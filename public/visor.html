@@ -3,44 +3,44 @@
 
 <head>
 
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
 
     <meta
         name="viewport"
-        content="
-            width=device-width,
-            initial-scale=1.0,
-            maximum-scale=1.0,
-            user-scalable=no,
-            viewport-fit=cover
-        "
-    />
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    >
 
-    <meta name="theme-color" content="#ffffff" />
-    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#ffffff">
+    <meta name="color-scheme" content="light">
 
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="PETS Visor" />
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="PETS Visor">
 
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
-    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
-    <meta name="referrer" content="no-referrer" />
+    <meta name="referrer" content="no-referrer">
 
-    <!-- Favicon SVG inline (cuadrícula PETS teal) -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23ffffff'/%3E%3Crect x='4' y='4' width='11' height='11' rx='2.5' fill='%2300a88f'/%3E%3Crect x='17' y='4' width='11' height='11' rx='2.5' fill='%2300a88f' opacity='.5'/%3E%3Crect x='4' y='17' width='11' height='11' rx='2.5' fill='%2300a88f' opacity='.5'/%3E%3Crect x='17' y='17' width='11' height='11' rx='2.5' fill='%2300a88f' opacity='.25'/%3E%3C/svg%3E" />
+    <!-- Favicon -->
+    <link
+        rel="icon"
+        type="image/svg+xml"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23ffffff'/%3E%3Crect x='4' y='4' width='11' height='11' rx='2.5' fill='%2300a88f'/%3E%3Crect x='17' y='4' width='11' height='11' rx='2.5' fill='%2300a88f' opacity='.5'/%3E%3Crect x='4' y='17' width='11' height='11' rx='2.5' fill='%2300a88f' opacity='.5'/%3E%3Crect x='17' y='17' width='11' height='11' rx='2.5' fill='%2300a88f' opacity='.25'/%3E%3C/svg%3E"
+    >
+
     <!-- Fallback PNG -->
-    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="icon" type="image/png" href="favicon.png">
 
     <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <link rel="stylesheet" href="visor.css" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- Estilos del visor -->
+    <link rel="stylesheet" href="visor.css">
 
     <title>PETS — Visor de Procedimientos</title>
 
@@ -49,6 +49,76 @@
 <body>
 
     <div id="app">
+
+        <!-- =======================================
+             LOADER DE INICIO (SPLASH INICIAL)
+        ======================================= -->
+        <div id="initialSplash" class="initial-splash">
+            <div class="initial-splash-content">
+                <div class="initial-splash-logo">
+                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                        <rect x="2" y="2" width="20" height="20" rx="5" fill="#00a88f"/>
+                        <rect x="26" y="2" width="20" height="20" rx="5" fill="#00a88f" opacity="0.5"/>
+                        <rect x="2" y="26" width="20" height="20" rx="5" fill="#00a88f" opacity="0.5"/>
+                        <rect x="26" y="26" width="20" height="20" rx="5" fill="#00a88f" opacity="0.25"/>
+                    </svg>
+                </div>
+                <h1>PETS</h1>
+                <p>Procedimientos de Trabajo</p>
+                <div class="initial-splash-loader">
+                    <span class="splash-dot"></span>
+                    <span class="splash-dot"></span>
+                    <span class="splash-dot"></span>
+                </div>
+                <span class="initial-splash-version">v2.0</span>
+            </div>
+        </div>
+
+        <!-- =======================================
+             LOADER DE ÁREA (CARGA CON PORCENTAJE)
+        ======================================= -->
+        <div id="areaLoader" class="area-loader" style="display:none;">
+            <div class="area-loader-overlay">
+                <div class="area-loader-card">
+                    
+                    <!-- Header -->
+                    <div class="area-loader-header">
+                        <div class="area-loader-title-group">
+                            <span class="area-loader-icon" id="loaderIcon">🔄</span>
+                            <span class="area-loader-area" id="loaderArea">Todos</span>
+                        </div>
+                        <span class="area-loader-total" id="loaderTotal">143 procedimientos</span>
+                    </div>
+                    
+                    <!-- Barra de progreso -->
+                    <div class="area-loader-progress">
+                        <div class="area-loader-bar">
+                            <div class="area-loader-fill" id="loaderFill" style="width: 0%;"></div>
+                        </div>
+                        <span class="area-loader-percentage" id="loaderPercentage">0%</span>
+                    </div>
+                    
+                    <!-- PET actual -->
+                    <div class="area-loader-current">
+                        <span class="area-loader-counter" id="loaderCounter">PET 000 de 143</span>
+                        <div class="area-loader-pet-code" id="loaderPetCode">PET 001 · VER. 02</div>
+                        <div class="area-loader-pet-title" id="loaderPetTitle">Cargando procedimientos...</div>
+                    </div>
+                    
+                    <!-- Lista de PETS cargados -->
+                    <div class="area-loader-list-container">
+                        <div class="area-loader-list-header">
+                            <span>📋 Procedimientos cargados</span>
+                            <span id="loaderLoadedCount">0 / 143</span>
+                        </div>
+                        <div class="area-loader-list" id="loaderList">
+                            <!-- Los PETS se añadirán dinámicamente -->
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
 
         <!-- ===========================
              OVERLAY MÓVIL (cierra sidebar)
@@ -227,6 +297,11 @@
 
                         </button>
 
+                        <!-- CRÉDITO -->
+                        <div class="sidebar-credit">
+                            Creado por Matwey Aguirre
+                        </div>
+
                     </div>
 
                 </div>
@@ -261,13 +336,11 @@
                 <div class="request-title-group">
 
                     <span class="request-label">
-                        Solicitud
+                        SOLICITUD
                     </span>
 
-                    <h2 id="requestTitle">
-
-                        Procedimientos PETS
-
+                    <h2>
+                        Seleccionar procedimientos
                     </h2>
 
                 </div>
@@ -608,33 +681,477 @@
             <!-- Contenedor del PDF -->
             <section id="viewerContainer" aria-label="Visor de PDF">
 
-                <!-- Estado vacío inicial -->
+                <!-- =======================================
+                    ESTADO VACÍO — BIENVENIDA DEL VISOR
+                ======================================= -->
                 <div id="emptyState">
-                    <div id="emptyStateIcon">
-                        <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
-                            <rect x="10" y="6" width="36" height="44" rx="4" stroke="currentColor" stroke-width="1.5" opacity="0.3"/>
-                            <rect x="14" y="10" width="28" height="36" rx="3" stroke="currentColor" stroke-width="1" opacity="0.15"/>
-                            <path d="M18 20h20M18 26h20M18 32h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+
+                    <!-- Ilustración principal -->
+                    <div id="emptyStateIllustration" aria-hidden="true">
+
+                        <svg
+                            width="170"
+                            height="150"
+                            viewBox="0 0 170 150"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+
+                            <!-- Fondo decorativo -->
+                            <circle
+                                cx="85"
+                                cy="70"
+                                r="48"
+                                fill="#00A88F"
+                                opacity="0.055"
+                            />
+
+                            <circle
+                                cx="48"
+                                cy="43"
+                                r="4"
+                                fill="#00A88F"
+                                opacity="0.35"
+                            />
+
+                            <circle
+                                cx="132"
+                                cy="37"
+                                r="4"
+                                fill="#00A88F"
+                                opacity="0.25"
+                            />
+
+                            <!-- Documento -->
+                            <rect
+                                x="52"
+                                y="18"
+                                width="66"
+                                height="94"
+                                rx="7"
+                                fill="#FFFFFF"
+                                stroke="#AAB8C8"
+                                stroke-width="2"
+                            />
+
+                            <!-- Parte superior del documento -->
+                            <path
+                                d="M99 18V35H118"
+                                fill="#E8EEF3"
+                            />
+
+                            <path
+                                d="M99 18V35H118"
+                                stroke="#AAB8C8"
+                                stroke-width="2"
+                                stroke-linejoin="round"
+                            />
+
+                            <!-- Checks -->
+                            <path
+                                d="M65 49L69 53L76 45"
+                                stroke="#00A88F"
+                                stroke-width="2.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
+
+                            <path
+                                d="M65 69L69 73L76 65"
+                                stroke="#00A88F"
+                                stroke-width="2.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
+
+                            <!-- Líneas -->
+                            <path
+                                d="M82 48H106"
+                                stroke="#CBD5DF"
+                                stroke-width="3"
+                                stroke-linecap="round"
+                            />
+
+                            <path
+                                d="M82 68H106"
+                                stroke="#CBD5DF"
+                                stroke-width="3"
+                                stroke-linecap="round"
+                            />
+
+                            <path
+                                d="M65 88H106"
+                                stroke="#D8E0E7"
+                                stroke-width="3"
+                                stroke-linecap="round"
+                            />
+
+                            <path
+                                d="M65 97H96"
+                                stroke="#D8E0E7"
+                                stroke-width="3"
+                                stroke-linecap="round"
+                            />
+
+                            <!-- Lupa -->
+                            <circle
+                                cx="45"
+                                cy="91"
+                                r="18"
+                                fill="#FFFFFF"
+                                stroke="#00A88F"
+                                stroke-width="4"
+                            />
+
+                            <path
+                                d="M58 104L70 116"
+                                stroke="#00A88F"
+                                stroke-width="5"
+                                stroke-linecap="round"
+                            />
+
+                            <!-- Pequeña planta decorativa -->
+                            <path
+                                d="M130 112C130 92 132 77 142 62"
+                                stroke="#00A88F"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                            />
+
+                            <path
+                                d="M136 83C126 79 124 70 126 65C135 66 139 73 136 83Z"
+                                fill="#00A88F"
+                                opacity="0.75"
+                            />
+
+                            <path
+                                d="M137 76C143 68 151 68 156 71C152 79 145 81 137 76Z"
+                                fill="#00A88F"
+                                opacity="0.55"
+                            />
+
+                            <path
+                                d="M132 94C123 91 120 85 121 80C130 81 134 86 132 94Z"
+                                fill="#00A88F"
+                                opacity="0.55"
+                            />
+
+                            <!-- Maceta -->
+                            <path
+                                d="M126 108H153L149 130H130L126 108Z"
+                                fill="#00A88F"
+                                opacity="0.82"
+                            />
+
+                            <path
+                                d="M124 108H155"
+                                stroke="#008F7A"
+                                stroke-width="3"
+                                stroke-linecap="round"
+                            />
+
+                            <!-- Línea base -->
+                            <path
+                                d="M25 131H151"
+                                stroke="#B7D9D3"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                            />
+
                         </svg>
+
                     </div>
-                    <p id="emptyStateTitle">Selecciona un PETS</p>
-                    <p id="emptyStateSub">Elige un procedimiento del panel izquierdo para visualizarlo</p>
+
+
+                    <!-- Título -->
+                    <p id="emptyStateTitle">
+                        Selecciona un PETS
+                    </p>
+
+
+                    <!-- Descripción -->
+                    <p id="emptyStateSub">
+                        Elige un procedimiento del panel izquierdo
+                        para visualizarlo aquí.
+                    </p>
+
+
+                    <!-- ===================================
+                        BENEFICIOS
+                    ==================================== -->
+                    <div class="empty-state-benefits">
+
+
+                        <!-- Consulta segura -->
+                        <div class="empty-state-benefit">
+
+                            <div
+                                class="empty-state-benefit-icon"
+                                aria-hidden="true">
+
+                                <svg
+                                    width="21"
+                                    height="21"
+                                    viewBox="0 0 24 24"
+                                    fill="none">
+
+                                    <rect
+                                        x="5"
+                                        y="3"
+                                        width="14"
+                                        height="18"
+                                        rx="2"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                    />
+
+                                    <path
+                                        d="M8 8H16"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                    />
+
+                                    <path
+                                        d="M8 12H16"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                    />
+
+                                    <path
+                                        d="M8 16H12"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                    />
+
+                                </svg>
+
+                            </div>
+
+                            <strong>
+                                Consulta segura
+                            </strong>
+
+                            <span>
+                                Accede a los procedimientos autorizados.
+                            </span>
+
+                        </div>
+
+
+                        <!-- Información confiable -->
+                        <div class="empty-state-benefit">
+
+                            <div
+                                class="empty-state-benefit-icon"
+                                aria-hidden="true">
+
+                                <svg
+                                    width="21"
+                                    height="21"
+                                    viewBox="0 0 24 24"
+                                    fill="none">
+
+                                    <path
+                                        d="M12 3L19 6V11C19 15.5 16.1 19.3 12 21C7.9 19.3 5 15.5 5 11V6L12 3Z"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linejoin="round"
+                                    />
+
+                                    <path
+                                        d="M9 12L11 14L15 10"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />
+
+                                </svg>
+
+                            </div>
+
+                            <strong>
+                                Información confiable
+                            </strong>
+
+                            <span>
+                                Procedimientos actualizados y verificados.
+                            </span>
+
+                        </div>
+
+
+                        <!-- Navegación rápida -->
+                        <div class="empty-state-benefit">
+
+                            <div
+                                class="empty-state-benefit-icon"
+                                aria-hidden="true">
+
+                                <svg
+                                    width="21"
+                                    height="21"
+                                    viewBox="0 0 24 24"
+                                    fill="none">
+
+                                    <path
+                                        d="M6 4H18"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                    />
+
+                                    <path
+                                        d="M6 12H18"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                    />
+
+                                    <path
+                                        d="M6 20H14"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                    />
+
+                                    <path
+                                        d="M18 16L21 19L18 22"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />
+
+                                </svg>
+
+                            </div>
+
+                            <strong>
+                                Navegación rápida
+                            </strong>
+
+                            <span>
+                                Explora por áreas o busca tu PET.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ===================================
+                        TIP
+                    ==================================== -->
+                    <div class="empty-state-tip">
+
+                        <div
+                            class="empty-state-tip-icon"
+                            aria-hidden="true">
+
+                            <svg
+                                width="19"
+                                height="19"
+                                viewBox="0 0 24 24"
+                                fill="none">
+
+                                <path
+                                    d="M9 18H15"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                />
+
+                                <path
+                                    d="M10 21H14"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                />
+
+                                <path
+                                    d="M8.5 14.5C7.2 13.4 6.5 11.8 6.5 10C6.5 6.9 8.9 4.5 12 4.5C15.1 4.5 17.5 6.9 17.5 10C17.5 11.8 16.8 13.4 15.5 14.5C14.8 15.1 14.5 15.8 14.5 16.5H9.5C9.5 15.8 9.2 15.1 8.5 14.5Z"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linejoin="round"
+                                />
+
+                            </svg>
+
+                        </div>
+
+                        <div>
+
+                            <strong>Tip:</strong>
+
+                            Usa el buscador o selecciona un área para encontrar
+                            el procedimiento que necesitas.
+
+                        </div>
+
+                    </div>
+
+                    <!-- CRÉDITO -->
+                    <div class="empty-state-credit">
+                        Creado por Matwey Aguirre
+                    </div>
+
                 </div>
 
-                <!-- Splash loader -->
-                <div id="pdfSplashLoader" role="status" aria-label="Cargando PDF">
-
+                <!-- Splash loader (se mantiene como respaldo) -->
+                <div id="pdfSplashLoader" role="status" aria-label="Cargando PDF" style="display:none;">
                     <div class="google-loader">
                         <span class="dot dot-blue"></span>
                         <span class="dot dot-red"></span>
                         <span class="dot dot-yellow"></span>
                         <span class="dot dot-green"></span>
                     </div>
-
                 </div>
 
                 <!-- PDF viewer -->
                 <div id="pdfViewer"></div>
+
+                <!-- =======================================
+                    LOADER DE DESCARGA DE PDF
+                ======================================= -->
+                <div id="pdfDownloadLoader" class="pdf-download-loader" style="display:none;">
+                    <div class="pdf-download-overlay">
+                        <div class="pdf-download-card">
+                            
+                            <!-- Header -->
+                            <div class="pdf-download-header">
+                                <span class="pdf-download-icon">📄</span>
+                                <span class="pdf-download-title" id="downloadPetName">Cargando PDF...</span>
+                            </div>
+                            
+                            <!-- Área -->
+                            <span class="pdf-download-area" id="downloadArea">C1</span>
+                            
+                            <!-- Barra de progreso -->
+                            <div class="pdf-download-progress">
+                                <div class="pdf-download-bar">
+                                    <div class="pdf-download-fill" id="downloadFill" style="width: 0%;"></div>
+                                </div>
+                                <span class="pdf-download-percentage" id="downloadPercentage">0%</span>
+                            </div>
+                            
+                            <!-- Información de descarga -->
+                            <div class="pdf-download-info">
+                                <span class="pdf-download-size" id="downloadSize">0.0 / 0.0 MB</span>
+                                <span class="pdf-download-speed" id="downloadSpeed">-- KB/s</span>
+                            </div>
+                            
+                            <!-- Detalles del PET -->
+                            <div class="pdf-download-pet">
+                                <div class="pdf-download-pet-code" id="downloadPetCode">PET 001 · VER. 02</div>
+                                <div class="pdf-download-pet-title" id="downloadPetTitle">Título del procedimiento</div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
 
                 <!-- ========================================================= -->
                 <!-- EXPLORAR PET -->
@@ -882,7 +1399,7 @@
 
     </div>
 
-     <!-- =======================================
+    <!-- =======================================
          TOAST
     ======================================= -->
 
@@ -906,26 +1423,40 @@
     </div>
 
     <!-- =======================================
-        PDF.js - Configuración con CDN
+     PDF.js
     ======================================= -->
 
-    <!-- 1. Cargar PDF.js -->
     <script src="pdf.min.js"></script>
 
-    <!-- 2. Configurar el worker con CDN (siempre funciona) -->
     <script>
+        /*
+        * PDF.js
+        *
+        * IMPORTANTE:
+        * pdf.min.js y pdf.worker.min.js deben
+        * pertenecer a la misma versión de PDF.js.
+        */
+
         if (typeof pdfjsLib !== 'undefined') {
-            // ✅ Usar CDN para el worker
-            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-            console.log('✅ PDF.js worker configurado con CDN');
+
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'pdf.worker.min.js';
+
+            console.log('✅ PDF.js cargado correctamente');
+
         } else {
-            console.error('❌ pdfjsLib no está disponible');
+
+            console.error(
+                '❌ PDF.js no pudo cargarse: pdfjsLib no está disponible.'
+            );
+
         }
     </script>
 
-    <!-- 3. Cargar la aplicación -->
+    <!-- =======================================
+        APLICACIÓN PETS
+    ======================================= -->
+
     <script type="module" src="visor.js"></script>
 
-</body>
-
+    </body>
 </html>

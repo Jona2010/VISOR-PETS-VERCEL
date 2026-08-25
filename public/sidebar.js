@@ -60,14 +60,14 @@ const AREA_CONFIG = [
         color: "#64748B",
         icon: "mantenimiento-mina.png"
     },
-/*
-    {
+
+    /*{
         id: "GENERAL PROCESOS",
         nombre: "General Procesos",
         color: "#7C3AED",
         icon: "procesos.png"
-    },
-*/
+    },*/
+
     {
         id: "PLANTAS-PLAN OPIMIZADO",
         nombre: "Plantas Plan Optimizado",
@@ -92,7 +92,9 @@ export class Sidebar {
 
         onOpenPDF,
 
-        onTaskSelected = null
+        onTaskSelected = null,
+
+        onSearchRequested = null
 
     }) {
 
@@ -102,6 +104,9 @@ export class Sidebar {
 
         // Callback hacia App
         this.onTaskSelected = onTaskSelected;
+
+        // Callback hacia App para iniciar la búsqueda
+        this.onSearchRequested = onSearchRequested;
 
         this.petsList    = document.getElementById("petsList");
         this.searchInput = document.getElementById("searchInput");
@@ -118,6 +123,16 @@ export class Sidebar {
 
         this.changeAreaBtn =
             document.getElementById("changeAreaBtn");
+
+        // ==========================================
+        // BUSCADOR DE TAREAS
+        // ==========================================
+
+        this.searchTaskBtn =
+            document.getElementById("searchTaskBtn");
+
+        this.taskSearchInput =
+            document.getElementById("taskSearchInput");
         
         // ==========================================
         // PANEL DE SOLICITUD DE PROCEDIMIENTOS
@@ -205,6 +220,91 @@ export class Sidebar {
         this.taskPanel = null;
 
         // ==========================================
+        // SEARCH SIDEBAR ENGINE
+        // ==========================================
+
+        // Árbol recibido desde PDFViewer
+        this.searchTree = [];
+
+        // ViewModel recibido
+        this.searchTreeView = [];
+
+        // Vista plana
+        this.searchTreeFlat = [];
+
+        // Nodos visibles
+        this.visibleSearchNodes = [];
+
+        // Nodo activo
+        this.activeSearchNode = null;
+
+        // Nodo seleccionado
+        this.selectedSearchNode = null;
+
+        // Índice rápido
+        this.searchNodeIndex = new Map();
+
+        // Elementos HTML renderizados
+        this.searchNodeElements = new Map();
+
+        this.searchTreeVersion = 0;
+
+        this.lastRenderedVersion = -1;
+
+        this.lastSearchTreeData = null;
+
+        // Cache del árbol renderizado
+
+        this.renderedSearchNodes = new Map();
+
+        // Cache de elementos reutilizables
+
+        this.searchNodeCache = new Map();
+
+        // Nodo raíz renderizado
+
+        this.searchTreeFragment = null;
+
+        // Solicitud de render pendiente
+
+        this.renderPending = false;
+
+        // Navegación por teclado
+
+        this.keyboardNavigationEnabled = true;
+
+        this.focusedSearchNode = null;
+
+        this.keyboardNavigationLocked = false;
+
+        // ==========================================
+        // SEARCHTREE UX
+        // ==========================================
+
+        this.enableAnimations = true;
+
+        this.animationDuration = 180;
+
+        this.focusVisible = true;
+
+        this.hoverNode = null;
+
+        // Estado del buscador
+        this.searchSidebarVisible = false;
+
+        // Texto del filtro
+        this.searchTreeFilter = "";
+
+        // Panel SearchTree
+        this.searchTreePanel = null;
+
+        // Contenedor
+        this.searchTreeContainer = null;
+
+        // Listener PDFViewer
+        this.pdfViewer = null;
+
+        // ==========================================
         // SIDEBAR V3
         // SOLICITUD DE PROCEDIMIENTOS
         // ==========================================
@@ -247,6 +347,8 @@ export class Sidebar {
         this.initializeSearch();
 
         this.initializeTaskPanel();
+
+        this.initializeSearchTreePanel();
 
         this.requestBtn?.addEventListener(
 
@@ -386,6 +488,38 @@ export class Sidebar {
             }
 
         );
+
+        // ==========================================
+        // BOTÓN BUSCAR
+        // ==========================================
+
+        this.searchTaskBtn?.addEventListener(
+
+            "click",
+
+            ()=>{
+
+                this.requestTaskSearch();
+
+            }
+
+        );
+
+        this.taskSearchInput?.addEventListener(
+
+            "keydown",
+
+            event=>{
+
+                if(event.key==="Enter"){
+
+                    this.requestTaskSearch();
+
+                }
+
+            }
+
+        );
        
         // Ocultar los filtros de área
         if (this.areaFilters) {
@@ -473,6 +607,1498 @@ export class Sidebar {
             this.hideTaskPanel();
 
         }
+
+    }
+
+    // ==========================================
+    // INICIAR BÚSQUEDA
+    // ==========================================
+
+    requestTaskSearch(){
+
+        if(!this.onSearchRequested){
+
+            return;
+
+        }
+
+        const text =
+
+            this.taskSearchInput?.value?.trim()
+
+            ?? "";
+
+        if(!text){
+
+            return;
+
+        }
+
+        this.onSearchRequested(text);
+
+    }
+
+    showSearchTreePanel(){
+
+        if(!this.searchTreePanel){
+
+            return;
+
+        }
+
+        this.searchSidebarVisible=true;
+
+        this.searchTreePanel.hidden=false;
+
+        this.taskPanel.hidden=true;
+
+    }
+
+    hideSearchTreePanel(){
+
+        if(!this.searchTreePanel){
+
+            return;
+
+        }
+
+        if(this.taskPanel){
+
+            this.taskPanel.hidden=false;
+
+        }
+
+        this.searchSidebarVisible=false;
+
+        this.searchTreePanel.hidden=true;
+
+    }
+
+    clearSearchTree(){
+
+        this.searchTree=[];
+
+        this.searchTreeView=[];
+
+        this.searchTreeFlat=[];
+
+        this.visibleSearchNodes=[];
+
+        this.activeSearchNode=null;
+
+        this.selectedSearchNode=null;
+
+        this.searchNodeIndex.clear();
+
+        this.searchNodeElements.clear();
+
+        this.searchTreeFilter="";
+
+        this.clearSearchTreeView();
+
+        this.activeSearchNode=null;
+
+        this.searchTreeVersion=0;
+
+        this.lastRenderedVersion=-1;
+
+        this.lastSearchTreeData=null;
+
+        this.renderPending=false;
+
+        this.renderedSearchNodes.clear();
+
+        this.searchTreeFragment=null;
+
+        this.searchNodeCache.clear();
+
+    }
+
+    getSearchTreeElement(id){
+
+        return(
+
+            this.searchNodeElements.get(id)
+
+            ||
+
+            null
+
+        );
+
+    }
+
+    scrollSearchTreeNodeIntoView(id){
+
+        const element=
+
+            this.getSearchTreeElement(id);
+
+        if(!element){
+
+            return;
+
+        }
+
+        element.scrollIntoView({
+
+            behavior:"smooth",
+
+            block:"nearest"
+
+        });
+
+    }
+
+    highlightSearchTreeNode(id){
+
+        this.searchNodeElements.forEach(element=>{
+
+            element.classList.remove(
+
+                "active",
+
+                "selected"
+
+            );
+
+            element.setAttribute(
+
+                "aria-selected",
+
+                "false"
+
+            );
+
+        });
+
+        const element =
+
+            this.getSearchTreeElement(id);
+
+        if(!element){
+
+            return;
+
+        }
+
+        if(id===this.selectedSearchNode){
+
+            element.classList.add(
+
+                "selected"
+
+            );
+
+        }
+
+        if(id===this.activeSearchNode){
+
+            element.classList.add(
+
+                "active"
+
+            );
+
+        }
+
+        element.setAttribute(
+
+            "aria-selected",
+
+            "true"
+
+        );
+
+        if(
+
+            this.focusVisible
+
+        ){
+
+            element.focus({
+
+                preventScroll:true
+
+            });
+
+        }
+
+    }
+
+    expandAllSearchNodes(){
+
+        if(!this.pdfViewer){
+
+            return;
+
+        }
+
+        this.pdfViewer.expandAllSearchResults();
+
+    }
+
+    collapseAllSearchNodes(){
+
+        if(!this.pdfViewer){
+
+            return;
+
+        }
+
+        this.pdfViewer.collapseAllSearchResults();
+
+    }
+
+    focusCurrentSearchNode(){
+
+        if(
+
+            !this.activeSearchNode
+
+        ){
+
+            return;
+
+        }
+
+        this.scrollSearchTreeNodeIntoView(
+
+            this.activeSearchNode
+
+        );
+
+    }
+
+    activateSearchResult(resultId){
+
+        this.setSearchTreeActive(
+            resultId
+        );
+
+        this.focusCurrentSearchNode();
+
+    }
+
+    clearSearchTreeSelection(){
+
+        this.selectedSearchNode=null;
+
+        this.searchNodeElements.forEach(
+
+            element=>{
+
+                element.classList.remove(
+
+                    "selected",
+
+                    "active"
+
+                );
+
+            }
+
+        );
+
+        this.searchNodeElements.forEach(
+
+            element=>{
+
+                element.setAttribute(
+
+                    "aria-selected",
+
+                    "false"
+
+                );
+
+            }
+
+        );
+
+    }
+
+    selectRenderedSearchNode(id){
+
+        this.selectedSearchNode=id;
+
+        this.highlightSearchTreeNode(id);
+
+        this.scrollSearchTreeNodeIntoView(id);
+
+    }
+
+    setSearchTree(data={}){
+
+        if(!data){
+
+            this.clearSearchTree();
+
+            return;
+
+        }
+
+        // =====================================
+        // NUEVA VERSIÓN DEL ÁRBOL
+        // =====================================
+
+        this.lastSearchTreeData = data;
+
+        this.searchTreeVersion++;
+
+        this.searchTree =
+            data.tree || [];
+
+        this.searchTreeView =
+            data.view || [];
+
+        this.searchTreeFlat =
+            data.flat || [];
+
+        this.visibleSearchNodes =
+            data.visible || [];
+
+        this.activeSearchNode =
+            data.active ?? null;
+
+        this.selectedSearchNode =
+            data.selected ?? null;
+
+        this.searchNodeIndex.clear();
+
+        this.searchTreeFlat.forEach(node=>{
+
+            this.searchNodeIndex.set(
+
+                node.id,
+
+                node
+
+            );
+
+        });
+
+        this.scheduleSearchTreeRender();
+
+    }
+
+    renderSearchTree(){
+
+        if(
+
+            this.lastRenderedVersion===
+
+            this.searchTreeVersion
+
+        ){
+
+            return;
+
+        }
+
+        this.lastRenderedVersion=
+
+        this.searchTreeVersion;
+
+        if(!this.searchTreeContainer){
+
+            return;
+
+        }
+
+        this.clearSearchTreeView();
+
+        if(!this.hasSearchTree()){
+
+            this.hideSearchTreePanel();
+
+            return;
+
+        }
+
+        this.showSearchTreePanel();
+
+        const fragment=document.createDocumentFragment();
+
+        for(const node of this.visibleSearchNodes){
+
+            fragment.appendChild(
+
+                this.createSearchTreeNode(node)
+
+            );
+
+        }
+
+        this.searchTreeContainer.replaceChildren(
+
+            fragment
+
+        );
+
+        if(
+
+            this.selectedSearchNode
+
+        ){
+
+            this.highlightSearchTreeNode(
+
+                this.selectedSearchNode
+
+            );
+
+        }
+
+    }
+
+    createSearchTreeNode(viewNode){
+
+        let element =
+
+            this.searchNodeCache.get(
+
+                viewNode.id
+
+            );
+
+        if(element){
+
+            this.updateSearchTreeNode(
+
+                element,
+
+                viewNode
+
+            );
+
+            this.searchNodeElements.set(
+
+                viewNode.id,
+
+                element
+
+            );
+
+            return element;
+
+        }
+
+        element=document.createElement("div");
+
+        element.className = "search-tree-node";
+
+        element.dataset.id = viewNode.id;
+
+        element.dataset.type = viewNode.type;
+
+        element.style.paddingLeft =
+
+            `${viewNode.depth * 18}px`;
+
+        element.setAttribute(
+            "role",
+            "treeitem"
+        );
+
+        element.setAttribute(
+            "tabindex",
+            "-1"
+        );
+
+        element.setAttribute(
+            "aria-level",
+            viewNode.depth + 1
+        );
+
+        element.setAttribute(
+            "aria-selected",
+            "false"
+        );
+
+        element.setAttribute(
+            "aria-expanded",
+            String(viewNode.expanded)
+        );
+
+        this.searchNodeElements.set(
+            viewNode.id,
+            element
+        );
+
+        this.searchNodeCache.set(
+            viewNode.id,
+            element
+        );
+
+        this.searchNodeElements.set(
+            viewNode.id,
+            element
+        );
+
+        this.searchNodeCache.set(
+            viewNode.id,
+            element
+        );
+
+        // ==========================================
+        // CONTENEDOR HORIZONTAL DEL NODO
+        // ==========================================
+
+        const row = document.createElement("div");
+
+        row.className = "search-tree-row";
+
+        // ==========================================
+        // CONTROLES
+        // ==========================================
+
+        row.appendChild(
+
+            this.createSearchTreeToggle(
+                viewNode
+            )
+
+        );
+
+        row.appendChild(
+
+            this.createSearchTreeIcon(
+                viewNode
+            )
+
+        );
+
+        row.appendChild(
+
+            this.createSearchTreeLabel(
+                viewNode
+            )
+
+        );
+
+        element.appendChild(
+            row
+        );
+
+        this.attachSearchTreeEvents(
+
+            element,
+
+            row,
+
+            viewNode
+
+        );
+
+        return element;
+    }
+
+    updateSearchTreeNode(
+        element,
+        viewNode
+    ){
+
+        element.dataset.id=viewNode.id;
+
+        element.dataset.type=viewNode.type;
+
+        element.style.paddingLeft=
+
+            `${viewNode.depth*18}px`;
+
+        const toggle=
+
+            element.querySelector(
+
+                ".search-tree-toggle"
+
+            );
+
+        if(toggle){
+
+            toggle.disabled=
+
+                !viewNode.expandable;
+
+            toggle.textContent=
+
+                viewNode.expandable
+
+                    ? (
+
+                        viewNode.expanded
+
+                            ? "▼"
+
+                            : "▶"
+
+                    )
+
+                    : "";
+
+        }
+
+        const label=
+
+            element.querySelector(
+
+                ".search-tree-label"
+
+            );
+
+        if(label){
+
+            label.childNodes[0].textContent=
+
+                viewNode.title;
+
+        }
+
+        element.setAttribute(
+
+            "aria-expanded",
+
+            String(
+
+                viewNode.expanded
+
+            )
+
+        );
+
+        element.dataset.type =
+
+            viewNode.type;
+
+    }
+
+    attachSearchTreeEvents(
+        element,
+        row,
+        viewNode
+    ){
+
+        const toggle=row.querySelector(
+            ".search-tree-toggle"
+        );
+
+        toggle?.addEventListener(
+
+            "click",
+
+            event=>{
+
+                event.stopPropagation();
+
+                this.toggleSearchTreeNode(
+                    viewNode.id
+                );
+
+            }
+
+        );
+
+        row.addEventListener(
+
+            "mouseenter",
+
+            ()=>{
+
+                element.classList.add(
+
+                    "hover"
+
+                );
+
+                this.hoverNode =
+
+                    viewNode.id;
+
+            }
+
+        );
+
+        row.addEventListener(
+
+            "mouseleave",
+
+            ()=>{
+
+                element.classList.remove(
+
+                    "hover"
+
+                );
+
+                this.hoverNode = null;
+
+            }
+
+        );
+
+        row.addEventListener(
+
+            "dblclick",
+
+            ()=>{
+
+                this.selectSearchTreeNode(
+
+                    viewNode.id
+
+                );
+
+            }
+
+        );
+
+    }
+
+    animateSearchNode(element){
+
+        if(
+
+            !this.enableAnimations ||
+
+            !element
+
+        ){
+
+            return;
+
+        }
+
+        element.classList.remove(
+
+            "animate"
+
+        );
+
+        void element.offsetWidth;
+
+        element.classList.add(
+
+            "animate"
+
+        );
+
+    }
+
+    toggleSearchTreeNode(nodeId){
+
+        if(!this.pdfViewer){
+
+            return;
+
+        }
+
+        this.pdfViewer.toggleSearchTreeNode(nodeId);
+
+    }
+
+    selectSearchTreeNode(nodeId){
+
+        const node=
+
+            this.getSearchNode(nodeId);
+
+        if(!node){
+
+            return;
+
+        }
+
+        this.selectedSearchNode=nodeId;
+
+        this.highlightSearchTreeNode(nodeId);
+
+        this.scrollSearchTreeNodeIntoView(nodeId);
+
+        if(this.pdfViewer){
+
+            this.pdfViewer.selectSearchTreeResult(
+                nodeId
+            );
+
+        }
+
+        this.activeSearchNode=nodeId;
+
+    }
+
+    setSearchTreeSelection(nodeId){
+
+        if(
+
+            this.selectedSearchNode===nodeId
+
+        ){
+
+            return;
+
+        }
+
+        this.selectedSearchNode=nodeId;
+
+        this.highlightSearchTreeNode(nodeId);
+
+    }
+
+    setSearchTreeActive(nodeId){
+
+        if(
+
+            this.activeSearchNode===nodeId
+
+        ){
+
+            return;
+
+        }
+
+        this.activeSearchNode=nodeId;
+
+        this.highlightSearchTreeNode(nodeId);
+
+        this.scrollSearchTreeNodeIntoView(nodeId);
+
+        this.focusedSearchNode=nodeId;
+
+        this.animateSearchNode(
+
+            this.getSearchTreeElement(
+
+                nodeId
+
+            )
+
+        );
+
+    }
+
+    // ==========================================
+    // SEARCH TREE
+    // NODO ACTIVO DESDE PDFVIEWER
+    // ==========================================
+
+    setActiveSearchNode(node){
+
+        if(!node){
+
+            return;
+
+        }
+
+        const nodeId =
+
+            typeof node === "object"
+
+                ? node.id
+
+                : node;
+
+        this.setSearchTreeActive(
+
+            nodeId
+
+        );
+
+    }
+
+    createSearchTreeToggle(viewNode){
+
+        const button=document.createElement("button");
+
+        button.type="button";
+
+        button.className="search-tree-toggle";
+
+        if(!viewNode.expandable){
+
+            button.disabled=true;
+
+            button.textContent="";
+
+            return button;
+
+        }
+
+        button.textContent=
+
+            viewNode.expanded
+
+                ? "▼"
+
+                : "▶";
+
+        return button;
+
+    }
+
+    createSearchTreeIcon(viewNode){
+
+        const icon=document.createElement("span");
+
+        icon.className="search-tree-icon";
+
+        switch(viewNode.type){
+
+            case "section":
+
+                icon.textContent="📁";
+
+                break;
+
+            case "task":
+
+                icon.textContent="📄";
+
+                break;
+
+            case "result":
+
+                icon.textContent="🔍";
+
+                break;
+
+            default:
+
+                icon.textContent="•";
+
+        }
+
+        return icon;
+
+    }
+
+    createSearchTreeLabel(viewNode){
+
+        const label=document.createElement("span");
+
+        label.className="search-tree-label";
+
+        label.textContent=viewNode.title;
+
+        if(viewNode.resultCount){
+
+            const badge=document.createElement("span");
+
+            badge.className="search-tree-count";
+
+            badge.textContent=viewNode.resultCount;
+
+            label.appendChild(badge);
+
+        }
+
+        return label;
+
+    }
+
+    refreshSearchTree(){
+
+        if(
+
+            !this.lastSearchTreeData
+
+        ){
+
+            return;
+
+        }
+
+        this.scheduleSearchTreeRender();
+
+    }
+
+    clearSearchTreeView(){
+
+        if(!this.searchTreeContainer){
+
+            return;
+
+        }
+
+        this.searchTreeContainer.replaceChildren();
+
+        this.searchNodeElements.clear();
+
+    }
+
+    setPDFViewer(pdfViewer){
+
+        this.pdfViewer=pdfViewer;
+
+        this.bindSearchTree();
+
+        this.bindSearchTreeLifecycle();
+
+    }
+
+    bindSearchTree(){
+
+        if(!this.pdfViewer){
+
+            return;
+
+        }
+
+        this.pdfViewer.setSearchTreeListener(
+
+            data=>{
+
+                this.setSearchTree(data);
+
+            }
+
+        );
+
+        this.pdfViewer.setSearchTreeSelectionListener(
+
+            node=>{
+
+                if(!node){
+
+                    return;
+
+                }
+
+                this.setSearchTreeSelection(
+                    node.id
+                );
+
+            }
+
+        );
+
+    }
+
+    bindSearchTreeLifecycle(){
+
+        if(!this.pdfViewer){
+
+            return;
+
+        }
+
+        this.pdfViewer.setSearchTreeChangeListener(
+
+            data=>{
+
+                this.lastSearchTreeData=data;
+
+                this.setSearchTree(data);
+
+            }
+
+        );
+
+        this.pdfViewer.setSearchTreeActiveListener(
+
+            node=>{
+
+                if(!node){
+
+                    return;
+
+                }
+
+                this.activateSearchResult(
+
+                    node.id
+
+                );
+
+            }
+
+        );
+
+        this.pdfViewer.setSearchTreeResetListener(
+
+            ()=>{
+
+                this.resetSearchSidebar();
+
+            }
+
+        );
+
+    }
+
+    refreshSearchSidebar(){
+
+        if(
+
+            !this.pdfViewer
+
+        ){
+
+            return;
+
+        }
+
+        const data=
+
+            this.pdfViewer.getSearchTreeViewModel();
+
+        if(!data){
+
+            return;
+
+        }
+
+        this.setSearchTree(data);
+
+    }
+
+    syncSearchSidebar(){
+
+        this.refreshSearchSidebar();
+
+    }
+
+    hasSearchTree(){
+
+        return this.searchTree.length>0;
+
+    }
+
+    scheduleSearchTreeRender(){
+
+        if(this.renderPending){
+
+            return;
+
+        }
+
+        this.renderPending=true;
+
+        requestAnimationFrame(()=>{
+
+            this.renderPending=false;
+
+            this.renderSearchTree();
+
+        });
+
+    }
+
+    bindSearchKeyboard(){
+
+        document.addEventListener(
+
+            "keydown",
+
+            event=>{
+
+                if(
+
+                    !this.keyboardNavigationEnabled ||
+
+                    !this.searchSidebarVisible ||
+
+                    this.keyboardNavigationLocked
+
+                ){
+
+                    return;
+
+                }
+
+                this.handleSearchKeyboard(event);
+
+            }
+
+        );
+
+    }
+
+    handleSearchKeyboard(event){
+
+        switch(event.key){
+
+            case "ArrowUp":
+
+                event.preventDefault();
+
+                this.focusPreviousSearchNode();
+
+                break;
+
+            case "ArrowDown":
+
+                event.preventDefault();
+
+                this.focusNextSearchNode();
+
+                break;
+
+            case "ArrowLeft":
+
+                event.preventDefault();
+
+                this.collapseFocusedSearchNode();
+
+                break;
+
+            case "ArrowRight":
+
+                event.preventDefault();
+
+                this.expandFocusedSearchNode();
+
+                break;
+
+            case "Home":
+
+                event.preventDefault();
+
+                this.focusFirstSearchNode();
+
+                break;
+
+            case "End":
+
+                event.preventDefault();
+
+                this.focusLastSearchNode();
+
+                break;
+
+            case "Enter":
+
+            case " ":
+
+                event.preventDefault();
+
+                this.activateFocusedSearchNode();
+
+                break;
+
+        }
+
+    }
+
+    focusFirstSearchNode(){
+
+        if(!this.visibleSearchNodes.length){
+
+            return;
+
+        }
+
+        this.setSearchTreeActive(
+
+            this.visibleSearchNodes[0].id
+
+        );
+
+    }
+
+    focusLastSearchNode(){
+
+        if(!this.visibleSearchNodes.length){
+
+            return;
+
+        }
+
+        this.setSearchTreeActive(
+
+            this.visibleSearchNodes[
+
+                this.visibleSearchNodes.length-1
+
+            ].id
+
+        );
+
+    }
+
+    focusNextSearchNode(){
+
+        const index=
+
+            this.visibleSearchNodes.findIndex(
+
+                node=>node.id===this.activeSearchNode
+
+            );
+
+        if(index<0){
+
+            this.focusFirstSearchNode();
+
+            return;
+
+        }
+
+        if(index>=this.visibleSearchNodes.length-1){
+
+            return;
+
+        }
+
+        this.setSearchTreeActive(
+
+            this.visibleSearchNodes[index+1].id
+
+        );
+
+    }
+
+    focusPreviousSearchNode(){
+
+        const index=
+
+            this.visibleSearchNodes.findIndex(
+
+                node=>node.id===this.activeSearchNode
+
+            );
+
+        if(index<=0){
+
+            return;
+
+        }
+
+        this.setSearchTreeActive(
+
+            this.visibleSearchNodes[index-1].id
+
+        );
+
+    }
+
+    expandFocusedSearchNode(){
+
+        if(
+
+            !this.activeSearchNode ||
+
+            !this.pdfViewer
+
+        ){
+
+            return;
+
+        }
+
+        this.pdfViewer.expandSearchTreeNode(
+
+            this.activeSearchNode
+
+        );
+
+    }
+
+    collapseFocusedSearchNode(){
+
+        if(
+
+            !this.activeSearchNode ||
+
+            !this.pdfViewer
+
+        ){
+
+            return;
+
+        }
+
+        this.pdfViewer.collapseSearchTreeNode(
+
+            this.activeSearchNode
+
+        );
+
+    }
+
+    activateFocusedSearchNode(){
+
+        if(
+
+            !this.activeSearchNode
+
+        ){
+
+            return;
+
+        }
+
+        this.selectSearchTreeNode(
+
+            this.activeSearchNode
+
+        );
+
+    }
+
+    getSearchTree(){
+
+        return this.searchTree;
+
+    }
+
+    getSearchTreeView(){
+
+        return this.searchTreeView;
+
+    }
+
+    getVisibleSearchNodes(){
+
+        return this.visibleSearchNodes;
+
+    }
+
+    getSearchNode(id){
+
+        return this.searchNodeIndex.get(id)||null;
+
+    }
+
+    isSearchSidebarVisible(){
+
+        return this.searchSidebarVisible;
+
+    }
+
+    resetSearchSidebar(){
+
+        this.clearSearchTree();
+
+        this.hideSearchTreePanel();
+
+        this.searchSidebarVisible=false;
+
+        this.selectedSearchNode=null;
+
+        this.activeSearchNode=null;
+
+    }
+
+    destroySearchSidebar(){
+
+        this.resetSearchSidebar();
+
+        this.searchNodeCache.clear();
+
+        this.pdfViewer=null;
+
+    }
+
+    onSearchCompleted(){
+
+        this.refreshSearchSidebar();
+
+    }
+
+    onSearchCleared(){
+
+        this.resetSearchSidebar();
 
     }
 
@@ -591,6 +2217,42 @@ export class Sidebar {
             this.petsList
 
         );
+
+    }
+
+    initializeSearchTreePanel(){
+
+        if(this.searchTreePanel){
+
+            return;
+
+        }
+
+        this.searchTreePanel=document.createElement("div");
+
+        this.searchTreePanel.className="search-tree-panel";
+
+        this.searchTreePanel.hidden=true;
+
+        this.searchTreeContainer=document.createElement("div");
+
+        this.searchTreeContainer.className="search-tree";
+
+        this.searchTreePanel.appendChild(
+
+            this.searchTreeContainer
+
+        );
+
+        this.petsList.parentNode.insertBefore(
+
+            this.searchTreePanel,
+
+            this.petsList
+
+        );
+
+        this.bindSearchKeyboard();
 
     }
 
@@ -1825,12 +3487,44 @@ export class Sidebar {
         areasRow.className =
             "areas-row areas-collapsed";
 
+        // ------------------------------------------
+        // CONTADOR DE ÁREAS
+        // ------------------------------------------
+
+        const areaCount =
+            Object.keys(pet.archivos).length;
+
+        const areasLabel =
+            document.createElement("div");
+
+        areasLabel.className =
+            "areas-label";
+
+        areasLabel.innerHTML = `
+            <span>ÁREAS</span>
+            <strong>${areaCount}</strong>
+        `;
+
+        areasRow.appendChild(
+            areasLabel
+        );
+
+        // ------------------------------------------
+        // BOTONES DE ÁREA
+        // ------------------------------------------
+
+        const areasButtons =
+            document.createElement("div");
+
+        areasButtons.className =
+            "areas-buttons";
+
         Object.entries(
             pet.archivos
         ).forEach(
             ([area,path]) => {
 
-                areasRow.appendChild(
+                areasButtons.appendChild(
 
                     this.createAreaButton({
 
@@ -1849,6 +3543,10 @@ export class Sidebar {
                     })
                 );
             }
+        );
+
+        areasRow.appendChild(
+            areasButtons
         );
 
         card.appendChild(
@@ -1982,6 +3680,7 @@ export class Sidebar {
         btn.setAttribute("aria-label", `Abrir ${petName}, área ${area}`);
 
         btn.addEventListener("click", async () => {
+            
             try {
                 this.setActive(card, btn, areaIndicator, area);
 
@@ -2072,6 +3771,12 @@ export class Sidebar {
 
         this.updateRequestCounter();
 
+        requestAnimationFrame(() => {
+
+            this.requestSearch?.focus();
+
+        });
+
     }
 
     // ==========================================
@@ -2084,6 +3789,11 @@ export class Sidebar {
             return;
 
         this.requestVisible = false;
+
+        // Evita que un elemento del panel conserve el foco
+        if(this.requestPanel.contains(document.activeElement)){
+            document.activeElement.blur();
+        }
 
         this.requestPanel.hidden = true;
 
@@ -2276,19 +3986,35 @@ export class Sidebar {
 
             item.innerHTML =
 
-            `
+            item.innerHTML = `
                 <input
                     type="checkbox"
                     data-pet="${pet.nombre}"
                 >
 
-                <span>
+                <div class="request-pet-info">
 
-                    ${petNum}
+                    <div class="request-pet-top">
 
-                    ${version ? `• VER. ${version}` : ""}
+                        <span class="request-pet-code">
+                            ${petNum}
+                        </span>
 
-                </span>
+                        ${
+                            version
+                                ? `<span class="request-pet-version">
+                                    VER. ${version}
+                                </span>`
+                                : ""
+                        }
+
+                    </div>
+
+                    <div class="request-pet-name">
+                        ${pet.titulo || pet.nombre}
+                    </div>
+
+                </div>
             `;
 
             const checkbox =
@@ -2452,18 +4178,10 @@ export class Sidebar {
         const total =
             this.requestSelection.size;
 
-        if(total===0){
-
-            this.requestCounter.textContent =
-                "Solicitud vacía";
-
-            return;
-
-        }
-
         this.requestCounter.textContent =
-
-            `${total} PETS${total>1?"s":""} seleccionado${total>1?"s":""}`;
+            total === 0
+                ? "0 seleccionados"
+                : `${total} seleccionado${total > 1 ? "s" : ""}`;
 
     }
 
@@ -2528,13 +4246,14 @@ export class Sidebar {
                         b.nombre.match(/\d+/)?.[0] || 0
                     );
 
-                return na-nb;
+                return na - nb;
 
             })
 
             .forEach(pet=>{
 
-                const area = pet.requestArea;
+                const area =
+                    pet.requestArea;
 
                 if(!grouped[area]){
 
@@ -2548,57 +4267,78 @@ export class Sidebar {
 
         const lines = [];
 
-        lines.push("📋 PROCEDIMIENTOS REQUERIDOS");
-
-        lines.push("");
-
-        AREA_CONFIG
-
-        .filter(area => grouped[area.id])
-
-        .forEach(area => {
-
-            lines.push(`Área: ${area.nombre}`);
-
-            lines.push("");
-
-            grouped[area.id].forEach(pet => {
-
-                const path =
-                    pet.archivos[area.id];
-
-                const version =
-                    this.extractVersionFromPath(path);
-
-                const number =
-                    pet.nombre.match(/\d+/)?.[0];
-
-                const petCode =
-                    number
-                        ? `PET ${number.padStart(3,"0")}`
-                        : pet.nombre;
-
-                lines.push(
-
-                    `☑ ${petCode}${version ? ` • VER. ${version}` : ""}`
-
-                );
-
-            });
-
-            lines.push("");
-
-        });
+        // ==========================================
+        // ENCABEZADO
+        // ==========================================
 
         lines.push(
-
-            `Total: ${this.requestSelection.size} procedimiento${this.requestSelection.size>1?"s":""}`
-
+            "📋 SOLICITUD DE PETS"
         );
 
         lines.push("");
 
-        lines.push("Generado desde VISOR PETS");
+        // ==========================================
+        // ÁREAS Y PROCEDIMIENTOS
+        // ==========================================
+
+        AREA_CONFIG
+
+            .filter(area => grouped[area.id])
+
+            .forEach(area => {
+
+                lines.push(
+                    `🏢 Área: ${area.nombre}`
+                );
+
+                lines.push("");
+
+                grouped[area.id].forEach(pet => {
+
+                    const path =
+                        pet.archivos[area.id];
+
+                    const version =
+                        this.extractVersionFromPath(path);
+
+                    const number =
+                        pet.nombre.match(/\d+/)?.[0];
+
+                    const petCode =
+                        number
+                            ? `PET ${number.padStart(3,"0")}`
+                            : pet.nombre;
+
+                    const petTitle =
+                        pet.titulo ||
+                        pet.nombre
+                            .replace(/^\d+[-\s]*/, "")
+                            .trim();
+
+                    lines.push(
+                        `📄 ${petCode}${version ? ` · VER. ${version}` : ""}`
+                    );
+
+                    lines.push(
+                        `   ${petTitle}`
+                    );
+
+                    lines.push("");
+
+                });
+
+            });
+
+        // ==========================================
+        // TOTAL
+        // ==========================================
+
+        const total =
+            this.requestSelection.size;
+
+        lines.push(
+            `📌 Total: ${total} procedimiento${total > 1 ? "s" : ""}`
+        );
 
         return lines.join("\n");
 

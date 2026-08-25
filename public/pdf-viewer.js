@@ -6,6 +6,16 @@ export class PDFViewer {
         this.viewer       = viewer;
         this.onPageChange = onPageChange || null;
 
+        this.watermarkLayer =
+            document.createElement("div");
+
+        this.watermarkLayer.className =
+            "pdf-watermark-layer";
+
+        this.container.appendChild(
+            this.watermarkLayer
+        );
+
         this.pdfDoc     = null;
         this.scale      = 1;
         this.prevScale  = 1;
@@ -403,21 +413,40 @@ export class PDFViewer {
 
     async createPage(pageNum) {
 
-        const page     = await this.pdfDoc.getPage(pageNum);
-        const viewport = page.getViewport({ scale: this.scale });
+        const page = await this.pdfDoc.getPage(pageNum);
+        const viewport = page.getViewport({
+            scale: this.scale
+        });
 
         const pageDiv = document.createElement("div");
-        pageDiv.className            = "pdf-page";
-        pageDiv.dataset.page         = pageNum;
-        pageDiv.style.animationDelay = `${Math.min(pageNum * 30, 300)}ms`;
 
-        const loadingLayer = document.createElement("div");
+        pageDiv.className = "pdf-page";
+        pageDiv.dataset.page = pageNum;
+
+        pageDiv.style.animationDelay =
+            `${Math.min(pageNum * 30, 300)}ms`;
+
+        // ===============================
+        // LOADER DE PÁGINA
+        // ===============================
+
+        const loadingLayer =
+            document.createElement("div");
+
         loadingLayer.className = "page-loader";
+
         loadingLayer.innerHTML = `
             <div class="page-loader-spinner"></div>
-            <div class="page-loader-text">Página ${pageNum}</div>
+            <div class="page-loader-text">
+                Página ${pageNum}
+            </div>
         `;
+
         pageDiv.appendChild(loadingLayer);
+
+        // ===============================
+        // DIMENSIONES
+        // ===============================
 
         pageDiv.style.width =
             `${viewport.width}px`;
@@ -428,19 +457,32 @@ export class PDFViewer {
         pageDiv.style.minWidth = "0";
         pageDiv.style.minHeight = "0";
 
-        const canvas = document.createElement("canvas");
+        // ===============================
+        // CANVAS
+        // ===============================
+
+        const canvas =
+            document.createElement("canvas");
 
         canvas.style.opacity = "0";
-        //canvas.style.transition = "opacity .25s ease";
 
-        canvas.style.width  = `${viewport.width}px`;
-        canvas.style.height = `${viewport.height}px`;
+        canvas.style.width =
+            `${viewport.width}px`;
+
+        canvas.style.height =
+            `${viewport.height}px`;
 
         pageDiv.appendChild(canvas);
 
-        const highlightLayer = document.createElement("div");
+        // ===============================
+        // CAPA DE HIGHLIGHTS
+        // ===============================
 
-        highlightLayer.className = "page-highlight-layer";
+        const highlightLayer =
+            document.createElement("div");
+
+        highlightLayer.className =
+            "page-highlight-layer";
 
         pageDiv.appendChild(highlightLayer);
 
@@ -450,7 +492,7 @@ export class PDFViewer {
         );
 
         // ===============================
-        // MARCA DE AGUA POR PÁGINA
+        // MARCA DE AGUA INTELLIALL
         // ===============================
 
         const watermark =
@@ -459,37 +501,133 @@ export class PDFViewer {
         watermark.className =
             "page-watermark";
 
-        let html = "";
+        watermark.dataset.page =
+            pageNum;
 
-        for(let i = 0; i < 50; i++){
+        // ===============================
+        // URL DEL LOGO
+        // ===============================
 
-            html +=
-                "<span>PROHIBIDO COMPARTIR</span>";
-        }
+        const logoWatermarkUrl =
+            new URL(
+                "logo-watermark.png",
+                document.baseURI
+            ).href;
 
-        watermark.innerHTML =
-        `
-        <div class="page-watermark-grid">
-            ${html}
-        </div>
-        `;
+        // ===============================
+        // POSICIONES
+        // ===============================
 
-        pageDiv.appendChild(watermark);
+        const watermarkPositions = [
 
-        this.viewer.appendChild(pageDiv);
+            { x: 12, y: 10 },
+            { x: 38, y: 10 },
+            { x: 65, y: 10 },
+            { x: 88, y: 10 },
+
+            { x: 12, y: 52 },
+            { x: 40, y: 52 },
+            { x: 68, y: 52 },
+            { x: 90, y: 52 },
+
+            { x: 12, y: 94 },
+            { x: 42, y: 94 },
+            { x: 71, y: 94 },
+            { x: 92, y: 94 },
+
+        ];
+
+        // ===============================
+        // CREAR LOGOS
+        // ===============================
+
+        watermarkPositions.forEach(
+            (position, index) => {
+
+                const item =
+                    document.createElement("div");
+
+                item.className =
+                    "watermark-item";
+
+                item.dataset.index =
+                    index;
+
+                item.style.left =
+                    `${position.x}%`;
+
+                item.style.top =
+                    `${position.y}%`;
+
+                const img =
+                    document.createElement("img");
+
+                img.src =
+                    logoWatermarkUrl;
+
+                img.alt =
+                    "";
+
+                img.draggable =
+                    false;
+
+                img.loading =
+                    "eager";
+
+                img.onerror = () => {
+
+                    console.error(
+                        "❌ No se pudo cargar logo-watermark.png:",
+                        logoWatermarkUrl
+                    );
+
+                };
+
+                item.appendChild(img);
+
+                watermark.appendChild(item);
+
+            }
+        );
+
+        // ===============================
+        // INSERTAR WATERMARK
+        // ===============================
+
+        pageDiv.appendChild(
+            watermark
+        );
+
+        // ===============================
+        // INSERTAR PÁGINA
+        // ===============================
+
+        this.viewer.appendChild(
+            pageDiv
+        );
 
         this.pages.push({
+
             pageNum,
             page,
             pageDiv,
             canvas,
-            rendered:     false,
-            rendering:    false,
-            currentScale: this.scale
+
+            rendered: false,
+            rendering: false,
+
+            currentScale:
+                this.scale
+
         });
 
-        this.observer.observe(pageDiv);
-        this.pageObserver.observe(pageDiv);
+        this.observer.observe(
+            pageDiv
+        );
+
+        this.pageObserver.observe(
+            pageDiv
+        );
     }
 
     // ================================
@@ -710,6 +848,7 @@ export class PDFViewer {
 
             pageData.pageDiv.style.minWidth = "0";
             pageData.pageDiv.style.minHeight = "0";
+
         });
 
         // 2. Compensar scroll para conservar el punto anclado (síncrono, mismo frame)

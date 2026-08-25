@@ -58,8 +58,624 @@ from "./sidebar.js";
         originalConsoleError.apply(console, args);
     };
 
-    console.log('✅ Worker error filter installed');
+    //console.log('✅ Worker error filter installed');
 })();
+
+// =========================================================
+// LOADERS PARA PETS
+// =========================================================
+
+// ================================
+// LOADER DE INICIO (SPLASH)
+// ================================
+
+function showInitialSplash() {
+    const splash = document.getElementById('initialSplash');
+    if (splash) splash.classList.remove('hide');
+}
+
+function hideInitialSplash() {
+    const splash = document.getElementById('initialSplash');
+    if (splash) splash.classList.add('hide');
+}
+
+// ================================
+// LOADER DE ÁREA (CARGA CON PORCENTAJE)
+// ================================
+
+class AreaLoader {
+    constructor() {
+        this.el = document.getElementById('areaLoader');
+        this.icon = document.getElementById('loaderIcon');
+        this.area = document.getElementById('loaderArea');
+        this.total = document.getElementById('loaderTotal');
+        this.fill = document.getElementById('loaderFill');
+        this.percentage = document.getElementById('loaderPercentage');
+        this.counter = document.getElementById('loaderCounter');
+        this.petCode = document.getElementById('loaderPetCode');
+        this.petTitle = document.getElementById('loaderPetTitle');
+        this.list = document.getElementById('loaderList');
+        this.loadedCount = document.getElementById('loaderLoadedCount');
+        
+        this.isActive = false;
+        this.cancelRequested = false;
+        this.pets = [];
+        this.currentIndex = 0;
+    }
+    
+    show(area, pets, icon = '🔄') {
+        if (this.isActive) {
+            this.cancelRequested = true;
+            setTimeout(() => {
+                this.cancelRequested = false;
+                this.show(area, pets, icon);
+            }, 150);
+            return;
+        }
+        
+        this.isActive = true;
+        this.cancelRequested = false;
+        this.pets = pets || [];
+        this.currentIndex = 0;
+        
+        // Configurar UI
+        this.icon.textContent = icon;
+        this.area.textContent = area;
+        this.total.textContent = `${this.pets.length} procedimientos`;
+        this.fill.style.width = '0%';
+        this.percentage.textContent = '0%';
+        this.counter.textContent = `PET 000 de ${String(this.pets.length).padStart(3, '0')}`;
+        this.petCode.textContent = 'Cargando...';
+        this.petTitle.textContent = 'Preparando procedimientos...';
+        this.loadedCount.textContent = `0 / ${this.pets.length}`;
+        this.list.innerHTML = '';
+        
+        // Mostrar loader
+        this.el.style.display = 'flex';
+        
+        // Iniciar carga
+        this.loadNext();
+    }
+    
+    loadNext() {
+        if (this.cancelRequested || this.currentIndex >= this.pets.length) {
+            this.complete();
+            return;
+        }
+        
+        const pet = this.pets[this.currentIndex];
+        const total = this.pets.length;
+        const current = this.currentIndex + 1;
+        const progress = (current / total) * 100;
+        
+        // Actualizar barra
+        this.fill.style.width = progress + '%';
+        this.percentage.textContent = Math.round(progress) + '%';
+        
+        // Actualizar contador
+        const currentStr = String(current).padStart(3, '0');
+        const totalStr = String(total).padStart(3, '0');
+        this.counter.textContent = `PET ${currentStr} de ${totalStr}`;
+        this.loadedCount.textContent = `${current} / ${total}`;
+        
+        // Actualizar PET actual
+        if (pet) {
+            this.petCode.textContent = `${pet.id} · VER. ${pet.version || '01'}`;
+            this.petTitle.textContent = pet.title || 'Sin título';
+        }
+        
+        // Añadir a la lista
+        this.addToList(pet, current);
+        
+        this.currentIndex++;
+        
+        // Velocidad variable
+        const baseDelay = 80;
+        const extraDelay = Math.max(0, (this.currentIndex / total) * 60);
+        const delay = baseDelay + extraDelay;
+        
+        setTimeout(() => this.loadNext(), delay);
+    }
+    
+    addToList(pet, index) {
+        const item = document.createElement('div');
+        item.className = 'loader-list-item';
+        item.innerHTML = `
+            <span class="item-icon">✅</span>
+            <span class="item-code">${pet.id}</span>
+            <span class="item-title">${this.truncate(pet.title || 'Sin título', 40)}</span>
+            <span class="item-status">Cargado</span>
+        `;
+        this.list.appendChild(item);
+        this.list.scrollTop = this.list.scrollHeight;
+    }
+    
+    complete() {
+        this.fill.style.width = '100%';
+        this.percentage.textContent = '100%';
+        this.petCode.textContent = '✅ Completado';
+        this.petTitle.textContent = 'Todos los procedimientos cargados';
+        
+        setTimeout(() => {
+            this.hide();
+        }, 600);
+    }
+    
+    hide() {
+        this.el.style.display = 'none';
+        this.isActive = false;
+        this.cancelRequested = false;
+        
+        document.dispatchEvent(new CustomEvent('area-loaded', {
+            detail: { area: this.area.textContent }
+        }));
+    }
+    
+    truncate(text, maxLength) {
+        if (!text) return '';
+        if (text.length <= maxLength) return text;
+        return text.substring(0, maxLength) + '...';
+    }
+}
+
+// ================================
+// LOADER DE DESCARGA DE PDF
+// ================================
+
+class PDFDownloadLoader {
+    constructor() {
+        this.el = document.getElementById('pdfDownloadLoader');
+        this.petName = document.getElementById('downloadPetName');
+        this.area = document.getElementById('downloadArea');
+        this.fill = document.getElementById('downloadFill');
+        this.percentage = document.getElementById('downloadPercentage');
+        this.size = document.getElementById('downloadSize');
+        this.speed = document.getElementById('downloadSpeed');
+        this.petCode = document.getElementById('downloadPetCode');
+        this.petTitle = document.getElementById('downloadPetTitle');
+        
+        this.isActive = false;
+        this.startTime = 0;
+        this.loadedBytes = 0;
+        this.totalBytes = 0;
+        this.lastUpdate = 0;
+    }
+    
+    show(pet) {
+        this.isActive = true;
+        this.startTime = Date.now();
+        this.loadedBytes = 0;
+        this.totalBytes = 0;
+        this.lastUpdate = 0;
+
+        // =========================================================
+        // 📍 ASEGURAR QUE EL LOADER PERTENEZCA AL VIEWER
+        // =========================================================
+
+        const viewerContainer = document.getElementById("viewerContainer");
+
+        if (viewerContainer && this.el) {
+
+            // Si el loader está fuera del visor,
+            // moverlo dentro del contenedor correcto.
+            if (this.el.parentElement !== viewerContainer) {
+                viewerContainer.appendChild(this.el);
+            }
+        }
+
+        // =========================================================
+        // 📝 CONFIGURAR INFORMACIÓN
+        // =========================================================
+
+        this.petName.textContent =
+            pet.name || 'Cargando PDF...';
+
+        this.area.textContent =
+            pet.area || '--';
+
+        this.petCode.textContent =
+            pet.code || 'PET --- · VER. --';
+
+        this.petTitle.textContent =
+            pet.title || 'Cargando procedimiento...';
+
+        this.fill.style.width = '0%';
+
+        this.percentage.textContent = '0%';
+
+        this.size.textContent =
+            '0.0 / 0.0 MB';
+
+        this.speed.textContent =
+            '-- KB/s';
+
+        // =========================================================
+        // 📐 LOADER = TODA EL ÁREA DEL VISOR
+        // =========================================================
+
+        this.el.style.display = 'flex';
+
+        this.el.style.position = 'absolute';
+
+        this.el.style.inset = '0';
+
+        this.el.style.width = '100%';
+
+        this.el.style.height = '100%';
+
+        this.el.style.margin = '0';
+
+        this.el.style.padding = '0';
+
+        this.el.style.alignItems = 'center';
+
+        this.el.style.justifyContent = 'center';
+
+        this.el.style.zIndex = '999';
+
+        this.el.style.flex = 'none';
+
+        this.el.style.pointerEvents = 'auto';
+
+        // =========================================================
+        // 🖥️ OVERLAY
+        // =========================================================
+
+        const overlay =
+            this.el.querySelector('.pdf-download-overlay');
+
+        if (overlay) {
+
+            overlay.style.position = 'absolute';
+
+            overlay.style.inset = '0';
+
+            overlay.style.width = '100%';
+
+            overlay.style.height = '100%';
+
+            overlay.style.margin = '0';
+
+            overlay.style.padding = '0';
+
+            overlay.style.pointerEvents = 'auto';
+        }
+
+        // =========================================================
+        // 🎯 CARD CENTRADA
+        // =========================================================
+
+        const card =
+            this.el.querySelector('.pdf-download-card');
+
+        if (card) {
+
+            card.style.position = 'relative';
+
+            card.style.margin = '0';
+
+            card.style.top = 'auto';
+
+            card.style.left = 'auto';
+
+            card.style.right = 'auto';
+
+            card.style.bottom = 'auto';
+
+            card.style.transform = 'none';
+
+            card.style.alignSelf = 'center';
+
+            card.style.pointerEvents = 'auto';
+        }
+    }
+    
+    update(loaded, total) {
+        if (!this.isActive) return;
+        
+        this.loadedBytes = loaded;
+        this.totalBytes = total;
+        
+        const progress = total > 0 ? (loaded / total) * 100 : 0;
+        const progressStr = Math.round(progress);
+        
+        // Actualizar barra
+        this.fill.style.width = progress + '%';
+        this.percentage.textContent = progressStr + '%';
+        
+        // Actualizar tamaño
+        const loadedMB = (loaded / (1024 * 1024)).toFixed(1);
+        const totalMB = (total / (1024 * 1024)).toFixed(1);
+        this.size.textContent = `${loadedMB} / ${totalMB} MB`;
+        
+        // Calcular velocidad
+        const now = Date.now();
+        if (now - this.lastUpdate > 500) {
+            const elapsed = (now - this.startTime) / 1000;
+            if (elapsed > 0) {
+                const speed = (loaded / elapsed) / 1024;
+                this.speed.textContent = speed < 1024 
+                    ? `${Math.round(speed)} KB/s`
+                    : `${(speed / 1024).toFixed(1)} MB/s`;
+            }
+            this.lastUpdate = now;
+        }
+        
+        if (progress >= 100) {
+            this.complete();
+        }
+    }
+    
+    complete() {
+        this.fill.style.width = '100%';
+        this.percentage.textContent = '100%';
+        this.speed.textContent = '✅ Completado';
+        
+        setTimeout(() => {
+            this.hide();
+        }, 500);
+    }
+    
+    hide() {
+        this.el.style.display = 'none';
+        this.isActive = false;
+        
+        document.dispatchEvent(new CustomEvent('pdf-download-complete'));
+    }
+    
+    error(message) {
+        this.percentage.textContent = '❌ Error';
+        this.speed.textContent = message || 'Error al descargar';
+        this.fill.style.width = '0%';
+        this.fill.style.background = '#dc2626';
+        
+        setTimeout(() => {
+            this.hide();
+        }, 3000);
+    }
+}
+
+// ================================
+// FUNCIÓN PARA DESCARGAR PDF CON PROGRESO
+// ================================
+
+async function downloadPDFWithProgress(url, pet, onProgress) {
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    
+    const contentLength = response.headers.get('content-length');
+    const total = contentLength ? parseInt(contentLength, 10) : 0;
+    
+    const reader = response.body.getReader();
+    const chunks = [];
+    let loaded = 0;
+    
+    while (true) {
+        const { done, value } = await reader.read();
+        
+        if (done) break;
+        
+        chunks.push(value);
+        loaded += value.length;
+        
+        if (onProgress) {
+            onProgress(loaded, total);
+        }
+    }
+    
+    const allChunks = new Uint8Array(loaded);
+    let position = 0;
+    for (const chunk of chunks) {
+        allChunks.set(chunk, position);
+        position += chunk.length;
+    }
+    
+    return allChunks.buffer;
+}
+
+// ================================
+// INSTANCIAR LOADERS
+// ================================
+
+const areaLoader = new AreaLoader();
+const downloadLoader = new PDFDownloadLoader();
+
+// ✅ Exponer globalmente para debugging
+window.downloadLoader = downloadLoader;
+
+// ================================
+// FUNCIÓN PARA OBTENER PETS POR ÁREA
+// ================================
+
+// ================================
+// PROCESAMIENTO DE DATOS DE PETS DESDE CONFIG.JSON
+// ================================
+
+// ──────────────────────────────────────────────
+// VARIABLE GLOBAL PARA ALMACENAR PETS
+// ──────────────────────────────────────────────
+
+let PETS_BY_AREA = {};
+let ALL_PETS = [];
+
+// ──────────────────────────────────────────────
+// PROCESAR PETS DEL CONFIG
+// ──────────────────────────────────────────────
+
+function processPetsFromConfig(configData) {
+    if (!configData || !configData.pets) {
+        console.warn('⚠️ No se encontraron PETS en la configuración');
+        return;
+    }
+    
+    const petsConfig = configData.pets;
+    const grouped = {};
+    const all = [];
+    
+    petsConfig.forEach((pet) => {
+        // Extraer número del PET desde el nombre
+        const match = pet.nombre.match(/^(\d+)-/);
+        const petNumber = match ? match[1] : '000';
+        
+        // Versión del PET
+        const versionMatch = pet.nombre.match(/V(\d{2})/i);
+        const version = versionMatch ? versionMatch[1] : '01';
+        
+        // Crear objeto base del PET
+        const petData = {
+            id: `PET ${petNumber}`,
+            version: version,
+            title: pet.nombre,
+            nombre: pet.nombre,
+            archivos: pet.archivos || {}
+        };
+        
+        // Agregar a "Todos" si no existe
+        if (!all.find(p => p.id === petData.id)) {
+            all.push(petData);
+        }
+        
+        // Procesar archivos por área
+        const areas = Object.keys(pet.archivos || {});
+        areas.forEach(area => {
+            const cleanArea = area.trim();
+            if (!grouped[cleanArea]) {
+                grouped[cleanArea] = [];
+            }
+            
+            // Verificar si ya existe este PET en esta área
+            const exists = grouped[cleanArea].find(p => p.id === petData.id);
+            if (!exists) {
+                const areaPet = {
+                    ...petData,
+                    area: cleanArea,
+                    path: pet.archivos[area]
+                };
+                grouped[cleanArea].push(areaPet);
+            }
+        });
+    });
+    
+    grouped['Todos'] = all;
+    PETS_BY_AREA = grouped;
+    ALL_PETS = all;
+    
+    console.log(`✅ ${all.length} PETS procesados en ${Object.keys(grouped).length - 1} áreas`);
+    return grouped;
+}
+
+// ================================
+// FUNCIÓN PARA OBTENER PETS POR ÁREA (BAJO DEMANDA)
+// ================================
+
+function getPetsByArea(area) {
+    // Si ya tenemos los datos, usarlos
+    if (Object.keys(PETS_BY_AREA).length > 0) {
+        return PETS_BY_AREA[area] || PETS_BY_AREA['Todos'] || [];
+    }
+    
+    // Si no, procesar desde config
+    if (config && config.pets) {
+        processPetsFromConfig(config);
+        return PETS_BY_AREA[area] || PETS_BY_AREA['Todos'] || [];
+    }
+    
+    console.warn('⚠️ No hay datos de PETS disponibles');
+    return [];
+}
+
+// ──────────────────────────────────────────────
+// FUNCIÓN PARA OBTENER TODOS LOS PETS
+// ──────────────────────────────────────────────
+
+function getAllPets() {
+    if (ALL_PETS.length === 0 && config) {
+        processPetsFromConfig(config);
+    }
+    return ALL_PETS;
+}
+
+// ──────────────────────────────────────────────
+// FUNCIÓN PARA OBTENER LISTA DE ÁREAS
+// ──────────────────────────────────────────────
+
+function getAreasList() {
+    if (Object.keys(PETS_BY_AREA).length === 0 && config) {
+        processPetsFromConfig(config);
+    }
+    return Object.keys(PETS_BY_AREA).filter(a => a !== 'Todos').sort();
+}
+
+// ──────────────────────────────────────────────
+// FUNCIÓN PARA CONTAR PETS POR ÁREA
+// ──────────────────────────────────────────────
+
+function getPetCountByArea(area) {
+    const pets = getPetsByArea(area);
+    return pets ? pets.length : 0;
+}
+
+// ──────────────────────────────────────────────
+// EXPONER FUNCIONES GLOBALMENTE
+// ──────────────────────────────────────────────
+
+window.getPetsByArea = getPetsByArea;
+window.getAllPets = getAllPets;
+window.getAreasList = getAreasList;
+window.getPetCountByArea = getPetCountByArea;
+window.PETS_BY_AREA = PETS_BY_AREA;
+window.ALL_PETS = ALL_PETS;
+
+// ================================
+// FUNCIÓN PARA CAMBIAR ÁREA CON LOADER
+// ================================
+
+function changeAreaWithLoader(area) {
+    const pets = getPetsByArea(area);
+    const count = pets.length;
+    const icon = area === 'Todos' ? '🚀' : '🔄';
+    
+    console.log(`📂 Cambiando a área: ${area} (${count} PETS)`);
+    
+    areaLoader.show(area, pets, icon);
+    
+    // Actualizar UI del sidebar
+    const areaNameEl = document.getElementById('currentAreaName');
+    if (areaNameEl) areaNameEl.textContent = area;
+}
+
+// ================================
+// 🚀 START - INICIO RÁPIDO SIN CARGA MASIVA
+// ================================
+
+async function initializeAppWithLoader() {
+    // Mostrar splash rápido
+    showInitialSplash();
+    
+    try {
+        // Cargar solo la configuración (sin PETS)
+        config = await loadConfig();
+        
+        createSupabaseClient(config.supabaseUrl, config.supabaseKey);
+        
+        // Ocultar splash después de 800ms
+        await new Promise(resolve => setTimeout(resolve, 800));
+        hideInitialSplash();
+        
+        // Inicializar la app directamente (sin cargar todos los PETS)
+        initializeApp();
+        
+        console.log('✅ App iniciada (carga bajo demanda)');
+        
+    } catch (error) {
+        console.error('❌ Error al iniciar:', error);
+        hideInitialSplash();
+        showFatalError('No se pudo iniciar la aplicación', null);
+    }
+}
 
 // ================================
 // 🌍 GLOBALS
@@ -75,23 +691,25 @@ let currentPath = null;
 let loading     = false;
 const versionCache = new Map();
 
+const pdfCache = new Map();
+const MAX_CACHE_SIZE = 10;
+
 let isMobile = window.matchMedia("(max-width: 900px)").matches;
 
 // ================================
-// 🚀 START
+// 🚀 START - CON LOADER DE INICIO
 // ================================
 
-window.addEventListener("DOMContentLoaded", initializeApp);
+window.addEventListener("DOMContentLoaded", initializeAppWithLoader);
 
 // ================================
 // 🚀 INIT APP
 // ================================
 
 async function initializeApp() {
-
     try {
-
-        togglePDFSplash(true);
+        // No mostrar splash aquí, ya lo maneja initializeAppWithLoader
+        // togglePDFSplash(true);
 
         pdfjsLib.GlobalWorkerOptions.workerSrc = "./pdf.worker.min.js";
 
@@ -107,32 +725,20 @@ async function initializeApp() {
         }
 
         viewer = new PDFViewer({
-
             container: viewerContainer,
-
             viewer: pdfViewerEl,
-
-            onPageChange:(page,total)=>{
-
-                updatePageUI(page,total);
-
+            onPageChange: (page, total) => {
+                updatePageUI(page, total);
                 syncSearchWithCurrentPage(page);
-
             }
-
         });
 
-        // ZoomManager registra sus propios listeners de wheel y botones
         zoom = new ZoomManager({ viewer });
 
         sidebar = new Sidebar({
-
             config,
-
             onOpenPDF: openPDF,
-
             onTaskSelected: handleTaskSelection
-
         });
 
         initializeKeyboard();
@@ -142,7 +748,6 @@ async function initializeApp() {
         initializeMobileSidebar();
         initializePageNav();
         initializeExplorer();
-        createWatermarkOverlay();
 
         console.log("✅ APP READY");
         togglePDFSplash(false);
@@ -1675,16 +2280,14 @@ function initializeMobileSidebar() {
 }
 
 // ================================
-// 📄 OPEN PDF
+// 📄 OPEN PDF (VERSIÓN MEJORADA)
 // ================================
 
-async function openPDF(path, petName, areaName) {
-
+async function openPDF(path, petName, areaName, petData) {
     try {
-
         if (loading && currentPath === path) return;
 
-        loading     = true;
+        loading = true;
         currentPath = path;
 
         hideFatalError?.();
@@ -1700,44 +2303,102 @@ async function openPDF(path, petName, areaName) {
         }
 
         toggleEmptyState(false);
-        togglePDFSplash(true);
-
         updateTopBar(petName, areaName);
 
-        const pdfUrl = await buildPDFUrl(path);
-        await viewer.load(pdfUrl);
+        // ✅ Verificar si el PDF está en caché
+        let pdfData = pdfCache.get(path);
+        let fromCache = false;
 
+        if (pdfData) {
+            console.log(`📦 PDF en caché: ${petName}`);
+            fromCache = true;
+            
+            // Mostrar loader brevemente para feedback visual
+            downloadLoader.show({
+                name: petName || 'Cargando PDF...',
+                area: areaName || '--',
+                code: petData?.id || petName || 'PET ---',
+                title: petData?.title || 'Cargando procedimiento...'
+            });
+            
+            // Simular progreso rápido
+            let progress = 0;
+            const fastLoad = setInterval(() => {
+                progress += 25;
+                if (progress >= 100) {
+                    clearInterval(fastLoad);
+                    downloadLoader.update(100, 100);
+                    setTimeout(() => downloadLoader.hide(), 300);
+                } else {
+                    downloadLoader.update(progress * 0.5, 100);
+                }
+            }, 80);
+            
+            // Esperar a que termine la animación
+            await new Promise(resolve => setTimeout(resolve, 600));
+            
+        } else {
+            // ✅ Descargar PDF con progreso
+            const pdfUrl = await buildPDFUrl(path);
+            
+            downloadLoader.show({
+                name: petName || 'Cargando PDF...',
+                area: areaName || '--',
+                code: petData?.id || petName || 'PET ---',
+                title: petData?.title || 'Cargando procedimiento...'
+            });
+            
+            pdfData = await downloadPDFWithProgress(pdfUrl, petData, (loaded, total) => {
+                downloadLoader.update(loaded, total);
+            });
+            
+            // ✅ Guardar en caché
+            if (pdfCache.size >= MAX_CACHE_SIZE) {
+                // Eliminar el primer elemento (FIFO)
+                const firstKey = pdfCache.keys().next().value;
+                pdfCache.delete(firstKey);
+                console.log(`🗑️ Caché lleno, eliminando: ${firstKey}`);
+            }
+            pdfCache.set(path, pdfData);
+            //console.log(`💾 PDF cacheado: ${petName} (${pdfCache.size}/${MAX_CACHE_SIZE})`);
+        }
+
+        // Crear blob y cargar
+        const blob = new Blob([pdfData], { type: 'application/pdf' });
+        const blobUrl = URL.createObjectURL(blob);
+        
+        downloadLoader.hide();
+        await viewer.load(blobUrl);
         renderExplorer();
-        togglePDFSplash(false);
+        
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
 
     } catch (error) {
-
-        // ✅ SILENCIAR ERRORES DE WORKER TERMINADO
+        // ... manejo de errores (mantener igual)
         const isWorkerError = 
             error?.message?.includes('Worker was terminated') ||
             error?.message?.includes('Worker was destroyed') ||
             error?.name === 'AbortException';
 
         if (isWorkerError) {
-            // ✅ Silenciar completamente - solo log de debug
             console.debug('⏹️ Carga cancelada (cambio rápido de PET)');
-            togglePDFSplash(false);
+            downloadLoader.hide();
             loading = false;
             return;
         }
 
         console.error("❌ PDF ERROR:", error);
-        togglePDFSplash(false);
+        downloadLoader.error(error.message || 'Error al cargar el PDF');
 
-        // Reintento automático si URL expiró
         if (error?.message?.includes("expired") || error?.status === 400) {
             try {
+                // ✅ Si falla, eliminar de caché y reintentar
+                pdfCache.delete(path);
                 const freshUrl = await buildPDFUrl(path);
                 await viewer.load(freshUrl);
-                togglePDFSplash(false);
+                downloadLoader.hide();
                 return;
             } catch (e2) {
-                // ✅ Silenciar también errores de worker en el reintento
                 if (e2?.message?.includes('Worker was terminated')) {
                     console.debug('⏹️ Reintento cancelado');
                     return;
@@ -1747,7 +2408,6 @@ async function openPDF(path, petName, areaName) {
         }
 
         clearExplorer();
-
         viewer?.destroy?.();
         viewer?.clear?.();
 
@@ -1896,9 +2556,10 @@ function createSupabaseClient(url, key) {
 async function loadConfig() {
     const r = await fetch("./config.json");
     if (!r.ok) throw new Error("No se pudo cargar config");
-    return r.json();
+    const data = await r.json();
+    
+    return data;
 }
-
 // ================================
 // ⏳ SPLASH LOADER
 // ================================
@@ -2098,32 +2759,6 @@ function hideFatalError() {
 
     window.__retryPDF = null;
 
-}
-
-// ================================
-// WATERMARK
-// ================================
-
-function createWatermarkOverlay(){
-
-    const overlay =
-        document.getElementById(
-            "pdfWatermarkOverlay"
-        );
-
-    if(!overlay) return;
-
-    let html =
-        `<div class="watermark-grid">`;
-
-    for(let i = 0; i < 80; i++){
-
-        html +=
-            `<span>PROHIBIDO COMPARTIR</span>`;
-    }
-    html += `</div>`;
-
-    overlay.innerHTML = html;
 }
 
 // ================================
