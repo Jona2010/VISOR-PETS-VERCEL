@@ -260,6 +260,7 @@ body {
 
 #sidebarHeader {
     flex-shrink: 0;
+    min-height: fit-content;
 
     display: flex;
     flex-direction: column;
@@ -277,6 +278,8 @@ body {
         1px solid rgba(15, 23, 32, .07);
 
     gap: 0;
+
+    overflow: visible;
 }
 
 
@@ -640,9 +643,10 @@ body {
    ========================================================= */
 
 #sidebarNavigation {
+    flex-shrink: 0;           /* ❌ NO se reduce */
+    min-height: fit-content;  /* ❌ Mantiene su tamaño */
 
     display: flex;
-
     flex-direction: column;
 
     width: 100%;
@@ -653,7 +657,6 @@ body {
         4px
         0
         0;
-
 }
 
 
@@ -662,21 +665,15 @@ body {
    ========================================================= */
 
 #currentAreaInfo {
-
     display: flex;
-
     flex-direction: column;
-
     align-items: center;
-
     justify-content: center;
 
     gap: 5px;
 
     width: 100%;
-
     min-width: 0;
-
 }
 
 
@@ -685,21 +682,14 @@ body {
    --------------------------------------------------------- */
 
 .area-label {
-
     font-size: 10px;
-
     font-weight: 700;
-
     letter-spacing: .10em;
-
     line-height: 1.2;
-
     text-transform: uppercase;
-
     text-align: center;
 
     color: var(--text-muted);
-
 }
 
 
@@ -711,83 +701,51 @@ body {
     position: relative;
 
     display: flex;
-
     align-items: center;
     justify-content: center;
 
     width: 100%;
-
     min-height: 52px;
 
-    padding:
-        0
-        14px;
-
+    padding: 0 14px;
     gap: 7px;
 
-    border:
-        1px solid #dfe6ea;
-
+    border: 1px solid #dfe6ea;
     border-radius: 14px;
 
-    background:
-        linear-gradient(
-            180deg,
-            #ffffff,
-            #fbfcfd
-        );
+    background: linear-gradient(180deg, #ffffff, #fbfcfd);
 
     color: var(--text-primary);
 
     font-size: 15px;
-
     font-weight: 750;
-
     line-height: 1;
-
     text-align: center;
 
     cursor: default;
 
-    box-shadow:
-        0 1px 2px rgba(15, 23, 32, .025);
+    box-shadow: 0 1px 2px rgba(15, 23, 32, .025);
 }
 
 /* indicador */
-
 #currentAreaName::before {
     content: '';
-
     width: 9px;
     height: 9px;
-
     flex-shrink: 0;
-
     margin-right: 11px;
-
     border-radius: 50%;
-
     background: var(--accent);
-
-    box-shadow:
-        0 0 0 4px
-        rgba(0, 168, 143, .10);
+    box-shadow: 0 0 0 4px rgba(0, 168, 143, .10);
 }
 
-
 /* flecha */
-
 #currentAreaName::after {
     content: '›';
-
     margin-left: 0;
-
     color: #84929f;
-
     font-size: 23px;
-
     font-weight: 400;
-
     line-height: 1;
 }
 
@@ -797,17 +755,12 @@ body {
    ========================================================= */
 
 #sidebarActions {
-
     display: flex;
-
     flex-direction: column;
-
     align-items: stretch;
 
     width: 100%;
-
     gap: 8px;
-
 }
 
 
@@ -909,6 +862,8 @@ body {
 
     width: 100%;
     height: 46px;
+
+    flex-shrink: 0;
 
     margin: 0;
 
@@ -7441,7 +7396,6 @@ body {
         display: none !important;
     }
 }
-
 
 /* =========================================================
    48. MOBILE — 900PX
