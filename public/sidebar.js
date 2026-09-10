@@ -73,14 +73,13 @@ const AREA_CONFIG = [
         nombre: "Plantas Plan Optimizado",
         color: "#16A34A",
         icon: "plan.png"
-    },
-
-    {
+    }
+    /*{
         id: "MANTENIMIENTO ELECTRICO MINA",
         nombre: "Mantenimiento Eléctrico Mina",
         color: "#EAB308",
         icon: "electrico.png"
-    }
+    }*/
 
 ];
 
