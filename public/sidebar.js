@@ -54,14 +54,14 @@ const AREA_CONFIG = [
         icon: "concentradora.png"
     },
 
-    {
+    /*{
         id: "MANTENIMIENTO MINA",
         nombre: "Mantenimiento Mina",
         color: "#64748B",
         icon: "mantenimiento-mina.png"
     },
 
-    /*{
+    {
         id: "GENERAL PROCESOS",
         nombre: "General Procesos",
         color: "#7C3AED",
