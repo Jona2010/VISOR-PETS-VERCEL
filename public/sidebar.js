@@ -59,22 +59,23 @@ const AREA_CONFIG = [
         nombre: "Mantenimiento Mina",
         color: "#64748B",
         icon: "mantenimiento-mina.png"
-    },
+    },*/
 
     {
         id: "GENERAL PROCESOS",
         nombre: "General Procesos",
         color: "#7C3AED",
         icon: "procesos.png"
-    },*/
+    },
 
-    {
+    /*{
         id: "PLANTAS-PLAN OPIMIZADO",
         nombre: "Plantas Plan Optimizado",
         color: "#16A34A",
         icon: "plan.png"
-    }
-    /*{
+    },
+
+    {
         id: "MANTENIMIENTO ELECTRICO MINA",
         nombre: "Mantenimiento Eléctrico Mina",
         color: "#EAB308",
