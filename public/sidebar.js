@@ -62,8 +62,8 @@ const AREA_CONFIG = [
     },*/
 
     {
-        id: "GENERAL PROCESOS",
-        nombre: "General Procesos",
+        id: "PROCESOS",
+        nombre: "Procesos",
         color: "#7C3AED",
         icon: "procesos.png"
     },
