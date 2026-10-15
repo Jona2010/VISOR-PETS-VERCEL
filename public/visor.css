@@ -288,7 +288,7 @@ body {
    --------------------------------------------------------- */
 
 #sidebarHeader #logoArea {
-    margin-bottom: 16px;
+    margin-bottom: 10px;
 }
 
 
@@ -402,6 +402,152 @@ body {
     text-transform: uppercase;
 
     line-height: 1;
+}
+
+/* =========================================================
+   08.1 SELECTOR DE BIBLIOTECAS
+   PETS / FDS / MANUALES
+   DESKTOP Y MOBILE
+========================================================= */
+
+#bibliotecasSelector {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    align-items: center;
+
+    width: 100%;
+
+    min-width: 0;
+
+    gap: 4px;
+
+    padding: 4px;
+
+    margin-bottom: 12px;
+
+    border: 1px solid #e4eaed;
+
+    border-radius: 12px;
+
+    background: #f2f5f7;
+
+    flex-shrink: 0;
+
+}
+
+
+/* =========================================================
+   BOTONES
+========================================================= */
+
+.biblioteca-btn {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 100%;
+
+    min-width: 0;
+
+    height: 36px;
+
+    padding: 0 5px;
+
+    border: 1px solid transparent;
+
+    border-radius: 9px;
+
+    background: transparent;
+
+    color: #697886;
+
+    font-family: var(--font-body);
+
+    font-size: 12px;
+
+    font-weight: 650;
+
+    line-height: 1;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    transition:
+        background .18s ease,
+        color .18s ease,
+        border-color .18s ease,
+        box-shadow .18s ease;
+
+    -webkit-tap-highlight-color: transparent;
+
+}
+
+
+/* =========================================================
+   HOVER
+========================================================= */
+
+.biblioteca-btn:hover:not(.active) {
+
+    background: rgba(255, 255, 255, .75);
+
+    color: #263b43;
+
+}
+
+
+/* =========================================================
+   BIBLIOTECA ACTIVA
+========================================================= */
+
+.biblioteca-btn.active {
+
+    background: #ffffff;
+
+    color: var(--accent-dark);
+
+    border-color: rgba(0, 168, 143, .14);
+
+    box-shadow:
+        0 2px 6px rgba(15, 23, 32, .07);
+
+    font-weight: 750;
+
+}
+
+
+/* =========================================================
+   ACCESIBILIDAD
+========================================================= */
+
+.biblioteca-btn:focus-visible {
+
+    outline: 2px solid var(--accent);
+
+    outline-offset: 2px;
+
+}
+
+.biblioteca-btn:active {
+
+    transform: scale(.97);
+
+}
+
+.biblioteca-btn:disabled {
+
+    opacity: .55;
+
+    cursor: wait;
+
 }
 
 /* =========================================================
@@ -1287,11 +1433,7 @@ body {
     border-radius: 16px;
 
     background:
-        color-mix(
-            in srgb,
-            var(--area-color, var(--accent)) 10%,
-            #ffffff
-        );
+        var(--category-icon-bg, rgba(0, 168, 143, .10));
 
     border:
         1px solid
@@ -1329,6 +1471,20 @@ body {
 
     transition:
         transform .20s ease;
+}
+
+/* =====================================================
+   ICONOS PNG DE CATEGORÍAS FDS
+===================================================== */
+
+.fds-category-card .area-card-icon img {
+
+    width: 44px;
+
+    height: 44px;
+
+    object-fit: contain;
+
 }
 
 
@@ -2163,6 +2319,243 @@ body {
     box-shadow: 0 3px 10px rgba(0, 168, 143, .20);
 }
 
+/* =========================================================
+   20.1 TARJETAS DOCUMENTALES
+   FDS Y MANUALES
+========================================================= */
+
+/* ---------------------------------------------------------
+   TARJETA
+--------------------------------------------------------- */
+
+.document-card {
+
+    gap: 0;
+
+    cursor: default;
+
+    min-width: 0;
+
+}
+
+/* ---------------------------------------------------------
+   ESTADO ACTIVO
+--------------------------------------------------------- */
+
+.document-card.active {
+
+    background: #fafffe;
+
+    border-color: rgba(0, 168, 143, .40);
+
+    box-shadow:
+        0 4px 16px rgba(0, 168, 143, .08);
+
+}
+
+/* ---------------------------------------------------------
+   CÓDIGO Y VERSIÓN
+--------------------------------------------------------- */
+
+.document-card .pet-number-row {
+
+    padding-right: 0;
+
+    margin-bottom: 7px;
+
+}
+
+.document-card-code {
+
+    font-family: var(--font-mono);
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    letter-spacing: .025em;
+
+    color: #007f72;
+
+}
+
+/* ---------------------------------------------------------
+   ENCABEZADO
+--------------------------------------------------------- */
+
+.document-card .pet-card-header {
+
+    cursor: default;
+
+}
+
+/* ---------------------------------------------------------
+   NOMBRE DEL DOCUMENTO
+--------------------------------------------------------- */
+
+.document-card-title {
+
+    width: 100%;
+
+    min-width: 0;
+
+    padding-right: 0;
+
+    font-size: 13px;
+
+    line-height: 1.45;
+
+    font-weight: 600;
+
+    color: var(--text-primary);
+
+    overflow-wrap: anywhere;
+
+}
+
+/* ---------------------------------------------------------
+   PIE DE TARJETA
+--------------------------------------------------------- */
+
+.document-card-footer {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    width: 100%;
+
+    min-width: 0;
+
+    margin-top: 13px;
+
+}
+
+/* ---------------------------------------------------------
+   FABRICANTE / PRESENTACIÓN / MODELO
+--------------------------------------------------------- */
+
+.document-card-info {
+
+    flex: 1 1 100px;
+
+    min-width: 0;
+
+    font-size: 11px;
+
+    line-height: 1.4;
+
+    font-weight: 500;
+
+    color: var(--text-muted);
+
+    overflow-wrap: anywhere;
+
+}
+
+/* ---------------------------------------------------------
+   BOTÓN VER FDS / VER MANUAL
+--------------------------------------------------------- */
+
+.document-card-open {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex: 0 0 auto;
+
+    min-height: 34px;
+
+    padding: 0 12px;
+
+    border: 1px solid #dce4e8;
+
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: #007f72;
+
+    font-family: var(--font-body);
+
+    font-size: 11px;
+
+    font-weight: 650;
+
+    line-height: 1.2;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    transition:
+        background .18s ease,
+        border-color .18s ease,
+        color .18s ease,
+        transform .18s ease,
+        box-shadow .18s ease;
+
+    -webkit-tap-highlight-color: transparent;
+
+}
+
+/* ---------------------------------------------------------
+   HOVER
+--------------------------------------------------------- */
+
+.document-card-open:hover {
+
+    background: #eff9f7;
+
+    border-color: rgba(0, 168, 143, .35);
+
+    color: #007a68;
+
+    box-shadow:
+        0 2px 8px rgba(0, 168, 143, .07);
+
+}
+
+/* ---------------------------------------------------------
+   DOCUMENTO ABIERTO
+--------------------------------------------------------- */
+
+.document-card.active .document-card-open {
+
+    background: #00a88f;
+
+    border-color: #00a88f;
+
+    color: #ffffff;
+
+}
+
+/* ---------------------------------------------------------
+   INTERACCIÓN
+--------------------------------------------------------- */
+
+.document-card-open:active {
+
+    transform: scale(.96);
+
+}
+
+.document-card-open:focus-visible {
+
+    outline: 2px solid var(--accent);
+
+    outline-offset: 3px;
+
+}
 
 /* =========================================================
    21. RESPONSIVE PET CARDS
@@ -2230,6 +2623,68 @@ body {
         font-size: 9px;
         border-radius: 7px;
     }
+
+    /* =====================================================
+       TARJETAS FDS Y MANUALES — MOBILE
+    ===================================================== */
+
+    .document-card {
+
+        padding: 12px 14px;
+
+        border-radius: 12px;
+
+    }
+
+    .document-card .pet-number-row {
+
+        padding-right: 0;
+
+        margin-bottom: 6px;
+
+    }
+
+    .document-card-code {
+
+        font-size: 12px;
+
+    }
+
+    .document-card-title {
+
+        padding-right: 0;
+
+        font-size: 12px;
+
+        line-height: 1.45;
+
+    }
+
+    .document-card-footer {
+
+        gap: 8px;
+
+        margin-top: 12px;
+
+    }
+
+    .document-card-info {
+
+        font-size: 10px;
+
+        line-height: 1.4;
+
+    }
+
+    .document-card-open {
+
+        min-height: 36px;
+
+        padding: 0 11px;
+
+        font-size: 10px;
+
+    }
 }
 
 @media (max-width: 520px) {
@@ -2293,6 +2748,46 @@ body {
         padding: 0 7px;
         font-size: 8px;
         border-radius: 6px;
+    }
+
+    /* =====================================================
+       TARJETAS DOCUMENTALES — MOBILE PEQUEÑO
+    ===================================================== */
+
+    .document-card {
+
+        padding: 11px 12px;
+
+    }
+
+    .document-card .pet-number-row {
+
+        padding-right: 0;
+
+    }
+
+    .document-card-title {
+
+        padding-right: 0;
+
+    }
+
+    .document-card-footer {
+
+        align-items: flex-start;
+
+    }
+
+    .document-card-info {
+
+        flex: 1 1 100%;
+
+    }
+
+    .document-card-open {
+
+        min-height: 38px;
+
     }
 }
  
@@ -2735,7 +3230,8 @@ body {
    23. EXPLORAR PETS
    ========================================================= */
 
-#explorerBtn {
+#explorerBtn,
+#searchPdfBtn {
     display: inline-flex;
 
     align-items: center;
@@ -2752,11 +3248,13 @@ body {
     color: #536170;
 }
 
-#explorerBtn svg {
+#explorerBtn svg,
+#searchPdfBtn svg {
     flex-shrink: 0;
 }
 
-#explorerBtn:hover {
+#explorerBtn:hover,
+#searchPdfBtn:hover {
     background: rgba(0, 168, 143, 0.08);
 
     border-color: rgba(0, 168, 143, 0.12);
@@ -2764,11 +3262,40 @@ body {
     color: #008c79;
 }
 
-#explorerBtn:active {
+#explorerBtn:active,
+#searchPdfBtn:active {
     background: rgba(0, 168, 143, 0.14);
 }
 
-#explorerBtn span {
+#explorerBtn.active,
+#searchPdfBtn.active {
+
+    background:
+        rgba(0, 168, 143, .12);
+
+    border-color:
+        rgba(0, 168, 143, .34);
+
+    color:
+        #007f72;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(0, 168, 143, .10);
+
+}
+
+
+#explorerBtn.active svg,
+#searchPdfBtn.active svg {
+
+    color:
+        #008c79;
+
+}
+
+#explorerBtn span,
+#searchPdfBtn span {
     font-size: 13px;
     font-weight: 600;
 }
@@ -2912,18 +3439,35 @@ body {
 }
 
 .pdf-page::before {
-    content: "PETS INTELLIALL SRL";
+    content: "INTELLIALL SRL";
 
     position: absolute;
 
-    top: 10px;
-    right: 14px;
+    top:
+        calc(
+            10px *
+            var(--pdf-page-scale, 1)
+        );
 
-    font-size: 10px;
+    right:
+        calc(
+            14px *
+            var(--pdf-page-scale, 1)
+        );
+
+    font-size:
+        calc(
+            10px *
+            var(--pdf-page-scale, 1)
+        );
 
     font-weight: 700;
 
-    letter-spacing: 1px;
+    letter-spacing:
+        calc(
+            1px *
+            var(--pdf-page-scale, 1)
+        );
 
     color: rgba(184, 134, 11, .55);
 
@@ -3638,8 +4182,17 @@ body {
 .watermark-item {
     position: absolute;
 
-    width: 100px;
-    height: 100px;
+    width:
+        calc(
+            100px *
+            var(--pdf-page-scale, 1)
+        );
+
+    height:
+        calc(
+            100px *
+            var(--pdf-page-scale, 1)
+        );
 
     display: flex;
 
@@ -3662,7 +4215,11 @@ body {
 .watermark-item img {
     display: block;
 
-    width: 150px;
+    width:
+        calc(
+            150px *
+            var(--pdf-page-scale, 1)
+        );
 
     height: auto;
 
@@ -3681,6 +4238,17 @@ body {
 
 .watermark-item span {
     display: none !important;
+}
+
+/* =========================================================
+   ELEMENTOS OCULTOS DEL PANEL
+========================================================= */
+
+#requestPanel[hidden],
+#requestPanel [hidden] {
+
+    display: none !important;
+
 }
 
 /* =========================================================
@@ -3862,6 +4430,162 @@ body {
         #18222d;
 }
 
+/* =========================================================
+   VISTAS DEL PANEL: TODOS / SELECCIONADOS
+========================================================= */
+
+#requestPanel #requestViewTabs {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 4px;
+
+    flex-shrink: 0;
+
+    margin: 14px 24px 0;
+
+    padding: 4px;
+
+    background: #f2f5f7;
+
+    border: 1px solid #e3eaed;
+
+    border-radius: 11px;
+
+}
+
+
+/* =========================================================
+   BOTONES DE LAS VISTAS
+========================================================= */
+
+#requestPanel .request-view-tab {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-width: 0;
+
+    min-height: 38px;
+
+    gap: 6px;
+
+    padding: 7px 8px;
+
+    border: 1px solid transparent;
+
+    border-radius: 8px;
+
+    background: transparent;
+
+    color: #667784;
+
+    font-family: var(--font-body);
+
+    font-size: 12px;
+
+    font-weight: 650;
+
+    cursor: pointer;
+
+    transition:
+        background .18s ease,
+        color .18s ease,
+        border-color .18s ease;
+
+}
+
+
+/* =========================================================
+   VISTA ACTIVA
+========================================================= */
+
+#requestPanel .request-view-tab.active {
+
+    background: #ffffff;
+
+    border-color:
+        rgba(0, 168, 143, .16);
+
+    color: #007f72;
+
+    box-shadow:
+        0 1px 5px rgba(15, 23, 32, .06);
+
+}
+
+
+/* =========================================================
+   ACCESIBILIDAD
+========================================================= */
+
+#requestPanel .request-view-tab:focus-visible {
+
+    outline: 2px solid var(--accent);
+
+    outline-offset: 2px;
+
+}
+
+
+/* =========================================================
+   CONTADOR DE SELECCIONADOS
+========================================================= */
+
+#requestPanel #requestSelectedBadge {
+
+    display: inline-flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    min-width: 20px;
+
+    height: 20px;
+
+    padding: 0 5px;
+
+    border-radius: 6px;
+
+    background: #e3f4ef;
+
+    color: #007f72;
+
+    font-family: var(--font-mono);
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+}
+
+
+/* =========================================================
+   ÁREA O CATEGORÍA DEL DOCUMENTO SELECCIONADO
+========================================================= */
+
+#requestPanel .request-selected-group {
+
+    display: block;
+
+    color: #768793;
+
+    font-family: var(--font-body);
+
+    font-size: 11px;
+
+    font-weight: 550;
+
+    overflow-wrap: anywhere;
+
+}
 
 /* =========================================================
    ÁREA
@@ -4275,49 +4999,249 @@ body {
         pointer;
 }
 
+/* =========================================================
+   CANTIDAD GENERAL
+========================================================= */
+
+#requestPanel #requestQuantityGeneral {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    flex-wrap: wrap;
+
+    width: auto;
+
+    gap: 10px;
+
+    margin: 0 24px 10px;
+
+    padding: 11px 13px;
+
+    background: #f7faf9;
+
+    border: 1px solid #e2ece9;
+
+    border-radius: 10px;
+
+    flex-shrink: 0;
+
+}
+
 
 /* =========================================================
-   CONTADOR
-   Es #requestCounter, NO .request-counter.
+   ETIQUETA
+========================================================= */
+
+#requestPanel #requestQuantityGeneral label {
+
+    font-family: var(--font-body);
+
+    font-size: 12px;
+
+    line-height: 1.3;
+
+    font-weight: 650;
+
+    color: #43535e;
+
+}
+
+
+/* =========================================================
+   CONTROLES
+========================================================= */
+
+#requestPanel .request-general-controls {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+}
+
+
+/* =========================================================
+   CAMPO NUMÉRICO
+========================================================= */
+
+#requestPanel #requestGeneralQuantity {
+
+    width: 58px;
+
+    height: 34px;
+
+    padding: 0 7px;
+
+    border: 1px solid #dce5e9;
+
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: #25313c;
+
+    font-family: var(--font-mono);
+
+    font-size: 13px;
+
+    font-weight: 650;
+
+    text-align: center;
+
+    outline: none;
+
+    appearance: textfield;
+
+    -moz-appearance: textfield;
+
+}
+
+#requestPanel #requestGeneralQuantity::-webkit-inner-spin-button,
+#requestPanel #requestGeneralQuantity::-webkit-outer-spin-button {
+
+    -webkit-appearance: none;
+
+    margin: 0;
+
+}
+
+#requestPanel #requestGeneralQuantity:focus {
+
+    border-color: var(--accent);
+
+    box-shadow: 0 0 0 3px rgba(0, 168, 143, .09);
+
+}
+
+
+/* =========================================================
+   BOTÓN APLICAR
+========================================================= */
+
+#requestPanel #requestApplyQuantity {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    height: 34px;
+
+    padding: 0 13px;
+
+    border: 1px solid rgba(0, 168, 143, .22);
+
+    border-radius: 8px;
+
+    background: #e7f6f2;
+
+    color: #007f72;
+
+    font-family: var(--font-body);
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background .18s ease,
+        border-color .18s ease,
+        transform .18s ease;
+
+}
+
+#requestPanel #requestApplyQuantity:hover {
+
+    background: #d7f0e9;
+
+    border-color: rgba(0, 168, 143, .4);
+
+}
+
+#requestPanel #requestApplyQuantity:active {
+
+    transform: scale(.96);
+
+}
+
+#requestPanel #requestApplyQuantity:focus-visible {
+
+    outline: 2px solid var(--accent);
+
+    outline-offset: 2px;
+
+}
+
+/* =========================================================
+   DOCUMENTOS SELECCIONADOS
 ========================================================= */
 
 #requestPanel #requestCounter {
 
-    display:
-        block;
+    display: block;
 
-    width:
-        auto;
+    width: auto;
 
-    margin:
-        0 24px 10px;
+    margin: 0 24px 4px;
 
-    padding:
-        0;
+    padding: 0;
 
-    font-family:
-        var(--font-mono);
+    font-family: var(--font-mono);
 
-    font-size:
-        12px;
+    font-size: 11px;
 
-    line-height:
-        1.2;
+    line-height: 1.4;
 
-    font-weight:
-        700;
+    font-weight: 650;
 
-    letter-spacing:
-        .04em;
+    letter-spacing: .01em;
 
-    color:
-        #93a0aa;
+    color: #748592;
 
-    white-space:
-        nowrap;
+    white-space: normal;
 
-    box-sizing:
-        border-box;
+    overflow-wrap: anywhere;
+
+    flex-shrink: 0;
+
+}
+
+
+/* =========================================================
+   TOTAL DE JUEGOS
+========================================================= */
+
+#requestPanel #requestGamesCounter {
+
+    display: block;
+
+    width: auto;
+
+    margin: 0 24px 12px;
+
+    padding: 0;
+
+    font-family: var(--font-mono);
+
+    font-size: 12px;
+
+    line-height: 1.4;
+
+    font-weight: 700;
+
+    color: #008f80;
+
+    flex-shrink: 0;
+
 }
 
 
@@ -4558,10 +5482,10 @@ body {
         vertical;
 
     -webkit-line-clamp:
-        2;
+        3;
 
     line-clamp:
-        2;
+        3;
 
     overflow:
         hidden;
@@ -4570,6 +5494,157 @@ body {
         break-word;
 }
 
+/* =========================================================
+   CANTIDAD INDIVIDUAL
+========================================================= */
+
+#requestPanel .request-item-quantity {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    flex-wrap: wrap;
+
+    gap: 8px;
+
+    width: 100%;
+
+    min-width: 0;
+
+    margin-top: 8px;
+
+    padding-top: 9px;
+
+    border-top: 1px solid #e5eceb;
+
+}
+
+
+/* =========================================================
+   ETIQUETA JUEGOS
+========================================================= */
+
+#requestPanel .request-item-quantity > span:first-child {
+
+    margin-right: auto;
+
+    font-family: var(--font-body);
+
+    font-size: 11px;
+
+    line-height: 1.3;
+
+    font-weight: 600;
+
+    color: #71818c;
+
+}
+
+
+/* =========================================================
+   BOTONES DE CANTIDAD
+========================================================= */
+
+#requestPanel .request-qty-btn {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex: 0 0 30px;
+
+    width: 30px;
+
+    height: 30px;
+
+    padding: 0;
+
+    border: 1px solid #dce5e9;
+
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: #007f72;
+
+    font-family: var(--font-body);
+
+    font-size: 17px;
+
+    font-weight: 650;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        background .18s ease,
+        border-color .18s ease,
+        transform .18s ease;
+
+}
+
+#requestPanel .request-qty-btn:hover:not(:disabled) {
+
+    background: #eaf8f4;
+
+    border-color: rgba(0, 168, 143, .45);
+
+}
+
+#requestPanel .request-qty-btn:active:not(:disabled) {
+
+    transform: scale(.94);
+
+}
+
+#requestPanel .request-qty-btn:disabled {
+
+    opacity: .4;
+
+    cursor: not-allowed;
+
+}
+
+#requestPanel .request-qty-btn:focus-visible {
+
+    outline: 2px solid var(--accent);
+
+    outline-offset: 2px;
+
+}
+
+
+/* =========================================================
+   VALOR DE LA CANTIDAD
+========================================================= */
+
+#requestPanel .request-qty-value {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-width: 26px;
+
+    font-family: var(--font-mono);
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    color: #25313c;
+
+    font-variant-numeric: tabular-nums;
+
+}
 
 /* =========================================================
    HOVER
@@ -4842,6 +5917,91 @@ body {
 
 @media (max-width: 600px) {
 
+    #explorerBtn.active,
+    #searchPdfBtn.active,
+    #fitWidth.active {
+
+        background:
+            rgba(0, 168, 143, .12);
+
+        border-color:
+            rgba(0, 168, 143, .34);
+
+        color:
+            #007f72;
+
+        box-shadow:
+            0 0 0 3px
+            rgba(0, 168, 143, .10);
+
+    }
+
+
+    #explorerBtn.active svg,
+    #searchPdfBtn.active svg,
+    #fitWidth.active svg {
+
+        color:
+            #007f72;
+
+    }
+
+    #searchPdfBtn,
+    #explorerBtn {
+
+        min-width:
+            38px;
+
+        width:
+            38px;
+
+        padding:
+            0;
+
+        gap:
+            0;
+
+    }
+
+
+    #searchPdfBtn span,
+    #explorerBtn span {
+
+        display:
+            none;
+
+    }
+
+
+    #searchPdfBtn svg,
+    #explorerBtn svg {
+
+        width:
+            18px;
+
+        height:
+            18px;
+
+    }
+
+    /* =====================================================
+        VISTAS DE SOLICITUD — MOBILE
+    ===================================================== */
+
+    #requestPanel #requestViewTabs {
+
+        margin: 12px 20px 0;
+
+    }
+
+    #requestPanel .request-view-tab {
+
+        min-height: 40px;
+
+        font-size: 12px;
+
+    }
+
     #requestPanel {
 
         width:
@@ -4932,10 +6092,94 @@ body {
     }
 
 
-    #requestPanel .request-counter {
+    /* =====================================================
+        CANTIDADES Y CONTADORES — MOBILE
+    ===================================================== */
 
-        font-size:
-            9px;
+    #requestPanel #requestQuantityGeneral {
+
+        margin: 0 20px 10px;
+
+        padding: 10px 12px;
+
+        gap: 8px;
+
+    }
+
+    #requestPanel #requestQuantityGeneral label {
+
+        font-size: 11px;
+
+    }
+
+    #requestPanel #requestGeneralQuantity {
+
+        width: 54px;
+
+        height: 34px;
+
+        font-size: 12px;
+
+    }
+
+    #requestPanel #requestApplyQuantity {
+
+        height: 34px;
+
+        padding: 0 11px;
+
+        font-size: 11px;
+
+    }
+
+    #requestPanel #requestCounter {
+
+        margin: 0 20px 3px;
+
+        font-size: 10px;
+
+    }
+
+    #requestPanel #requestGamesCounter {
+
+        margin: 0 20px 10px;
+
+        font-size: 11px;
+
+    }
+
+    #requestPanel .request-item-quantity {
+
+        gap: 7px;
+
+        margin-top: 7px;
+
+        padding-top: 8px;
+
+    }
+
+    #requestPanel .request-item-quantity > span:first-child {
+
+        font-size: 10px;
+
+    }
+
+    #requestPanel .request-qty-btn {
+
+        flex-basis: 32px;
+
+        width: 32px;
+
+        height: 32px;
+
+    }
+
+    #requestPanel .request-qty-value {
+
+        min-width: 22px;
+
+        font-size: 12px;
+
     }
 
 
@@ -5023,6 +6267,18 @@ body {
 
 @media (max-width: 400px) {
 
+    /* =====================================================
+        VISTAS DE SOLICITUD — MOBILE PEQUEÑO
+    ===================================================== */
+
+    #requestPanel #requestViewTabs {
+
+        margin-left: 16px;
+
+        margin-right: 16px;
+
+    }
+
     #requestPanel .request-select-bar {
 
         margin-left:
@@ -5072,20 +6328,61 @@ body {
         font-size:
             11px;
     }
+
+    /* =====================================================
+        CANTIDADES Y CONTADORES — MOBILE PEQUEÑO
+    ===================================================== */
+
+    #requestPanel #requestTools {
+
+        margin-left: 16px;
+
+        margin-right: 16px;
+
+    }
+
+    #requestPanel #requestQuantityGeneral {
+
+        margin-left: 16px;
+
+        margin-right: 16px;
+
+    }
+
+    #requestPanel #requestCounter,
+    #requestPanel #requestGamesCounter {
+
+        margin-left: 16px;
+
+        margin-right: 16px;
+
+    }
+
+    #requestPanel .request-pet {
+
+        gap: 9px;
+
+    }
 }
 
 /* =========================================================
    35. EXPLORER OVERLAY
-   ========================================================= */
+========================================================= */
 
-#explorerOverlay {
+#explorerOverlay,
+#searchOverlay {
     position: fixed;
 
     inset: 0;
 
-    background: rgba(0, 0, 0, .42);
+    background:
+        rgba(0, 0, 0, .14);
 
-    backdrop-filter: blur(6px);
+    backdrop-filter:
+        none;
+
+    -webkit-backdrop-filter:
+        none;
 
     z-index: 8900;
 
@@ -5100,7 +6397,8 @@ body {
         visibility .28s ease;
 }
 
-#explorerOverlay.visible {
+#explorerOverlay.visible,
+#searchOverlay.visible {
     opacity: 1;
 
     visibility: visible;
@@ -5113,7 +6411,8 @@ body {
    36. EXPLORER PANEL
    ========================================================= */
 
-#explorerPanel {
+#explorerPanel,
+#searchPanel {
     position: fixed;
 
     top: 0;
@@ -5145,7 +6444,15 @@ body {
         transform .34s cubic-bezier(.2, .8, .2, 1);
 }
 
-#explorerPanel:not([hidden]) {
+#searchPanel {
+
+    width:
+        min(360px, 100vw);
+
+}
+
+#explorerPanel:not([hidden]),
+#searchPanel:not([hidden]) {
     transform: translateX(0);
 }
 
@@ -5162,6 +6469,122 @@ body {
         1px solid rgba(15, 23, 32, .08);
 
     background: #ffffff;
+}
+
+#searchPanelHeader {
+
+    display: flex;
+
+    justify-content:
+        space-between;
+
+    align-items:
+        flex-start;
+
+    padding:
+        18px 20px 16px;
+
+    border-bottom:
+        1px solid
+        rgba(15, 23, 32, .08);
+
+    background:
+        #ffffff;
+
+    flex-shrink:
+        0;
+
+}
+
+
+.search-panel-label {
+
+    display:
+        block;
+
+    margin-bottom:
+        6px;
+
+    font-size:
+        11px;
+
+    font-weight:
+        700;
+
+    color:
+        var(--text-muted);
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        .08em;
+
+}
+
+
+#searchPanelHeader h3 {
+
+    margin:
+        0;
+
+    font-size:
+        18px;
+
+    line-height:
+        1.25;
+
+    font-weight:
+        750;
+
+}
+
+
+#searchPanelSubtitle {
+
+    margin:
+        0;
+
+    font-size:
+        13px;
+
+    color:
+        var(--text-muted);
+
+}
+
+
+#closeSearchPanel {
+
+    width:
+        38px;
+
+    height:
+        38px;
+
+    border:
+        none;
+
+    border-radius:
+        50%;
+
+    background:
+        transparent;
+
+    cursor:
+        pointer;
+
+    transition:
+        .25s;
+
+}
+
+
+#closeSearchPanel:hover {
+
+    background:
+        rgba(15, 23, 32, .06);
+
 }
 
 .explorer-label {
@@ -5320,6 +6743,11 @@ body {
     gap: 14px;
 
     padding-bottom: 24px;
+}
+
+#stepsView[hidden],
+#searchView[hidden] {
+    display: none !important;
 }
 
 .explorer-step {
@@ -5722,6 +7150,25 @@ body {
     color: var(--text-muted);
 }
 
+/* =========================================================
+   OCULTAR X NATIVA DEL INPUT TYPE="SEARCH"
+   Se conserva únicamente #pdfSearchClear
+   ========================================================= */
+
+#pdfSearchInput::-webkit-search-cancel-button,
+#pdfSearchInput::-webkit-search-decoration {
+
+    -webkit-appearance:
+        none;
+
+    appearance:
+        none;
+
+    display:
+        none;
+
+}
+
 #pdfSearchInput:focus {
     background: #ffffff;
 
@@ -5923,69 +7370,111 @@ body {
 
 /* =========================================================
    39. SEARCH RESULT CARDS
-   ========================================================= */
+========================================================= */
 
 .pdf-search-card {
-    position: relative;
 
-    display: flex;
+    position:
+        relative;
 
-    flex-direction: column;
+    display:
+        flex;
 
-    gap: 10px;
+    flex-direction:
+        column;
 
-    padding: 16px;
+    gap:
+        8px;
 
-    border-radius: 18px;
+    width:
+        100%;
+
+    padding:
+        13px 14px 13px 16px;
 
     border:
         1px solid rgba(15, 23, 32, .08);
 
-    background: #ffffff;
+    border-radius:
+        14px;
 
-    cursor: pointer;
+    background:
+        #ffffff;
 
-    overflow: hidden;
+    color:
+        var(--text-primary);
 
-    transition:
-        transform .22s ease,
-        box-shadow .22s ease,
-        border-color .22s ease,
-        background .22s ease;
+    text-align:
+        left;
+
+    font-family:
+        var(--font-body);
+
+    cursor:
+        pointer;
+
+    overflow:
+        hidden;
 
     box-shadow:
-        0 4px 16px rgba(15, 23, 32, .05);
+        0 2px 8px rgba(15, 23, 32, .045);
 
-    animation:
-        pdfSearchFade .20s ease;
+    transition:
+        border-color .18s ease,
+        background .18s ease,
+        box-shadow .18s ease,
+        transform .18s ease;
+
 }
 
 .pdf-search-card::before {
-    content: "";
 
-    position: absolute;
+    content:
+        "";
 
-    left: 0;
-    top: 0;
-    bottom: 0;
+    position:
+        absolute;
 
-    width: 4px;
+    top:
+        9px;
 
-    background: var(--accent);
+    bottom:
+        9px;
 
-    opacity: 0;
+    left:
+        0;
 
-    transition: opacity .20s ease;
+    width:
+        3px;
+
+    border-radius:
+        0 3px 3px 0;
+
+    background:
+        var(--accent);
+
+    opacity:
+        0;
+
+    transition:
+        opacity .18s ease;
+
 }
 
 .pdf-search-card:hover {
-    transform: translateY(-2px);
 
     border-color:
-        rgba(0, 168, 143, .28);
+        rgba(0, 168, 143, .24);
+
+    background:
+        #fbfefd;
 
     box-shadow:
-        0 12px 28px rgba(0, 168, 143, .12);
+        0 5px 14px rgba(15, 23, 32, .07);
+
+    transform:
+        translateY(-1px);
+
 }
 
 .pdf-search-card:hover::before {
@@ -5993,19 +7482,19 @@ body {
 }
 
 .pdf-search-card.active {
+
+    border-color:
+        rgba(0, 168, 143, .48);
+
     background:
-        linear-gradient(
-            180deg,
-            rgba(0, 168, 143, .10),
-            rgba(0, 168, 143, .04)
-        );
-
-    border-color: var(--accent);
-
-    transform: translateX(5px);
+        rgba(0, 168, 143, .055);
 
     box-shadow:
-        0 14px 32px rgba(0, 168, 143, .18);
+        0 4px 14px rgba(0, 168, 143, .10);
+
+    transform:
+        none;
+
 }
 
 .pdf-search-card.active::before {
@@ -6026,36 +7515,265 @@ body {
         0 10px 24px rgba(0, 168, 143, .18);
 }
 
+.pdf-search-card-top {
+
+    display:
+        flex;
+
+    align-items:
+        flex-start;
+
+    justify-content:
+        space-between;
+
+    gap:
+        10px;
+
+    width:
+        100%;
+
+}
+
+.pdf-search-context {
+
+    flex:
+        1;
+
+    min-width:
+        0;
+
+    font-size:
+        12px;
+
+    line-height:
+        1.35;
+
+    font-weight:
+        750;
+
+    color:
+        var(--text-primary);
+
+    letter-spacing:
+        .005em;
+
+    overflow:
+        hidden;
+
+    display:
+        -webkit-box;
+
+    -webkit-box-orient:
+        vertical;
+
+    -webkit-line-clamp:
+        2;
+
+    line-clamp:
+        2;
+
+}
+
+.pdf-search-badge {
+
+    flex-shrink:
+        0;
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    min-height:
+        21px;
+
+    padding:
+        0 7px;
+
+    border-radius:
+        999px;
+
+    font-size:
+        9px;
+
+    line-height:
+        1;
+
+    font-weight:
+        750;
+
+    letter-spacing:
+        .035em;
+
+    text-transform:
+        uppercase;
+
+    white-space:
+        nowrap;
+
+}
+
+
+.pdf-search-badge-title {
+
+    background:
+        rgba(0, 168, 143, .11);
+
+    color:
+        #007f72;
+
+}
+
+
+.pdf-search-badge-section {
+
+    background:
+        rgba(37, 99, 235, .08);
+
+    color:
+        #476785;
+
+}
+
+
+.pdf-search-badge-content {
+
+    background:
+        #f1f4f6;
+
+    color:
+        #768391;
+
+}
+
+.pdf-search-path {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        4px;
+
+    min-width:
+        0;
+
+    font-size:
+        10px;
+
+    line-height:
+        1.3;
+
+    color:
+        var(--text-muted);
+
+    white-space:
+        nowrap;
+
+    overflow:
+        hidden;
+
+}
+
+
+.pdf-search-path span {
+
+    overflow:
+        hidden;
+
+    text-overflow:
+        ellipsis;
+
+}
+
+
+.pdf-search-path-arrow {
+
+    flex-shrink:
+        0;
+
+    color:
+        #b0bac4;
+
+}
+
+.pdf-search-meta {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+}
+
+
 .pdf-search-page {
-    display: flex;
 
-    align-items: center;
+    display:
+        inline-flex;
 
-    gap: 8px;
+    align-items:
+        center;
 
-    font-size: 12px;
+    font-size:
+        10px;
 
-    font-weight: 700;
+    line-height:
+        1;
 
-    color: var(--text-accent);
+    font-weight:
+        650;
 
-    text-transform: uppercase;
+    color:
+        var(--text-accent);
 
-    letter-spacing: .06em;
+    letter-spacing:
+        .025em;
 
-    user-select: none;
+    user-select:
+        none;
+
 }
 
 .pdf-search-snippet {
-    font-size: 14px;
 
-    line-height: 1.75;
+    font-size:
+        12px;
 
-    color: var(--text-primary);
+    line-height:
+        1.55;
 
-    word-break: break-word;
+    color:
+        #52606d;
 
-    transition: color .20s ease;
+    word-break:
+        break-word;
+
+    display:
+        -webkit-box;
+
+    -webkit-box-orient:
+        vertical;
+
+    -webkit-line-clamp:
+        3;
+
+    line-clamp:
+        3;
+
+    overflow:
+        hidden;
+
 }
 
 .pdf-search-card:hover .pdf-search-snippet {
@@ -6063,22 +7781,25 @@ body {
 }
 
 .pdf-search-highlight {
-    display: inline;
 
-    padding: 1px 5px;
+    display:
+        inline;
 
-    border-radius: 6px;
+    padding:
+        0 2px;
+
+    border-radius:
+        2px;
 
     background:
-        rgba(255, 219, 77, .55);
+        rgba(255, 224, 0, .72);
 
-    color: #111827;
+    color:
+        #18212b;
 
-    font-weight: 700;
+    font-weight:
+        700;
 
-    transition:
-        background .20s ease,
-        color .20s ease;
 }
 
 .pdf-search-card:hover .pdf-search-highlight {
@@ -6086,28 +7807,45 @@ body {
 }
 
 .page-highlight-layer .pdf-search-highlight {
-    position: absolute;
+
+    position:
+        absolute;
 
     background:
-        rgba(255, 235, 59, .35);
+        rgba(255, 225, 70, .48);
 
     border:
-        1px solid rgba(255, 193, 7, .9);
+        none;
 
-    border-radius: 3px;
+    border-radius:
+        1px;
 
-    box-sizing: border-box;
+    box-sizing:
+        border-box;
+
+    pointer-events:
+        none;
+
+    mix-blend-mode:
+        multiply;
+
 }
 
-.pdf-search-highlight.active {
+.page-highlight-layer .pdf-search-highlight.active {
+
     background:
-        rgba(255, 140, 0, .55);
+        rgba(255, 183, 45, .62);
 
     border:
-        2px solid #ff9800;
+        1px solid
+        rgba(191, 115, 0, .28);
 
     box-shadow:
-        0 0 8px rgba(255, 152, 0, .5);
+        none;
+
+    mix-blend-mode:
+        multiply;
+
 }
 
 @keyframes pdfSearchFade {
@@ -7462,6 +9200,28 @@ body {
         display: block;
     }
 
+        /* SELECTOR DE BIBLIOTECAS */
+
+    #bibliotecasSelector {
+
+        gap: 3px;
+
+        padding: 3px;
+
+        margin-bottom: 10px;
+
+    }
+
+    .biblioteca-btn {
+
+        height: 38px;
+
+        padding: 0 3px;
+
+        font-size: 11px;
+
+    }
+
     #closeSidebarBtn {
         display: flex;
     }
@@ -7473,7 +9233,11 @@ body {
     #toolbar {
         top: auto;
 
-        bottom: 20px;
+        bottom:
+            max(
+                10px,
+                env(safe-area-inset-bottom)
+            );
 
         left: 50%;
 
@@ -7585,6 +9349,238 @@ body {
 
 @media (max-width: 600px) {
 
+    /* =====================================================
+       EXPLORER / SEARCH — MOBILE COMPACTO
+       ===================================================== */
+
+    #explorerPanel {
+
+        width:
+            min(84vw, 340px);
+
+        max-width:
+            340px;
+
+    }
+
+
+    #searchPanel {
+
+        width:
+            min(78vw, 310px);
+
+        max-width:
+            310px;
+
+    }
+
+    #explorerHeader {
+
+        padding:
+            18px 18px 16px;
+
+    }
+
+
+    #explorerCounter {
+
+        padding:
+            0 18px 12px;
+
+    }
+
+
+    #explorerViews {
+
+        padding:
+            0 14px 18px;
+
+    }
+
+
+    #stepsView {
+
+        gap:
+            10px;
+
+        padding-bottom:
+            18px;
+
+    }
+
+
+    .explorer-step-header {
+
+        padding:
+            10px;
+
+        gap:
+            10px;
+
+    }
+
+
+    .explorer-step-number {
+
+        width:
+            28px;
+
+        height:
+            28px;
+
+        font-size:
+            12px;
+
+    }
+
+
+    .explorer-step-title {
+
+        font-size:
+            13px;
+
+        line-height:
+            1.35;
+
+    }
+
+
+    .explorer-step-page {
+
+        font-size:
+            11px;
+
+        padding:
+            3px 7px;
+
+    }
+
+
+    #searchPanelHeader {
+
+        padding:
+            14px 16px 12px;
+
+    }
+
+
+    #searchView {
+
+        padding:
+            8px 10px 14px;
+
+    }
+
+
+    .pdf-search-panel {
+
+        gap:
+            12px;
+
+    }
+
+
+    .pdf-search-header {
+
+        gap:
+            6px;
+
+        padding:
+            0;
+
+    }
+
+
+    #pdfSearchInput {
+
+        height:
+            42px;
+
+        padding:
+            0 14px;
+
+        font-size:
+            15px;
+
+        border-radius:
+            12px;
+
+    }
+
+
+    #pdfSearchClear {
+
+        width:
+            36px;
+
+        height:
+            36px;
+
+    }
+
+
+    #pdfSearchPrev,
+    #pdfSearchNext {
+
+        width:
+            32px;
+
+    }
+
+    #toolbar button:active {
+
+        background:
+            rgba(0, 168, 143, .14);
+
+        color:
+            #007f72;
+
+        transform:
+            scale(.94);
+
+    }
+
+    #fitWidth.active {
+
+        background:
+            rgba(0, 168, 143, .10);
+
+        border-color:
+            rgba(0, 168, 143, .28);
+
+        color:
+            #007f72;
+
+        box-shadow:
+            0 0 0 2px
+            rgba(0, 168, 143, .08);
+
+    }
+
+
+    #fitWidth.active svg {
+
+        color:
+            #007f72;
+
+    }
+
+    #fitWidth:focus-visible {
+
+        outline:
+            none;
+
+    }
+
+
+    #fitWidth.active:focus-visible {
+
+        box-shadow:
+            0 0 0 3px
+            rgba(0, 168, 143, .12);
+
+    }
+
     #pageNav {
         display: none;
     }
@@ -7601,9 +9597,9 @@ body {
 
     #viewerContainer {
         padding:
-            16px
+            12px
             8px
-            80px;
+            68px;
     }
 
     .pdf-page {
@@ -7736,22 +9732,23 @@ body {
     }
 
     .pdf-download-pet-title {
-        display: none;
-    }
-
-    .pdf-download-pet::after {
-        content:
-            "Descargando procedimiento…";
 
         display: block;
-
-        margin-top: 4px;
 
         font-size: 12px;
 
         line-height: 1.4;
 
         color: #55708f;
+
+        overflow-wrap: anywhere;
+
+    }
+
+    .pdf-download-pet::after {
+
+        content: none;
+
     }
 
     /* -----------------------------------------------------
@@ -7766,7 +9763,7 @@ body {
     }
 
     #sidebarHeader #logoArea {
-        margin-bottom: 14px;
+        margin-bottom: 10px;
     }
 
     #searchInput {

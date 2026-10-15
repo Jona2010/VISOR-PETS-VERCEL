@@ -1,0 +1,673 @@
+{
+    "supabaseUrl": "https://xnkpjgrxgwkfhgrrzwhu.supabase.co",
+    "supabaseKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhua3BqZ3J4Z3drZmhncnJ6d2h1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNjY5NTAsImV4cCI6MjA5MTk0Mjk1MH0.XPvMGOe5ajGzFZRD4aQ9imGZ1BixN0Ht-8I9o0iGb8I",
+    "tipo": "fds",
+    "bucket": "fds",
+    "documentos": [
+        {
+            "id": "FDS-001",
+            "nombre": "BUFFER PH 10.01 OAKTON (35653-03) THERMO FISHER SCIENTIFIC",
+            "categoria": "Reactivos y soluciones de calibración",
+            "fabricante": "OAKTON",
+            "archivo": "REACTIVOS Y SOLUCIONES DE CALIBRACION/BUFFER PH 10.01 OAKTON (35653-03) THERMO FISHER SCIENTIFIC-2020.pdf",
+            "version": "02",
+            "anioReferencia": 2020
+        },
+        {
+            "id": "FDS-002",
+            "nombre": "SUPERCITO 7018R",
+            "categoria": "Soldadura y materiales de unión",
+            "fabricante": "SOLDEXA",
+            "archivo": "SOLDADURA Y MATERIALES DE UNION/SUPERCITO 7018R_SOLDEXA_2017.pdf",
+            "version": "06"
+        },
+        {
+            "id": "FDS-003",
+            "nombre": "DIESEL B5 S50",
+            "categoria": "Combustibles y gases",
+            "fabricante": "Petroperu",
+            "archivo": "COMBUSTIBLES Y GASES/DIESEL B5 S50_Petroperu_2019.pdf",
+            "fechaPublicacion": "2019-04-01"
+        },
+        {
+            "id": "FDS-004",
+            "nombre": "BUFFER CONDUCTIVIDAD ESTANDAR",
+            "categoria": "Reactivos y soluciones de calibración",
+            "fabricante": "OAKTON",
+            "archivo": "REACTIVOS Y SOLUCIONES DE CALIBRACION/BUFFER CONDUCTIVIDAD ESTANDAR_OAKTON_2019.pdf",
+            "version": "02"
+        },
+        {
+            "id": "FDS-005",
+            "nombre": "Sikaflex 11FC",
+            "categoria": "Adhesivos y selladores",
+            "fabricante": "SIKA",
+            "archivo": "ADHESIVOS Y SELLADORES/Sikaflex 11FC_SIKA_2024.pdf",
+            "fechaPublicacion": "2024-07-03"
+        },
+        {
+            "id": "FDS-006",
+            "nombre": "CELLOCORD AP",
+            "categoria": "Soldadura y materiales de unión",
+            "fabricante": "SOLDEX S.A.",
+            "archivo": "SOLDADURA Y MATERIALES DE UNION/CELLOCORD AP-2017.pdf",
+            "version": "06",
+            "anioReferencia": 2017
+        },
+        {
+            "id": "FDS-007",
+            "nombre": "LIMPIADOR DE CONTACTOS WURTH",
+            "categoria": "Solventes y limpiadores",
+            "fabricante": "WURTH",
+            "archivo": "SOLVENTES Y LIMPIADORES/LIMPIADOR DE CONTACTOS_WURTH_2021.PDF"
+        },
+        {
+            "id": "FDS-008",
+            "nombre": "Limpiador alcohol Isopropilico 99°",
+            "categoria": "Solventes y limpiadores",
+            "fabricante": "Daryza",
+            "archivo": "SOLVENTES Y LIMPIADORES/Limpiador alcohol Isopropilico 99_Daryza_2022.pdf",
+            "version": "04",
+            "fechaPublicacion": "2022-11-01"
+        },
+        {
+            "id": "FDS-009",
+            "nombre": "DIÓXIDO DE CARBONO",
+            "categoria": "Combustibles y gases",
+            "fabricante": "LINDE PERÚ S.R.L",
+            "archivo": "COMBUSTIBLES Y GASES/DIOXIDO DE CARBONO_LINDE PERU S.R.L_2025.pdf",
+            "fechaPublicacion": "2020-11-10"
+        },
+        {
+            "id": "FDS-010",
+            "nombre": "LOCTITE LB 8040 PENETRATING OIL",
+            "categoria": "Lubricantes y grasas",
+            "fabricante": "LOCTITE",
+            "archivo": "LUBRICANTES Y GRASAS/LOCTITE LB 8040 PENETRATING OIL_LOCTITE_2017.pdf",
+            "version": "07"
+        },
+        {
+            "id": "FDS-011",
+            "nombre": "JET THINNER STD SIC",
+            "categoria": "Solventes y limpiadores",
+            "fabricante": "CPPQ SA",
+            "archivo": "SOLVENTES Y LIMPIADORES/JET THINNER STD SIC_CPPQ SA-2021.pdf",
+            "anioReferencia": 2021
+        },
+        {
+            "id": "FDS-012",
+            "nombre": "BEFFER 1.406 MS",
+            "categoria": "Reactivos y soluciones de calibración",
+            "fabricante": "",
+            "archivo": "REACTIVOS Y SOLUCIONES DE CALIBRACION/BEFFER 1.406 MS__Kalibrierlosung CLY11-C 1,406 mS_Endress+Hauser_2022.pdf",
+            "version": "04"
+        },
+        {
+            "id": "FDS-013",
+            "nombre": "LIMPIADOR PARA CONTACTOS ELECTRICOS (AEROSOL)",
+            "categoria": "Solventes y limpiadores",
+            "fabricante": "A W CHESTERTON COMPANY",
+            "archivo": "SOLVENTES Y LIMPIADORES/LIMPIADOR PARA CONTACTOS ELECTRICOS (AEROSOL)_A W CHESTERTON COMPANY_2022.pdf",
+            "presentacion": "Aerosol"
+        },
+        {
+            "id": "FDS-014",
+            "nombre": "BUFFER PH 12",
+            "categoria": "Reactivos y soluciones de calibración",
+            "fabricante": "PUFFERLOSUNG",
+            "archivo": "REACTIVOS Y SOLUCIONES DE CALIBRACION/BUFFER PH 12_PUFFERLOSUNG_ENDRESS+HAUSER_2021.pdf",
+            "version": "02"
+        },
+        {
+            "id": "FDS-015",
+            "nombre": "BUFFER PH 7",
+            "categoria": "Reactivos y soluciones de calibración",
+            "fabricante": "CPY20-E",
+            "archivo": "REACTIVOS Y SOLUCIONES DE CALIBRACION/BUFFER PH 7_CPY20-E_PUFFERLOSUNG_EndressHauser_2017.pdf",
+            "version": "06"
+        },
+        {
+            "id": "FDS-016",
+            "nombre": "Ursa Super Plus EC SAE 15W-40",
+            "categoria": "Lubricantes y grasas",
+            "fabricante": "Chevron",
+            "archivo": "LUBRICANTES Y GRASAS/Ursa Super Plus EC SAE 15W-40_Chevron_2020.pdf"
+        },
+        {
+            "id": "FDS-017",
+            "nombre": "ELECTRODO A5.1 E6011 PUNTO AZUL",
+            "categoria": "Soldadura y materiales de unión",
+            "fabricante": "SOLDEX SA",
+            "archivo": "SOLDADURA Y MATERIALES DE UNION/ELECTRODO A5.1 E6011 PUNTO AZUL_SOLDEX SA_2017.pdf",
+            "version": "06"
+        },
+        {
+            "id": "FDS-018",
+            "nombre": "CHAMFERCORD-SOLDEX SA",
+            "categoria": "Soldadura y materiales de unión",
+            "fabricante": "SOLDEX S.A.",
+            "archivo": "SOLDADURA Y MATERIALES DE UNION/CHAMFERCORD-SOLDEX SA-2017.pdf",
+            "version": "06",
+            "anioReferencia": 2017
+        },
+        {
+            "id": "FDS-019",
+            "nombre": "WD-40, producto multiuso en aerosol",
+            "categoria": "Lubricantes y grasas",
+            "fabricante": "WD-40 Company",
+            "archivo": "LUBRICANTES Y GRASAS/40001616_ Producto en aerosol multiuso WD-40_WD-40 Company_FDS V1.pdf",
+            "fechaPublicacion": "2024-05-21",
+            "presentacion": "Aerosol"
+        },
+        {
+            "id": "FDS-020",
+            "nombre": "BUFFER SOLUCION CPY3 +220 MV",
+            "categoria": "Reactivos y soluciones de calibración",
+            "fabricante": "PUFFERLOSUNG",
+            "archivo": "REACTIVOS Y SOLUCIONES DE CALIBRACION/BUFFER SOLUCION CPY3 +220 MV_PUFFERLOSUNG_ENDRESS+HAUSER_2021.pdf",
+            "version": "03"
+        },
+        {
+            "id": "FDS-021",
+            "nombre": "NITRÓGENO COMPRIMIDO",
+            "categoria": "Combustibles y gases",
+            "fabricante": "LINDE PERÚ S.R.L",
+            "archivo": "COMBUSTIBLES Y GASES/NITROGENO COMPRIMIDO_LINDE PERU S.R.L_2025.pdf",
+            "fechaPublicacion": "2020-02-10"
+        },
+        {
+            "id": "FDS-022",
+            "nombre": "LOCTITE LB 8713 PEN OIL SOLVO RUST 12.50OZ",
+            "categoria": "Lubricantes y grasas",
+            "fabricante": "HENKEL PERUANA S.A.",
+            "archivo": "LUBRICANTES Y GRASAS/LOCTITE LB 8713 PEN OIL SOLVO RUST 12.50OZ_HENKEL PERUANA S.A._2024.pdf"
+        },
+        {
+            "id": "FDS-023",
+            "nombre": "Limpiador de contacto QD",
+            "categoria": "Solventes y limpiadores",
+            "fabricante": "CRC Industries",
+            "archivo": "SOLVENTES Y LIMPIADORES/Limpiador de contacto QD(82130)_CRC Industries_2023.pdf"
+        },
+        {
+            "id": "FDS-024",
+            "nombre": "Kit de preparación de cables 3M",
+            "categoria": "Pendiente de clasificación",
+            "fabricante": "",
+            "archivo": "PENDIENTE DE CLASIFICACION/Kit de preparacion de cables 3M-2019.pdf",
+            "version": "03",
+            "anioReferencia": 2019
+        },
+        {
+            "id": "FDS-025",
+            "nombre": "JET ECOPOXY 100",
+            "categoria": "Pinturas y recubrimientos",
+            "fabricante": "CPPQ SA",
+            "archivo": "PINTURAS Y RECUBRIMIENTOS/JET ECOPOXY 100_ CPPQ SA-2022.pdf",
+            "anioReferencia": 2022
+        },
+        {
+            "id": "FDS-026",
+            "nombre": "PLS",
+            "categoria": "Productos para procesos industriales",
+            "fabricante": "SMCV",
+            "archivo": "PRODUCTOS PARA PROCESOS INDUSTRIALES/PLS_SMCV_2022_LIXIVIACION.pdf"
+        },
+        {
+            "id": "FDS-027",
+            "nombre": "BUFFER PH 10",
+            "categoria": "Reactivos y soluciones de calibración",
+            "fabricante": "CPY20-K",
+            "archivo": "REACTIVOS Y SOLUCIONES DE CALIBRACION/BUFFER PH 10_CPY20-K_BUFFERLOSUNG_ENDRESS HAUSER-2017.pdf",
+            "version": "03",
+            "anioReferencia": 2017
+        },
+        {
+            "id": "FDS-028",
+            "nombre": "NAZCA NOX 309L",
+            "categoria": "Soldadura y materiales de unión",
+            "fabricante": "SOLDEXA",
+            "archivo": "SOLDADURA Y MATERIALES DE UNION/NAZCA NOX 309L_SOLDEXA_2021.pd",
+            "version": "01"
+        },
+        {
+            "id": "FDS-029",
+            "nombre": "SQP- 220",
+            "categoria": "Productos para procesos industriales",
+            "fabricante": "Soluciones Químicas del Perú",
+            "archivo": "PRODUCTOS PARA PROCESOS INDUSTRIALES/SQP- 220_ Soluciones Quimicas del Peru_2024.pdf"
+        },
+        {
+            "id": "FDS-030",
+            "nombre": "SOLVO-50-CHEM TOOLS",
+            "categoria": "Solventes y limpiadores",
+            "fabricante": "CHEM TOOLS SAC",
+            "archivo": "SOLVENTES Y LIMPIADORES/SOLVO-50-CHEM TOOLS_2020.pdf"
+        },
+        {
+            "id": "FDS-031",
+            "nombre": "POTASIO CLORURO EN SOLUCION 3 MOl",
+            "categoria": "Reactivos y soluciones de calibración",
+            "fabricante": "MERCK PERUANA S.A",
+            "archivo": "REACTIVOS Y SOLUCIONES DE CALIBRACION/POTASIO CLORURO EN SOLUCION 3 MOl_MERCK PERUANA S.A_2023.pdf",
+            "version": "08",
+            "fechaPublicacion": "2023-03-06"
+        },
+        {
+            "id": "FDS-032",
+            "nombre": "Rando HD 32, 46, 68 - CHEVRON",
+            "categoria": "Lubricantes y grasas",
+            "fabricante": "Chevron",
+            "archivo": "LUBRICANTES Y GRASAS/Rando HD 32, 46, 68 - CHEVRON_2024.pdf"
+        },
+        {
+            "id": "FDS-033",
+            "nombre": "NAZCA PLUS 6011",
+            "categoria": "Soldadura y materiales de unión",
+            "fabricante": "SOLDEX S.A.",
+            "archivo": "SOLDADURA Y MATERIALES DE UNION/NAZCA PLUS 6011_SOLDEX_FDS_2024.pdf",
+            "version": "03",
+            "fechaPublicacion": "2024-05-30"
+        },
+        {
+            "id": "FDS-034",
+            "nombre": "ARCILLA BENTONITICA",
+            "categoria": "Cementos y materiales minerales",
+            "fabricante": "BENTO PLUG",
+            "archivo": "CEMENTOS Y MATERIALES MINERALES/ARCILLA BENTONITICA_BENTO PLUG_POZO A TIERRA_2018.pdf"
+        },
+        {
+            "id": "FDS-035",
+            "nombre": "Material de soldadura nVent ERICO Cadweld, F20 - 250",
+            "categoria": "Soldadura y materiales de unión",
+            "fabricante": "",
+            "archivo": "SOLDADURA Y MATERIALES DE UNION/Material de soldadura nVent ERICO Cadweld F20 - 250_2020.pdf",
+            "version": "02"
+        },
+        {
+            "id": "FDS-036",
+            "nombre": "REAGENT S-11506 Promoter",
+            "categoria": "Productos para procesos industriales",
+            "fabricante": "Solvay",
+            "archivo": "PRODUCTOS PARA PROCESOS INDUSTRIALES/REAGENT S-11506 Promoter_Solvay_DOSIFICADORES_2018.pdf",
+            "version": "01",
+            "fechaPublicacion": "2018-08-07"
+        },
+        {
+            "id": "FDS-037",
+            "nombre": "LOCTITE SI 5699",
+            "categoria": "Adhesivos y selladores",
+            "fabricante": "HENKEL CORPORATION",
+            "archivo": "ADHESIVOS Y SELLADORES/LOCTITE SI 5699_HENKEL CORPORATION_2022.pdf",
+            "version": "05"
+        },
+        {
+            "id": "FDS-038",
+            "nombre": "CEMENTO CONDUCTIVO THOR CEM",
+            "categoria": "Cementos y materiales minerales",
+            "fabricante": "",
+            "archivo": "CEMENTOS Y MATERIALES MINERALES/CEMENTO CONDUCTIVO THOR CEM_ PARA RAYOS_POZO A TIERRA_2017.pdf"
+        },
+        {
+            "id": "FDS-039",
+            "nombre": "ACIDO NITRICO P.A.-Q.P. 65",
+            "categoria": "Reactivos y soluciones de calibración",
+            "fabricante": "ELMER JO ANAYA S.A.C.",
+            "archivo": "REACTIVOS Y SOLUCIONES DE CALIBRACION/ACIDO NITRICO P.A.-Q.P. 65__ELMER JO ANAYA_2023.pdf"
+        },
+        {
+            "id": "FDS-040",
+            "nombre": "LÖTFETT",
+            "categoria": "Soldadura y materiales de unión",
+            "fabricante": "STANNOL GMBH & CO (MEZCLA FUNDENTE)",
+            "archivo": "SOLDADURA Y MATERIALES DE UNION/LOTFETT_STANNOL GMBH & CO (MEZCLA FUNDENTE)_SOLDADURA BLANDA_2022.pdf",
+            "version": "15"
+        },
+        {
+            "id": "FDS-041",
+            "nombre": "BUFFER PH 10.01",
+            "categoria": "Reactivos y soluciones de calibración",
+            "fabricante": "OAKTON-ENVIRONMENTAL EXPRESS",
+            "archivo": "REACTIVOS Y SOLUCIONES DE CALIBRACION/BUFFER PH 10.01_OAKTON-ENVIRONMENTAL EXPRESS-2025.pdf",
+            "anioReferencia": 2025
+        },
+        {
+            "id": "FDS-042",
+            "nombre": "LOCTITE LB 771 NICKEL GRADE ANTI SEIZE",
+            "categoria": "Lubricantes y grasas",
+            "fabricante": "HENKEL PERUANA",
+            "archivo": "LUBRICANTES Y GRASAS/LOCTITE LB 771 NICKEL GRADE ANTI SEIZE_HENKEL PERUANA_2022.pdf"
+        },
+        {
+            "id": "FDS-043",
+            "nombre": "XANTATO ISOPROPILICO DE SODIO",
+            "categoria": "Productos para procesos industriales",
+            "fabricante": "Reactivos Nacionales",
+            "archivo": "PRODUCTOS PARA PROCESOS INDUSTRIALES/XANTATO ISOPROPILICO DE SODIO_Reactivos Nacionales_2024.pdf",
+            "version": "03"
+        },
+        {
+            "id": "FDS-044",
+            "nombre": "KITS DE EMPALME DE CABLE DE RESINA EN LÍNEA SCOTCHCAST ™ DE 3M® CON RESINA 3M®SCOTCHCAST ™ 4N",
+            "categoria": "Adhesivos y selladores",
+            "fabricante": "3M",
+            "archivo": "ADHESIVOS Y SELLADORES/KITS DE EMPALME DE CABLE DE RESINA EN LINEA SCOTCHCAST DE 3M CON RESINA 3M SCOTCHCAST 4N_2023.pdf",
+            "version": "02"
+        },
+        {
+            "id": "FDS-045",
+            "nombre": "AERO MX-7021 PROMOTER",
+            "categoria": "Productos para procesos industriales",
+            "fabricante": "Cytec de Mexico",
+            "archivo": "PRODUCTOS PARA PROCESOS INDUSTRIALES/AERO MX-7021 PROMOTER_Cytec de Mexico_2024.pdf",
+            "version": "05",
+            "fechaPublicacion": "2024-02-08"
+        },
+        {
+            "id": "FDS-046",
+            "nombre": "ESMALTE PARA TRÁFICO",
+            "categoria": "Pinturas y recubrimientos",
+            "fabricante": "CPP",
+            "archivo": "PINTURAS Y RECUBRIMIENTOS/ESMALTE PARA TRAFICO_CPP_2026.pdf"
+        },
+        {
+            "id": "FDS-047",
+            "nombre": "Alcohol isopropílico (IPA)",
+            "categoria": "Solventes y limpiadores",
+            "fabricante": "QUIMICA UNIVERSAL",
+            "archivo": "SOLVENTES Y LIMPIADORES/Alcohol isopropilico (IPA)_QUIMICA UNIVERSAL_2020.pdf",
+            "version": "01"
+        },
+        {
+            "id": "FDS-048",
+            "nombre": "Gasolina Regular",
+            "categoria": "Combustibles y gases",
+            "fabricante": "PETROPERÚ",
+            "archivo": "COMBUSTIBLES Y GASES/Gasolina Regular_PETROPERU_2022.pdf",
+            "fechaPublicacion": "2022-05-03"
+        },
+        {
+            "id": "FDS-049",
+            "nombre": "Buffer pH 10.01",
+            "categoria": "Reactivos y soluciones de calibración",
+            "fabricante": "OAKTON",
+            "archivo": "REACTIVOS Y SOLUCIONES DE CALIBRACION/Buffer pH 10.01_OAKTON_Thermo Fisher Scientific_2023.pdf",
+            "version": "02"
+        },
+        {
+            "id": "FDS-050",
+            "nombre": "PASTA PULIDORA FORMULA 9000 PROFESIONAL",
+            "categoria": "Otros productos",
+            "fabricante": "SIMONIZ SA",
+            "archivo": "OTROS PRODUCTOS/PASTA PULIDORA FORMULA 9000 PROFESIONAL_SIMONIZ SA_2019.pdf"
+        },
+        {
+            "id": "FDS-051",
+            "nombre": "Buffer pH 12.46",
+            "categoria": "Reactivos y soluciones de calibración",
+            "fabricante": "Thermo Fisher Scienti",
+            "archivo": "REACTIVOS Y SOLUCIONES DE CALIBRACION/Buffer pH 12.46_Thermo Fisher Scienti_2020.pdf"
+        },
+        {
+            "id": "FDS-052",
+            "nombre": "ALCOHOL ISOPROPILICO",
+            "categoria": "Solventes y limpiadores",
+            "fabricante": "IDDM INDUSTRIAL",
+            "archivo": "SOLVENTES Y LIMPIADORES/ALCOHOL ISOPROPILICO _IDDM INDUSTRIAL_2024.pdf"
+        },
+        {
+            "id": "FDS-053",
+            "nombre": "MC-S30",
+            "categoria": "Productos para procesos industriales",
+            "fabricante": "MOLYCOP",
+            "archivo": "PRODUCTOS PARA PROCESOS INDUSTRIALES/MC-S30_MOLYCOP_DOSIFICADORES_2025.pdf",
+            "version": "02",
+            "fechaPublicacion": "2025-05-26"
+        },
+        {
+            "id": "FDS-054",
+            "nombre": "ROST OFF",
+            "categoria": "Lubricantes y grasas",
+            "fabricante": "WURTH PERU",
+            "archivo": "LUBRICANTES Y GRASAS/ROST OFF_WURTH PERU_ANDAMIOS)_2023.pdf"
+        },
+        {
+            "id": "FDS-055",
+            "nombre": "BUFFER PH 12.46",
+            "categoria": "Reactivos y soluciones de calibración",
+            "fabricante": "ENVIRONMENTAL EXPRESS",
+            "archivo": "REACTIVOS Y SOLUCIONES DE CALIBRACION/BUFFER PH 12.46_ENVIRONMENTAL EXPRESS_TRACEABLE PRODUCTS-2025.pdf",
+            "version": "02",
+            "anioReferencia": 2025
+        },
+        {
+            "id": "FDS-056",
+            "nombre": "SOLVENTE RMS1",
+            "categoria": "Solventes y limpiadores",
+            "fabricante": "HBM",
+            "archivo": "SOLVENTES Y LIMPIADORES/SOLVENTE RMS1_HBM_2018 (Trabajos Strain Gauge).pdf",
+            "fechaPublicacion": "2018-10-11"
+        },
+        {
+            "id": "FDS-057",
+            "nombre": "CEMENTO CONDUCTIVO",
+            "categoria": "Cementos y materiales minerales",
+            "fabricante": "GEM25A",
+            "archivo": "CEMENTOS Y MATERIALES MINERALES/CEMENTO CONDUCTIVO_GEM25A_ERICO International Corporation_POZO A TIERRA_2025.pdf"
+        },
+        {
+            "id": "FDS-058",
+            "nombre": "ABRO PINTURAS EN SPRAY",
+            "categoria": "Pinturas y recubrimientos",
+            "fabricante": "ABRO INDUSTRIES",
+            "archivo": "PINTURAS Y RECUBRIMIENTOS/ABRO PINTURAS EN SPRAY_ABRO INDUSTRIES_2023.pdf"
+        },
+        {
+            "id": "FDS-059",
+            "nombre": "NAZCA NOX 308L",
+            "categoria": "Soldadura y materiales de unión",
+            "fabricante": "SOLDEX S.A.",
+            "archivo": "SOLDADURA Y MATERIALES DE UNION/NAZCA NOX 308L_SOLDEX S.A_2024.pdf",
+            "version": "03",
+            "fechaPublicacion": "2024-05-30"
+        },
+        {
+            "id": "FDS-060",
+            "nombre": "JET THINNER STD SIC",
+            "categoria": "Solventes y limpiadores",
+            "fabricante": "CORPORACION PERUANA DE PRODUCTOS QUÍMICOS S.A.",
+            "archivo": "SOLVENTES Y LIMPIADORES/JET THINNER STD SIC_CORPORACION PERUANA DE PRODUCTOS QUIMICOS S.A._2025.pdf"
+        },
+        {
+            "id": "FDS-061",
+            "nombre": "JET 70MP CATALIZADOR",
+            "categoria": "Pinturas y recubrimientos",
+            "fabricante": "CORPORACIÓN PERUANA DE PRODUCTOS QUIMICOS S.A.",
+            "archivo": "PINTURAS Y RECUBRIMIENTOS/JET 70MP CATALIZADOR_CORPORACION PERUANA DE PRODUCTOS QUIMICOS S.A._2025.pdf"
+        },
+        {
+            "id": "FDS-062",
+            "nombre": "ARCILLA BENTONITICA",
+            "categoria": "Cementos y materiales minerales",
+            "fabricante": "BENTOVIS",
+            "archivo": "CEMENTOS Y MATERIALES MINERALES/ARCILLA BENTONITICA_BENTOVIS_PTC SAC_POZO A TIERRA_2022.pdf",
+            "version": "02"
+        },
+        {
+            "id": "FDS-063",
+            "nombre": "ESTAÑO PARA SOLDAR CON CAUTIN",
+            "categoria": "Soldadura y materiales de unión",
+            "fabricante": "LEGATEC 40-50-60",
+            "archivo": "SOLDADURA Y MATERIALES DE UNION/ESTANO PARA SOLDAR CON CAUTIN_LEGATEC 40-50-60_ITALSOLDER_2022.pdf"
+        },
+        {
+            "id": "FDS-064",
+            "nombre": "ESTANDAR REDOX +250 MV",
+            "categoria": "Reactivos y soluciones de calibración",
+            "fabricante": "METROHM",
+            "archivo": "REACTIVOS Y SOLUCIONES DE CALIBRACION/ESTANDAR REDOX +250 MV_METROHM_2023.pdf",
+            "version": "01",
+            "fechaPublicacion": "2023-09-25"
+        },
+        {
+            "id": "FDS-065",
+            "nombre": "CAL HIDRATADA (HIDRÓXIDO DE CALCIO)",
+            "categoria": "Cementos y materiales minerales",
+            "fabricante": "CAL & CEMENTO SUR S.A.",
+            "archivo": "CEMENTOS Y MATERIALES MINERALES/CAL HIDRATADA (HIDROXIDO DE CALCIO)_CAL & CEMENTO SUR S.A._2025.pdf"
+        },
+        {
+            "id": "FDS-066",
+            "nombre": "Estaño sin plomo",
+            "categoria": "Soldadura y materiales de unión",
+            "fabricante": "Felder lottechnick",
+            "archivo": "SOLDADURA Y MATERIALES DE UNION/Estano sin plomo_Felder lottechnick_Fundente para soldaduras_2018.pdf",
+            "version": "03"
+        },
+        {
+            "id": "FDS-067",
+            "nombre": "CONCENTRADO DE MOLIBDENO",
+            "categoria": "Productos para procesos industriales",
+            "fabricante": "INTEM",
+            "archivo": "PRODUCTOS PARA PROCESOS INDUSTRIALES/CONCENTRADO DE MOLIBDENO_INTEM_2018.pdf"
+        },
+        {
+            "id": "FDS-068",
+            "nombre": "LIMPIA VIDRIOS",
+            "categoria": "Solventes y limpiadores",
+            "fabricante": "DARYZA S.A.C",
+            "archivo": "SOLVENTES Y LIMPIADORES/LIMPIA VIDRIOS_DARYZA S.A.C-2020.pdf",
+            "anioReferencia": 2020
+        },
+        {
+            "id": "FDS-069",
+            "nombre": "ÁCIDO CLORHIDRICO P.A.-Q.P. AL 37.5 +-0.5",
+            "categoria": "Reactivos y soluciones de calibración",
+            "fabricante": "ELMER JO ANAYA",
+            "archivo": "REACTIVOS Y SOLUCIONES DE CALIBRACION/ACIDO CLORHIDRICO P.A.-Q.P. AL 37.5 +-0.5__ELMER JO ANAYA_2025.pdf"
+        },
+        {
+            "id": "FDS-070",
+            "nombre": "FP651 FROTH PRO",
+            "categoria": "Productos para procesos industriales",
+            "fabricante": "ECOLAB PERU HOLDINGS S.R.L",
+            "archivo": "PRODUCTOS PARA PROCESOS INDUSTRIALES/FP651 FROTH PRO _ECOLAB PERU HOLDINGS S.R.L_NALCO_DOSIFICADORES_2025.pdf",
+            "fechaPublicacion": "2025-07-02"
+        },
+        {
+            "id": "FDS-071",
+            "nombre": "BUFFER PH 12.46 OKTON",
+            "categoria": "Reactivos y soluciones de calibración",
+            "fabricante": "THERMO FISHER SCIENTIFIC",
+            "archivo": "REACTIVOS Y SOLUCIONES DE CALIBRACION/BUFFER PH 12.46 OKTON_THERMO FISHER SCIENTIFIC_2020.pdf",
+            "version": "02"
+        },
+        {
+            "id": "FDS-072",
+            "nombre": "ALKAN A-13",
+            "categoria": "Lubricantes y grasas",
+            "fabricante": "CHEMTOOLS",
+            "archivo": "LUBRICANTES Y GRASAS/ALKAN A-13_CHEMTOOLS_2018.pdf"
+        },
+        {
+            "id": "FDS-073",
+            "nombre": "LOCTITE SI 596 SUPERFLEX RED HIGH T",
+            "categoria": "Adhesivos y selladores",
+            "fabricante": "Henkel",
+            "archivo": "ADHESIVOS Y SELLADORES/LOCTITE SI 596 RD SUPERFLEX RED HIGHT_HENKEL PERUANA_2022.pdf"
+        },
+        {
+            "id": "FDS-074",
+            "nombre": "LPS® MICRO-X",
+            "categoria": "Solventes y limpiadores",
+            "fabricante": "ITW PRO BRANDS",
+            "archivo": "SOLVENTES Y LIMPIADORES/LPS MICRO-X_ITW PRO BRANDS-2020.pdf",
+            "version": "03",
+            "anioReferencia": 2020
+        },
+        {
+            "id": "FDS-075",
+            "nombre": "Limpiador de contacto QD",
+            "categoria": "Solventes y limpiadores",
+            "fabricante": "CRC Industries",
+            "archivo": "SOLVENTES Y LIMPIADORES/LIMPIADOR DE CONTACTO QD_CRC INDUSTRIES_2022.pdf",
+            "version": "07"
+        },
+        {
+            "id": "FDS-076",
+            "nombre": "Lubricante de precisión multiusos 2-26 - 311 g",
+            "categoria": "Lubricantes y grasas",
+            "fabricante": "CRC",
+            "archivo": "LUBRICANTES Y GRASAS/2-26, Lubricante de Precision Multiusos - 311 g_ CRC_2019.pdf",
+            "version": "01"
+        },
+        {
+            "id": "FDS-077",
+            "nombre": "CO2",
+            "categoria": "Combustibles y gases",
+            "fabricante": "DIOXIDO",
+            "archivo": "COMBUSTIBLES Y GASES/CO2_DIOXIDO_DE_CARBONO_PRAXAIR_PERU_SRL_2019.pdf"
+        },
+        {
+            "id": "FDS-078",
+            "nombre": "Concentrado de cobre INTEM",
+            "categoria": "Productos para procesos industriales",
+            "fabricante": "INTEM",
+            "archivo": "PRODUCTOS PARA PROCESOS INDUSTRIALES/Concentrado de cobre INTEM_2018.pdf",
+            "version": "00"
+        },
+        {
+            "id": "FDS-079",
+            "nombre": "NASH",
+            "categoria": "Productos para procesos industriales",
+            "fabricante": "INTERSALES",
+            "archivo": "PRODUCTOS PARA PROCESOS INDUSTRIALES/NASH_SULFHIDRATO DE SODIO EN SOLUCION_ INTERSALES_2025.pdf",
+            "version": "06"
+        },
+        {
+            "id": "FDS-080",
+            "nombre": "CAL VIVA (ÓXIDO DE CALCIO)",
+            "categoria": "Cementos y materiales minerales",
+            "fabricante": "CAL & CEMENTO SUR S.A.",
+            "archivo": "CEMENTOS Y MATERIALES MINERALES/CAL VIVA (OXIDO DE CALCIO)_CAL & CEMENTO SUR S.A._2025.pdf"
+        },
+        {
+            "id": "FDS-081",
+            "nombre": "JET 70MP",
+            "categoria": "Pinturas y recubrimientos",
+            "fabricante": "CORPORACIÓN PERUANA DE PRODUCTOS QUIMICOS S.A.",
+            "archivo": "PINTURAS Y RECUBRIMIENTOS/JET 70MP_CORPORACION PERUANA DE PRODUCTOS QUIMICOS S.A._2025.pdf"
+        },
+        {
+            "id": "FDS-082",
+            "nombre": "Bright Zinc-It® Galvanizador Frío Instantáneo",
+            "categoria": "Pinturas y recubrimientos",
+            "fabricante": "CRC Industries, Inc",
+            "archivo": "PINTURAS Y RECUBRIMIENTOS/Bright Zinc-It Galvanizador Frio Instantaneo_CRC Industries, Inc_2021.pdf",
+            "version": "02"
+        },
+        {
+            "id": "FDS-083",
+            "nombre": "CEMENTO HIDRAULICO TIPO HS - YURA MAX",
+            "categoria": "Cementos y materiales minerales",
+            "fabricante": "CEMENTO YURA",
+            "archivo": "CEMENTOS Y MATERIALES MINERALES/CEMENTO HIDRAULICO TIPO HS - YURA MAX-2024.pdf",
+            "anioReferencia": 2024
+        },
+        {
+            "id": "FDS-084",
+            "nombre": "LIMPIADOR DE CONTACTOS NOVEC",
+            "categoria": "Solventes y limpiadores",
+            "fabricante": "3M",
+            "archivo": "SOLVENTES Y LIMPIADORES/LIMPIADOR DE CONTACTOS NOVEC_3M_FDS_2021.pdf",
+            "version": "04"
+        },
+        {
+            "id": "FDS-085",
+            "nombre": "Estaño",
+            "categoria": "Soldadura y materiales de unión",
+            "fabricante": "Felder lottechnick",
+            "archivo": "LUBRICANTES Y GRASAS/Estano_Felder lottechnick_Fundente para soldaduras_2022.pdf"
+        }
+    ]
+}

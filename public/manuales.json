@@ -1,0 +1,302 @@
+{
+    "tipo": "manuales",
+    "bucket": "manuales",
+    "documentos": [
+        {
+            "id": "MAN-001",
+            "nombre": "Cautín inalámbrico BP645",
+            "categoria": "Soldadura y equipos de unión",
+            "marca": "WELLER",
+            "modelo": "BP645",
+            "archivo": "SOLDADURA Y EQUIPOS DE UNION/MANUAL EQUIPO CAUTIN_bp645_SOLDADURA BLANDA.pdf"
+        },
+        {
+            "id": "MAN-002",
+            "nombre": "Soplador inalámbrico Makita DUB182",
+            "categoria": "Sopladores",
+            "marca": "Makita",
+            "modelo": "DUB182",
+            "archivo": "SOPLADORES/Soplador Inalambrico MAKITA DUB182 .pdf"
+        },
+        {
+            "id": "MAN-003",
+            "nombre": "Cautín inalámbrico Milwaukee M12",
+            "categoria": "Soldadura y equipos de unión",
+            "marca": "Milwaukee",
+            "modelo": "2488-20",
+            "archivo": "SOLDADURA Y EQUIPOS DE UNION/Estanadora Milwaukee Soldering Iron_SOLDADURA BLANDAA4.pdf"
+        },
+        {
+            "id": "MAN-004",
+            "nombre": "Amoladora Bosch GWS 9-125 P",
+            "categoria": "Amoladoras",
+            "marca": "Bosch",
+            "modelo": "GWS 9-125 P",
+            "archivo": "AMOLADORAS/Amoladora BOSCH GWS 9-125P.pdf"
+        },
+        {
+            "id": "MAN-005",
+            "nombre": "Soplador a batería TOTAL P20S",
+            "categoria": "Sopladores",
+            "marca": "TOTAL",
+            "modelo": "",
+            "archivo": "SOPLADORES/SOPLADOR-BATERIA-20V-TOTAL-P20S 37325.pdf"
+        },
+        {
+            "id": "MAN-006",
+            "nombre": "Soplador inalámbrico Makita DUB184",
+            "categoria": "Sopladores",
+            "marca": "Makita",
+            "modelo": "DUB184",
+            "archivo": "SOPLADORES/SOPLADOR MAKITA DUB184 basuca.pdf"
+        },
+        {
+            "id": "MAN-007",
+            "nombre": "Soplador inalámbrico Makita DUB185",
+            "categoria": "Sopladores",
+            "marca": "Makita",
+            "modelo": "DUB185",
+            "archivo": "SOPLADORES/Soplador inalambrico MAKITA DUB185.pdf"
+        },
+        {
+            "id": "MAN-008",
+            "nombre": "Soplador inalámbrico TOTAL TABLI20018",
+            "categoria": "Sopladores",
+            "marca": "TOTAL",
+            "modelo": "TABLI20018",
+            "archivo": "SOPLADORES/SOPLADOR TOTAL TABLI20018 (2).pdf"
+        },
+        {
+            "id": "MAN-009",
+            "nombre": "Luminaria portátil TOTAL TWLI20258",
+            "categoria": "Luminarias y equipos de iluminación",
+            "marca": "TOTAL",
+            "modelo": "TWLI20258",
+            "archivo": "LUMINARIAS Y EQUIPOS DE ILUMINACION/LUMINARIA TOTAL TWLI20258.pdf"
+        },
+        {
+            "id": "MAN-010",
+            "nombre": "Pistola de impacto a batería TOTAL TIWLI20010",
+            "categoria": "Atornilladores y herramientas de impacto",
+            "marca": "TOTAL",
+            "modelo": "TIWLI20010",
+            "archivo": "ATORNILLADORES Y HERRAMIENTAS DE IMPACTO/Atornillador-Pistola de impacto a bateria TOTAL TIWLI 20010.pdf"
+        },
+        {
+            "id": "MAN-011",
+            "nombre": "Máquina de soldar inversora ESAB LHN 240i PLUS",
+            "categoria": "Soldadura y equipos de unión",
+            "marca": "ESAB",
+            "modelo": "LHN 240i PLUS",
+            "archivo": "SOLDADURA Y EQUIPOS DE UNION/Maquina de soldar Inversor ESAB LHN240i PLUS.pdf"
+        },
+        {
+            "id": "MAN-012",
+            "nombre": "Generador eléctrico a gasolina",
+            "categoria": "Generadores y grupos electrógenos",
+            "marca": "GAB",
+            "modelo": "ZH1000LN",
+            "archivo": "GENERADORES Y GRUPOS ELECTROGENOS/MANUAL DE GENERADORES ELECTRICOS GASOLINEROS.pdf"
+        },
+        {
+            "id": "MAN-013",
+            "nombre": "Aspiradora Makita VC1310L",
+            "categoria": "Aspiradoras y equipos de limpieza",
+            "marca": "Makita",
+            "modelo": "VC1310L",
+            "archivo": "ASPIRADORAS Y EQUIPOS DE LIMPIEZA/Manual ASPIRADORA_VC1310L MAKITA.pdf"
+        },
+        {
+            "id": "MAN-014",
+            "nombre": "Taladro inalámbrico DeWalt DCD985",
+            "categoria": "Taladros y rotomartillos",
+            "marca": "DeWalt",
+            "modelo": "DCD985",
+            "archivo": "TALADROS Y ROTOMARTILLOS/Taladro Inalambrico DEWALT DCD985.PDF"
+        },
+        {
+            "id": "MAN-015",
+            "nombre": "Taladro inalámbrico DeWalt DCD796",
+            "categoria": "Taladros y rotomartillos",
+            "marca": "DeWalt",
+            "modelo": "DCD796",
+            "archivo": "TALADROS Y ROTOMARTILLOS/Taladro Inalambrico DEWALT DCD 796.pdf"
+        },
+        {
+            "id": "MAN-016",
+            "nombre": "Máquina de soldar inversora EMTOP EWDEM2031",
+            "categoria": "Soldadura y equipos de unión",
+            "marca": "EMTOP",
+            "modelo": "EWDEM2031",
+            "archivo": "SOLDADURA Y EQUIPOS DE UNION/Maquina de soldar Inversor EMTOP EWDEM2031 (1).pdf"
+        },
+        {
+            "id": "MAN-017",
+            "nombre": "Pistola de impacto Bosch GDS 18V-200",
+            "categoria": "Atornilladores y herramientas de impacto",
+            "marca": "Bosch",
+            "modelo": "GDS 18V-200",
+            "archivo": "ATORNILLADORES Y HERRAMIENTAS DE IMPACTO/PISTOLA DE IMPACTO BOSCH_gds_18v200_professional.pdf"
+        },
+        {
+            "id": "MAN-018",
+            "nombre": "Amoladora a batería TOTAL",
+            "categoria": "Amoladoras",
+            "marca": "TOTAL",
+            "modelo": "",
+            "archivo": "AMOLADORAS/Amoladora a bateria Total.pdf"
+        },
+        {
+            "id": "MAN-019",
+            "nombre": "Pistola de calor Skil 8003",
+            "categoria": "Pistolas de calor",
+            "marca": "Skil",
+            "modelo": "8003",
+            "archivo": "PISTOLAS DE CALOR/PISTOLA DE CALOR SKIL 8003.pdf"
+        },
+        {
+            "id": "MAN-020",
+            "nombre": "Soplador Crown CT17002",
+            "categoria": "Sopladores",
+            "marca": "Crown",
+            "modelo": "CT17002",
+            "archivo": "SOPLADORES/Soplador CROWN CT17002.pdf"
+        },
+        {
+            "id": "MAN-021",
+            "nombre": "Atornilladora de impacto DeWalt DCF889",
+            "categoria": "Atornilladores y herramientas de impacto",
+            "marca": "DeWalt",
+            "modelo": "DCF889",
+            "archivo": "ATORNILLADORES Y HERRAMIENTAS DE IMPACTO/ATORNILLADORA DEWALT DCF889 (1).pdf"
+        },
+        {
+            "id": "MAN-022",
+            "nombre": "Taladro inalámbrico Hilti SF 6H-A22",
+            "categoria": "Taladros y rotomartillos",
+            "marca": "Hilti",
+            "modelo": "SF 6H-A22",
+            "archivo": "TALADROS Y ROTOMARTILLOS/Taladro inalambrico HILTI SF 6H-A22.pdf"
+        },
+        {
+            "id": "MAN-023",
+            "nombre": "Sacabocados hidráulico Greenlee 746A",
+            "categoria": "Herramientas hidráulicas y especiales",
+            "marca": "Greenlee",
+            "modelo": "746A",
+            "archivo": "HERRAMIENTAS HIDRAULICAS Y ESPECIALES/Sacabocado Greenlee_746A_Manual.pdf"
+        },
+        {
+            "id": "MAN-024",
+            "nombre": "Generador Yamaha EF4000DFW",
+            "categoria": "Generadores y grupos electrógenos",
+            "marca": "Yamaha",
+            "modelo": "EF4000DFW",
+            "archivo": "GENERADORES Y GRUPOS ELECTROGENOS/MANUAL YAMAHA ef4000dfw.pdf"
+        },
+        {
+            "id": "MAN-025",
+            "nombre": "Aspiradora inalámbrica Makita CL107FD",
+            "categoria": "Aspiradoras y equipos de limpieza",
+            "marca": "Makita",
+            "modelo": "CL107FD",
+            "archivo": "ASPIRADORAS Y EQUIPOS DE LIMPIEZA/ASPIRADORA MAKITA CL107FD.pdf"
+        },
+        {
+            "id": "MAN-026",
+            "nombre": "Martillo demoledor DeWalt D25901 / D25941",
+            "categoria": "Taladros y rotomartillos",
+            "marca": "DeWalt",
+            "modelo": "D25901 / D25941",
+            "archivo": "TALADROS Y ROTOMARTILLOS/MANUAL DE ROTO MARTILLO D25901, D25941.pdf"
+        },
+        {
+            "id": "MAN-027",
+            "nombre": "Amoladora angular DeWalt DWE4314",
+            "categoria": "Amoladoras",
+            "marca": "DeWalt",
+            "modelo": "DWE4314",
+            "archivo": "AMOLADORAS/AMOLADORA Angular DEWALT DWE4314.pdf"
+        },
+        {
+            "id": "MAN-028",
+            "nombre": "Cargador de litio DeWalt DCB115",
+            "categoria": "Baterías y cargadores",
+            "marca": "DeWalt",
+            "modelo": "DCB115",
+            "archivo": "BATERIAS Y CARGADORES/Cargador de litio DEWALT DCB 115.pdf"
+        },
+        {
+            "id": "MAN-029",
+            "nombre": "Taladro DeWalt DCD7781",
+            "categoria": "Taladros y rotomartillos",
+            "marca": "DeWalt",
+            "modelo": "DCD7781",
+            "archivo": "TALADROS Y ROTOMARTILLOS/TALADRO DEWALT_DCD7781.pdf"
+        },
+        {
+            "id": "MAN-030",
+            "nombre": "Plataforma Genie Z-60/34 — manual de mantenimiento",
+            "categoria": "Plataformas y maquinaria de elevación",
+            "marca": "Genie",
+            "modelo": "Z-60/34",
+            "archivo": "PLATAFORMAS Y MAQUINARIA DE ELEVACION/Manual de Genie Z-60-34.pdf"
+        },
+        {
+            "id": "MAN-031",
+            "nombre": "Amortiguadores de portón Chery — catálogo",
+            "categoria": "Accesorios y componentes automotrices",
+            "marca": "Chery",
+            "modelo": "",
+            "archivo": "ACCESORIOS Y COMPONENTES AUTOMOTRICES/Amortiguador _ Piston de Baules Chery.pdf"
+        },
+        {
+            "id": "MAN-032",
+            "nombre": "Grupo electrógeno Yamaha EF4000DFW",
+            "categoria": "Generadores y grupos electrógenos",
+            "marca": "Yamaha",
+            "modelo": "EF4000DFW",
+            "archivo": "GENERADORES Y GRUPOS ELECTROGENOS/GRUPO ELECTROGENO YAMAHA EF4000DFW.pdf"
+        },
+        {
+            "id": "MAN-033",
+            "nombre": "Aspiradora Kärcher WD 1 Classic",
+            "categoria": "Aspiradoras y equipos de limpieza",
+            "marca": "Kärcher",
+            "modelo": "WD 1 Classic",
+            "archivo": "ASPIRADORAS Y EQUIPOS DE LIMPIEZA/ASPIRADORA KARCHER wd_1_classic.pdf"
+        },
+        {
+            "id": "MAN-034",
+            "nombre": "Amoladora angular DeWalt DWE4120",
+            "categoria": "Amoladoras",
+            "marca": "DeWalt",
+            "modelo": "DWE4120",
+            "archivo": "AMOLADORAS/AMOLADORA ANGULAR DEWALT dwe4120.pdf"
+        },
+        {
+            "id": "MAN-035",
+            "nombre": "Taladro inalámbrico DeWalt DCD791",
+            "categoria": "Taladros y rotomartillos",
+            "marca": "DeWalt",
+            "modelo": "DCD791",
+            "archivo": "TALADROS Y ROTOMARTILLOS/Taladro Inalambrico DEWALT DCD791.pdf"
+        },
+        {
+            "id": "MAN-036",
+            "nombre": "Taladro inalámbrico DeWalt DCD708",
+            "categoria": "Taladros y rotomartillos",
+            "marca": "DeWalt",
+            "modelo": "DCD708",
+            "archivo": "TALADROS Y ROTOMARTILLOS/Taladro Inalambrico DEWALT DCD708.pdf"
+        },
+        {
+            "id": "MAN-037",
+            "nombre": "Nivel láser autonivelante INGCO HLL305205",
+            "categoria": "Instrumentos de medición y nivelación",
+            "marca": "INGCO",
+            "modelo": "HLL305205",
+            "archivo": "INSTRUMENTOS DE MEDICION Y NIVELACION/Nivel laser autonivelante(Linea Verde)-INECO-HLL305205.pdf"
+        }
+    ]
+}

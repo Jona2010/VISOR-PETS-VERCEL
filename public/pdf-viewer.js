@@ -21,6 +21,11 @@ export class PDFViewer {
         this.prevScale  = 1;
         this.pixelRatio = window.devicePixelRatio || 1;
 
+        // Tipo de documento actualmente abierto:
+        // pets | fds | manuales
+        this.documentType =
+            "pets";
+
         // Flag para suprimir el observer de render mientras el zoom anima
         this._zooming = false;
 
@@ -286,125 +291,244 @@ export class PDFViewer {
     // 📄 LOAD PDF
     // ================================
 
-    async load(url) {
-        // ✅ Incrementar ID de carga para rastrear cuál es la última
-        const loadId = ++this._loadId;
-        this._isLoading = true;
-        
+    async load(
+        url,
+        documentType = "pets"
+    ) {
+
+        const loadId =
+            ++this._loadId;
+
+        this._isLoading =
+            true;
+
+
         try {
-            // ✅ Si hay una carga en progreso, cancelarla
+
+            // Cancelar una carga anterior.
             if (this.loadingTask) {
+
                 try {
-                    this.loadingTask.destroy();
-                } catch (e) {
-                    // Ignorar errores de cancelación
+
+                    await this.loadingTask.destroy();
+
                 }
-                this.loadingTask = null;
+                catch (error) {
+
+                    console.warn(
+                        "Carga anterior cancelada:",
+                        error
+                    );
+
+                }
+
+                this.loadingTask =
+                    null;
+
             }
 
-            // ✅ Limpiar el estado actual (sin destruir el worker)
+
+            // Limpiar documento anterior.
             this._cleanup();
 
-            // ✅ Verificar que esta carga sigue siendo la última
-            if (loadId !== this._loadId) {
-                console.log('⏹️ Carga cancelada (nueva solicitud)');
+
+            // =====================================
+            // TIPO DEL NUEVO DOCUMENTO
+            // =====================================
+
+            this.documentType =
+                documentType;
+
+
+            if (
+                loadId !==
+                this._loadId
+            ) {
+
                 return;
+
             }
 
-            // ✅ Crear una nueva tarea de carga
+            // Abrir el nuevo PDF.
             const loadingTask = pdfjsLib.getDocument({
                 url,
                 withCredentials: false
             });
 
-            // ✅ Guardar la referencia
             this.loadingTask = loadingTask;
 
-            // ✅ Verificar que esta carga sigue siendo la última
+            const pdfDoc = await loadingTask.promise;
+
             if (loadId !== this._loadId) {
-                this.loadingTask = null;
-                try { loadingTask.destroy(); } catch {}
-                console.log('⏹️ Carga cancelada (nueva solicitud)');
                 return;
             }
 
-            this.pdfDoc = await loadingTask.promise;
+            this.pdfDoc = pdfDoc;
             this.loadingTask = null;
 
-            // ✅ Verificar que esta carga sigue siendo la última
-            if (loadId !== this._loadId) {
-                console.log('⏹️ Carga cancelada (nueva solicitud)');
-                return;
+            // =====================================
+            // PRIORIDAD 1: PRIMERA PÁGINA
+            // =====================================
+
+            this.currentPage = 1;
+
+            await this.createPage(1);
+
+            if (loadId !== this._loadId) return;
+
+            this.onPageChange?.(
+                1,
+                this.pdfDoc.numPages
+            );
+
+            // Mostrar la primera página antes
+            // de procesar todo el documento.
+            await this.renderVisiblePage(1);
+
+            if (loadId !== this._loadId) return;
+
+            // Dar una oportunidad al navegador
+            // para actualizar la pantalla.
+            await new Promise(resolve => {
+                requestAnimationFrame(() => {
+                    setTimeout(resolve, 0);
+                });
+            });
+
+            if (loadId !== this._loadId) return;
+
+            // =====================================
+            // PRIORIDAD 2: RESTO DE PÁGINAS
+            // =====================================
+
+            for (
+                let pageNum = 2;
+                pageNum <= this.pdfDoc.numPages;
+                pageNum++
+            ) {
+
+                if (loadId !== this._loadId) return;
+
+                await this.createPage(pageNum);
+
             }
+
+            if (loadId !== this._loadId) return;
+
+            // =====================================
+            // PRIORIDAD 3: ÍNDICE DE TEXTO
+            // =====================================
 
             await this.buildTextIndex();
 
-            // ================================
-            // MOTOR ACTUAL
-            // ================================
-            this.extractProcedureBlock();
-            this.normalizeProcedureBlock();
-            this.detectProcedureType();
-            this.parseProcedureBlock();
+            if (loadId !== this._loadId) return;
 
-            // ================================
-            // NUEVO DOCUMENT OUTLINE ENGINE
-            // ================================
-            this.extractProcedureRange();
-            this.mergeFragmentsIntoLines();
-            this.detectHeadingStyles();
-            this.detectOutlineHeadings();
-            this.buildOutlineTree();
-            this.exportOutlineTasks();
+            // =====================================
+            // MOTOR EXCLUSIVO DE PETS
+            // =====================================
+
+            if (this.documentType === "pets") {
+
+                // ---------------------------------
+                // PROCEDIMIENTO
+                // ---------------------------------
+
+                this.extractProcedureBlock();
+
+                this.normalizeProcedureBlock();
+
+                this.detectProcedureType();
+
+                this.parseProcedureBlock();
+
+
+                // ---------------------------------
+                // DOCUMENT OUTLINE
+                // ---------------------------------
+
+                this.extractProcedureRange();
+
+                this.mergeFragmentsIntoLines();
+
+                this.detectHeadingStyles();
+
+                this.detectOutlineHeadings();
+
+                this.buildOutlineTree();
+
+                this.exportOutlineTasks();
+
+            }
+            else {
+
+                // =================================
+                // FDS / MANUALES
+                // No utilizan estructura PETS
+                // =================================
+
+                this.procedureBlock =
+                    null;
+
+                this.procedureType =
+                    null;
+
+                this.taskSteps =
+                    [];
+
+                this.taskTree =
+                    [];
+
+                this.outlineFragments =
+                    [];
+
+                this.outlineLines =
+                    [];
+
+                this.outline =
+                    [];
+
+                this.outlineTree =
+                    [];
+
+                this.outlineTaskSteps =
+                    [];
+
+                this.outlineIndex.clear();
+
+                this.outlineLocations.clear();
+
+            }
+
+
             this.debugSearchIndex();
+
+            if (loadId !== this._loadId) return;
 
             this.loadedAt = Date.now();
 
-            // ✅ Verificar que esta carga sigue siendo la última
-            if (loadId !== this._loadId) {
-                console.log('⏹️ Carga cancelada (nueva solicitud)');
-                return;
-            }
-
-            // Crear placeholders en paralelo
-            await Promise.all(
-                Array.from(
-                    { length: this.pdfDoc.numPages },
-                    (_, i) => this.createPage(i + 1)
-                )
-            );
-
-            // ✅ Verificar que esta carga sigue siendo la última
-            if (loadId !== this._loadId) {
-                console.log('⏹️ Carga cancelada (nueva solicitud)');
-                return;
-            }
-
-            this.currentPage = 1;
-            this.onPageChange?.(1, this.pdfDoc.numPages);
-
-            requestAnimationFrame(() => {
-                const firstPage = this.pages[0];
-                if (firstPage) {
-                    this.renderVisiblePage(1);
-                }
-            });
-
         } catch (error) {
-            // ✅ Si es un error de cancelación, ignorarlo
-            if (error?.name === 'AbortException' || 
-                error?.message?.includes('Worker was destroyed') ||
-                error?.message?.includes('Worker was terminated')) {
-                console.log('⏹️ Carga cancelada');
+
+            if (
+                error?.name === "AbortException" ||
+                error?.message?.includes("Worker was destroyed") ||
+                error?.message?.includes("Worker was terminated")
+            ) {
                 return;
             }
-            
+
             console.error("❌ PDF LOAD ERROR:", error);
+
             throw error;
+
         } finally {
-            this._isLoading = false;
-            this.loadingTask = null;
+
+            if (loadId === this._loadId) {
+                this._isLoading = false;
+                this.loadingTask = null;
+            }
+
         }
+
     }
 
     // ================================
@@ -456,6 +580,15 @@ export class PDFViewer {
 
         pageDiv.style.minWidth = "0";
         pageDiv.style.minHeight = "0";
+
+        /* =========================================
+            ESCALA VISUAL DE LA PÁGINA
+        ========================================= */
+
+        pageDiv.style.setProperty(
+            "--pdf-page-scale",
+            this.scale
+        );
 
         // ===============================
         // CANVAS
@@ -515,27 +648,36 @@ export class PDFViewer {
             ).href;
 
         // ===============================
-        // POSICIONES
+        // POSICIONES UNIFORMES
         // ===============================
 
-        const watermarkPositions = [
+        const watermarkPositions = [];
 
-            { x: 12, y: 10 },
-            { x: 38, y: 10 },
-            { x: 65, y: 10 },
-            { x: 88, y: 10 },
-
-            { x: 12, y: 52 },
-            { x: 40, y: 52 },
-            { x: 68, y: 52 },
-            { x: 90, y: 52 },
-
-            { x: 12, y: 94 },
-            { x: 42, y: 94 },
-            { x: 71, y: 94 },
-            { x: 92, y: 94 },
-
+        const columns = [
+            12.5,
+            37.5,
+            62.5,
+            87.5
         ];
+
+        const rows = [
+            12,
+            50,
+            88
+        ];
+
+        rows.forEach(y => {
+
+            columns.forEach(x => {
+
+                watermarkPositions.push({
+                    x,
+                    y
+                });
+
+            });
+
+        });
 
         // ===============================
         // CREAR LOGOS
@@ -637,135 +779,225 @@ export class PDFViewer {
     async renderVisiblePage(pageNum) {
 
         const pageData = this.pages[pageNum - 1];
-        if (!pageData) return;
 
-        if (pageData.rendered && pageData.currentScale === this.scale) return;
+        if (!pageData || !this.pdfDoc) {
+            return;
+        }
+
+        const targetScale = this.scale;
+
+        // La página ya está renderizada a la escala correcta.
         if (
-            pageData.rendering &&
-            pageData.currentScale === this.scale
+            pageData.rendered &&
+            pageData.currentScale === targetScale
         ) {
             return;
         }
 
-        pageData.rendering = true;
+        // Evitar dos renderizados simultáneos
+        // de la misma página y escala.
+        if (
+            pageData.rendering &&
+            pageData.renderScale === targetScale &&
+            pageData.renderPromise
+        ) {
+            return pageData.renderPromise;
+        }
 
-        const { page, pageDiv, canvas } = pageData;
+        // Cancelar un renderizado de escala anterior.
+        const previousTask = this.renderTasks.get(pageNum);
 
-        try {
-            const viewport = page.getViewport({ scale: this.scale });
-
-            const renderScale = window.innerWidth <= 768
-                ? Math.min(2.5, this.pixelRatio * 1.8)
-                : Math.min(3,   this.pixelRatio * 2);
-
-            const realWidth  = Math.max(1, Math.floor(viewport.width  * renderScale));
-            const realHeight = Math.max(1, Math.floor(viewport.height * renderScale));
-
-            const tempCanvas = document.createElement("canvas");
-            const tempCtx    = tempCanvas.getContext("2d", { alpha: false });
-
-            tempCtx.imageSmoothingEnabled = true;
-            tempCtx.imageSmoothingQuality = "high";
-            tempCanvas.width  = realWidth;
-            tempCanvas.height = realHeight;
-            tempCtx.setTransform(renderScale, 0, 0, renderScale, 0, 0);
-
-            const renderTask = page.render({ canvasContext: tempCtx, viewport });
-            this.renderTasks.set(pageNum, renderTask);
-            await renderTask.promise;
-
-            const newCanvas = document.createElement("canvas");
-            newCanvas.width  = realWidth;
-            newCanvas.height = realHeight;
-            newCanvas.style.opacity    = "1";
-            //newCanvas.style.transition = "opacity .25s ease";
-            newCanvas.style.width      = "100%";
-            newCanvas.style.height     = "100%";
-            newCanvas.style.position   = "absolute";
-            newCanvas.style.inset      = "0";
-
-            const newCtx = newCanvas.getContext("2d", { alpha: false });
-
-            newCtx.drawImage(tempCanvas, 0, 0);
-
-            // =====================================
-            // MARCA DE AGUA REPETIDA
-            // =====================================
-
-            /* newCtx.save();
-
-            newCtx.rotate(-Math.PI / 6);
-
-            const watermarkText =
-                "PROHIBIDO COMPARTIR";
-
-            const watermarkFontSize = 70;
-
-            newCtx.font =
-                `bold ${watermarkFontSize}px Arial`;
-
-            newCtx.fillStyle =
-                "rgba(184,134,11,0.13)";
-
-            const spacingY = 260;
-
-            const spacingX = 500;
-
-            for(let y = -realHeight; y < realHeight * 2; y += spacingY){
-
-                for(let x = -realWidth; x < realWidth * 2; x += spacingX){
-
-                    newCtx.fillText(
-                        watermarkText,
-                        x,
-                        y
-                    );
-                }
+        if (previousTask) {
+            try {
+                previousTask.cancel();
+            } catch (error) {
+                // La tarea puede haber terminado.
             }
+        }
 
-            newCtx.restore(); */
+        const renderId = (pageData.renderId || 0) + 1;
 
-            pageDiv.style.width  = `${viewport.width}px`;
-            pageDiv.style.height = `${viewport.height}px`;
-            pageDiv.querySelectorAll("canvas").forEach(c => c.remove());
-            pageDiv.appendChild(newCanvas);
+        pageData.renderId = renderId;
+        pageData.rendering = true;
+        pageData.renderScale = targetScale;
+        pageData.rendered = false;
 
-            //requestAnimationFrame(() => { newCanvas.style.opacity = "1"; });
+        const renderPromise = (async () => {
 
-            const loader = pageDiv.querySelector(".page-loader");
-            if (loader) loader.classList.add("hide");
+            let renderTask = null;
 
-            requestAnimationFrame(() => {
+            try {
 
-                if (canvas.parentNode)
-                    canvas.remove();
+                const { page, pageDiv } = pageData;
 
-            });
-
-            if(this.searchLocations.length){
-
-                requestAnimationFrame(() => {
-
-                    if(pageData.rendered){
-
-                        this.renderPageHighlights(pageNum);
-
-                    }
-
+                const viewport = page.getViewport({
+                    scale: targetScale
                 });
 
+                // Resolución moderada para reducir
+                // el consumo de memoria.
+                const pixelRatio = window.devicePixelRatio || 1;
+
+                const renderScale =
+                    window.innerWidth <= 768
+                        ? Math.min(1.5, pixelRatio)
+                        : Math.min(1.75, pixelRatio);
+
+                const realWidth = Math.max(
+                    1,
+                    Math.floor(viewport.width * renderScale)
+                );
+
+                const realHeight = Math.max(
+                    1,
+                    Math.floor(viewport.height * renderScale)
+                );
+
+                // Un único canvas de renderizado.
+                const newCanvas = document.createElement("canvas");
+
+                newCanvas.width = realWidth;
+                newCanvas.height = realHeight;
+
+                newCanvas.style.opacity = "1";
+                newCanvas.style.width = "100%";
+                newCanvas.style.height = "100%";
+                newCanvas.style.position = "absolute";
+                newCanvas.style.inset = "0";
+
+                const context = newCanvas.getContext(
+                    "2d",
+                    { alpha: false }
+                );
+
+                if (!context) {
+                    throw new Error(
+                        "No se pudo crear el contexto del canvas."
+                    );
+                }
+
+                context.imageSmoothingEnabled = true;
+                context.imageSmoothingQuality = "high";
+
+                // Escalar el contexto para mantener
+                // las dimensiones correctas del PDF.
+                context.setTransform(
+                    renderScale,
+                    0,
+                    0,
+                    renderScale,
+                    0,
+                    0
+                );
+
+                renderTask = page.render({
+                    canvasContext: context,
+                    viewport
+                });
+
+                this.renderTasks.set(
+                    pageNum,
+                    renderTask
+                );
+
+                await renderTask.promise;
+
+                // Evitar insertar un resultado antiguo
+                // después de un cambio de zoom.
+                if (
+                    pageData.renderId !== renderId ||
+                    this.scale !== targetScale ||
+                    !pageDiv.isConnected
+                ) {
+                    newCanvas.width = 0;
+                    newCanvas.height = 0;
+                    return;
+                }
+
+                // Actualizar las dimensiones.
+                pageDiv.style.width =
+                    `${viewport.width}px`;
+
+                pageDiv.style.height =
+                    `${viewport.height}px`;
+
+                // Sustituir únicamente el canvas.
+                // No eliminar loaders, highlights
+                // ni marcas de agua.
+                pageDiv
+                    .querySelectorAll("canvas")
+                    .forEach(canvas => {
+                        canvas.remove();
+                        canvas.width = 0;
+                        canvas.height = 0;
+                    });
+
+                pageDiv.appendChild(newCanvas);
+
+                pageData.canvas = newCanvas;
+                pageData.rendered = true;
+                pageData.currentScale = targetScale;
+
+                // Ocultar el indicador de esta página.
+                const loader = pageDiv.querySelector(
+                    ".page-loader"
+                );
+
+                if (loader) {
+                    loader.classList.add("hide");
+                }
+
+                // Restaurar los resaltados, si existen.
+                if (this.searchLocations.length) {
+                    requestAnimationFrame(() => {
+
+                        if (
+                            pageData.renderId === renderId &&
+                            pageData.rendered
+                        ) {
+                            this.renderPageHighlights(pageNum);
+                        }
+
+                    });
+                }
+
+            } catch (error) {
+
+                if (
+                    error?.name !== "RenderingCancelledException"
+                ) {
+                    console.error(
+                        `❌ PAGE ${pageNum}`,
+                        error
+                    );
+                }
+
+            } finally {
+
+                // No modificar el estado de un
+                // renderizado más reciente.
+                if (pageData.renderId === renderId) {
+
+                    pageData.rendering = false;
+                    pageData.renderPromise = null;
+
+                    if (
+                        this.renderTasks.get(pageNum) ===
+                        renderTask
+                    ) {
+                        this.renderTasks.delete(pageNum);
+                    }
+
+                }
+
             }
 
-            pageData.rendered     = true;
-            pageData.currentScale = this.scale;
+        })();
 
-        } catch (error) {
-            if (error?.name !== "RenderingCancelledException") {
-                console.error(`❌ PAGE ${pageNum}`, error);
-            }
-        } finally {
-            pageData.rendering = false;
-        }
+        pageData.renderPromise = renderPromise;
+
+        return renderPromise;
+
     }
 
     // ================================
@@ -848,6 +1080,11 @@ export class PDFViewer {
 
             pageData.pageDiv.style.minWidth = "0";
             pageData.pageDiv.style.minHeight = "0";
+
+            pageData.pageDiv.style.setProperty(
+                "--pdf-page-scale",
+                this.scale
+            );
 
         });
 
@@ -1297,70 +1534,460 @@ export class PDFViewer {
     }
 
     // ================================================
+    // 🔎 OBTENER TÉRMINOS ÚTILES DE BÚSQUEDA
+    // ================================================
+
+    getSearchTerms(query = "") {
+
+        const normalized =
+            this.normalizeText(query);
+
+        if (!normalized) {
+
+            return [];
+
+        }
+
+        const stopWords = new Set([
+
+            "de",
+            "del",
+            "la",
+            "las",
+            "el",
+            "los",
+            "y",
+            "o",
+            "en",
+            "para",
+            "por",
+            "con",
+            "un",
+            "una",
+            "unos",
+            "unas",
+            "al"
+
+        ]);
+
+        const rawTerms =
+            normalized
+                .split(/\s+/)
+                .filter(Boolean);
+
+        /*
+        * Si la consulta tiene varias palabras,
+        * eliminamos conectores que no aportan
+        * demasiado a la búsqueda.
+        *
+        * Ejemplo:
+        *
+        * "trabajos en altura"
+        *
+        * queda:
+        *
+        * ["trabajos", "altura"]
+        */
+
+        const usefulTerms =
+            rawTerms.filter(term => {
+
+                if (rawTerms.length === 1) {
+
+                    return true;
+
+                }
+
+                return !stopWords.has(term);
+
+            });
+
+        /*
+        * Evitar términos repetidos.
+        */
+
+        return [
+            ...new Set(usefulTerms)
+        ];
+
+    }
+
+    // ================================================
     // CLASIFICADOR DE ENCABEZADOS
     // ================================================
-    classifyProcedureLine(text = "") {
+    classifyProcedureLine(
+        text = ""
+    ) {
 
-        text = text.trim();
+        text =
+            String(text || "")
+                .replace(/\s+/g, " ")
+                .trim();
+
 
         if (!text) {
+
             return null;
+
         }
 
+
         // ============================================
-        // 1. NÚMEROS DECIMALES (4.3.1, 4.3, etc.)
+        // FUNCIÓN AUXILIAR:
+        // ¿PARECE REALMENTE UN TÍTULO?
         // ============================================
-        const decimal = text.match(/^(\d+(?:\.\d+)*)\s*\.?\s+(.+)/);
+
+        const looksLikeTitle =
+            value => {
+
+                const title =
+                    String(value || "")
+                        .trim();
+
+
+                if (!title) {
+
+                    return false;
+
+                }
+
+
+                // Un encabezado PET razonable no debería
+                // ser un párrafo extremadamente largo.
+                if (
+                    title.length > 180
+                ) {
+
+                    return false;
+
+                }
+
+
+                // Frases claramente provenientes de texto
+                // normal y no de encabezados.
+                if (
+                    /[.;]\s*$/.test(title)
+                    &&
+                    title.length > 45
+                ) {
+
+                    return false;
+
+                }
+
+
+                const letters =
+                    title.replace(
+                        /[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ]/g,
+                        ""
+                    );
+
+
+                if (!letters.length) {
+
+                    return true;
+
+                }
+
+
+                const uppercase =
+                    letters.replace(
+                        /[^A-ZÁÉÍÓÚÜÑ]/g,
+                        ""
+                    ).length;
+
+
+                const ratio =
+                    uppercase /
+                    letters.length;
+
+
+                // La mayoría de títulos de tus PETS
+                // están escritos en mayúsculas.
+                if (
+                    ratio >= 0.55
+                ) {
+
+                    return true;
+
+                }
+
+
+                // También aceptar títulos cortos.
+                const words =
+                    title
+                        .split(/\s+/)
+                        .filter(Boolean);
+
+
+                return (
+                    words.length <= 8
+                    &&
+                    !/[.;]$/.test(title)
+                );
+
+            };
+
+
+        // ============================================
+        // 1. NUMERACIÓN DEL BLOQUE 4
+        //
+        // 4. PROCEDIMIENTO
+        // 4.1. ACTIVIDADES PREVIAS
+        // 4.2. PASOS DE LA TAREA
+        // 4.2.1. ...
+        // ============================================
+
+        const decimal =
+            text.match(
+
+                /^(4(?:\.[1-9]\d*){0,4})\.?\s+(.+)$/
+
+            );
+
+
         if (decimal) {
-            const numbers = decimal[1].split(".");
-            const level = numbers.length;
-            
-            // Determinar qué tipo de encabezado es
-            const content = (decimal[2] || text).toUpperCase();
-            let type = "decimal";
-            
-            if (/ACTIVIDADES|CONSIDERACIONES|MOVILIZACION|MOVILIZACIÓN|DESMOVILIZACION|DESMOVILIZACIÓN|EJECUCION|EJECUCIÓN|FINALIZACION|FINALIZACIÓN|MEDIDAS|PASOS/i.test(content)) {
-                type = "section";
+
+            const number =
+                decimal[1];
+
+
+            const title =
+                decimal[2]
+                    .replace(/\s+/g, " ")
+                    .trim();
+
+            // ============================================
+            // DESCARTAR FILAS NUMÉRICAS DE TABLAS
+            //
+            // Ejemplo real:
+            // 4.00 20.20
+            // ============================================
+
+            if (
+                !/[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]/.test(title)
+            ) {
+
+                return null;
+
             }
-            
+
+
+            // ============================================
+            // VALIDACIÓN ESPECIAL DEL NIVEL "4."
+            //
+            // "4. PROCEDIMIENTO"            → válido
+            // "4. Equipos auxiliares..."    → NO válido
+            //
+            // Esto evita confundir listas numeradas
+            // internas con encabezados del PET.
+            // ============================================
+
+            if (
+                number === "4" &&
+                !/^PROCEDIMIENTO\b/i.test(title)
+            ) {
+
+                return null;
+
+            }
+
+
+            // ============================================
+            // VALIDACIÓN GENERAL
+            // ============================================
+
+            if (
+                !title ||
+                title.length > 180
+            ) {
+
+                return null;
+
+            }
+
+
+            const level =
+                number
+                    .split(".")
+                    .length;
+
+
+            let type =
+                "decimal";
+
+
+            if (
+                /^(PROCEDIMIENTO|ACTIVIDADES|CONSIDERACIONES|PLANIFICACION|PLANIFICACIÓN|MOVILIZACION|MOVILIZACIÓN|DESMOVILIZACION|DESMOVILIZACIÓN|EJECUCION|EJECUCIÓN|FINALIZACION|FINALIZACIÓN|MEDIDAS|PASOS)/i
+                    .test(title)
+            ) {
+
+                type =
+                    "section";
+
+            }
+
+
             return {
-                type: type,
-                level: Math.min(level, 4),
-                match: decimal[1]
+
+                type,
+
+                level:
+                    Math.min(
+                        level,
+                        5
+                    ),
+
+                match:
+                    number
+
             };
+
         }
 
-        // ============================================
-        // 2. ROMANOS (I., II., III., etc.)
-        // ============================================
-        if (/^(I|II|III|IV|V|VI|VII|VIII|IX|X)\.\s+/i.test(text)) {
-            return {
-                type: "roman",
-                level: 1
-            };
-        }
 
         // ============================================
-        // 3. LETRAS (A., B., C., etc.)
+        // 2. ROMANOS
         // ============================================
-        if (/^[A-ZÑ]\.\s+/i.test(text)) {
+
+        const roman =
+            text.match(
+
+                /^(I|II|III|IV|V|VI|VII|VIII|IX|X)\.\s+(.+)/i
+
+            );
+
+
+        if (roman) {
+
+            const title =
+                roman[2]
+                    .trim();
+
+
+            if (
+                !looksLikeTitle(title)
+            ) {
+
+                return null;
+
+            }
+
+
             return {
-                type: "letter",
-                level: 2
+
+                type:
+                    "roman",
+
+                level:
+                    2
+
             };
+
         }
 
+
         // ============================================
-        // 4. ENCABEZADOS GENÉRICOS
+        // 3. LETRAS
+        //
+        // A. MEDIDAS...
+        // B. PAPEL
+        // C. CARTON
         // ============================================
-        if (/^(ACTIVIDADES|CONSIDERACIONES|MOVILIZACION|MOVILIZACIÓN|DESMOVILIZACION|DESMOVILIZACIÓN|EJECUCION|EJECUCIÓN|FINALIZACION|FINALIZACIÓN|MEDIDAS|PASOS|DESARROLLO)/i.test(text)) {
+
+        const letter =
+            text.match(
+
+                /^([A-ZÑ])\.\s+(.+)/
+
+            );
+
+
+        if (letter) {
+
+            const rawTitle =
+                letter[2]
+                    .trim();
+
+
+            // ============================================
+            // NORMALIZAR SOLO PARA VALIDAR EL TÍTULO
+            //
+            // Ejemplos:
+            //
+            // Prueba de Aislamiento
+            // Prueba de Continuidad.
+            // Prueba de Resistencia de Contacto
+            //
+            // El punto final no debe impedir que sea
+            // reconocido como encabezado.
+            // ============================================
+
+            const titleForValidation =
+                rawTitle
+                    .replace(
+                        /[.;]\s*$/,
+                        ""
+                    )
+                    .trim();
+
+
+            if (
+                !looksLikeTitle(
+                    titleForValidation
+                )
+            ) {
+
+                return null;
+
+            }
+
+
             return {
-                type: "generic",
-                level: 1
+
+                type:
+                    "letter",
+
+                level:
+                    3
+
             };
+
         }
+
+
+        // ============================================
+        // 4. ENCABEZADOS SIN NUMERACIÓN
+        // Solo se aceptan si realmente parecen títulos.
+        // ============================================
+
+        const genericHeaderRegex =
+            /^(ACTIVIDADES|CONSIDERACIONES|MOVILIZACION|MOVILIZACIÓN|DESMOVILIZACION|DESMOVILIZACIÓN|EJECUCION|EJECUCIÓN|FINALIZACION|FINALIZACIÓN|MEDIDAS\s+DE\s+CONTROL|PASOS\s+DE\s+LA\s+TAREA|DESARROLLO)\b/i;
+
+
+        if (
+            genericHeaderRegex.test(text)
+            &&
+            looksLikeTitle(text)
+            &&
+            !/:$/.test(text)
+        ) {
+
+            return {
+
+                type:
+                    "generic",
+
+                level:
+                    2
+
+            };
+
+        }
+
 
         return null;
+
     }
 
     // ================================================
@@ -1515,86 +2142,179 @@ export class PDFViewer {
 
     // ================================================
     // 🔍 BUSCAR TEXTO DENTRO DEL PDF
+    // BÚSQUEDA FLEXIBLE MULTIPALABRA
     // ================================================
 
-    searchText(query){
+    searchText(query) {
 
-        // Limpiar resultados anteriores
+        // ============================================
+        // REINICIAR ESTADO
+        // ============================================
+
         this.searchMatches = [];
 
         this.currentMatch = -1;
 
         this.searchQuery = "";
 
-        if(!this.searchReady){
 
-            console.warn("⚠️ El índice de búsqueda aún no está listo.");
+        // ============================================
+        // ÍNDICE NO DISPONIBLE
+        // ============================================
+
+        if (!this.searchReady) {
+
+            console.warn(
+                "⚠️ El índice de búsqueda aún no está listo."
+            );
+
+            this.searchLocations = [];
+
+            this.totalSearchLocations = 0;
+
+            this.activeSearchLocation = -1;
 
             this.clearAllHighlights();
+
+            this.notifySearchChanged();
 
             return [];
 
         }
 
-        if(!query || !query.trim()){
+
+        // ============================================
+        // CONSULTA VACÍA
+        // ============================================
+
+        if (!query || !query.trim()) {
+
+            this.searchLocations = [];
+
+            this.totalSearchLocations = 0;
+
+            this.activeSearchLocation = -1;
 
             this.clearAllHighlights();
+
+            this.notifySearchChanged();
 
             return [];
 
         }
 
-        const search = this.normalizeText(query);
+
+        // ============================================
+        // NORMALIZAR CONSULTA
+        // ============================================
+
+        const search =
+            this.normalizeText(query);
 
         this.searchQuery = search;
 
-        const results = [];
 
-        for(const page of this.searchIndex){
+        // ============================================
+        // LOCALIZAR COINCIDENCIAS REALES
+        // ============================================
 
-            let occurrences = 0;
+        this.findSearchLocations(
+            search
+        );
 
-            let position = page.normalized.indexOf(search)
 
-            while(position !== -1){
+        // ============================================
+        // ORDENAR POR RELEVANCIA
+        // ============================================
 
-                occurrences++;
+        this.sortSearchLocationsByRelevance(
+            search
+        );
 
-                position = page.normalized.indexOf(
-                    search,
-                    position + search.length
-                );
 
-            }
-
-            if(occurrences > 0){
-                const firstMatch = page.normalized.indexOf(search);  // ✅ Declarado fuera
-                results.push({
-                    page: page.page,
-                    occurrences,
-                    preview: page.text.substring(
-                        Math.max(0, firstMatch - 50),
-                        Math.min(page.text.length, firstMatch + search.length + 80)
-                    )
-                });
-            }
-
-        }
-
-        this.searchMatches = results;
-
-        this.findSearchLocations(search);
+        // ============================================
+        // TOTAL
+        // ============================================
 
         this.totalSearchLocations =
             this.searchLocations.length;
+
 
         this.activeSearchLocation =
             this.totalSearchLocations > 0
                 ? 0
                 : -1;
 
+
+        // ============================================
+        // AGRUPAR RESULTADOS POR PÁGINA
+        // ============================================
+
+        const pageResults =
+            new Map();
+
+
+        for (const location of this.searchLocations) {
+
+            if (!pageResults.has(location.page)) {
+
+                pageResults.set(
+                    location.page,
+                    []
+                );
+
+            }
+
+            pageResults
+                .get(location.page)
+                .push(location);
+
+        }
+
+
+        const results = [];
+
+
+        for (
+            const [pageNumber, locations]
+            of pageResults.entries()
+        ) {
+
+            const first =
+                locations[0];
+
+
+            results.push({
+
+                page:
+                    pageNumber,
+
+                occurrences:
+                    locations.length,
+
+                preview:
+                    first?.text || ""
+
+            });
+
+        }
+
+
+        this.searchMatches = results;
+
+
+        // ============================================
+        // RESALTAR
+        // ============================================
+
         this.renderHighlights();
+
         this.notifySearchChanged();
+
+
+        // ============================================
+        // INFORMAR AL SIDEBAR
+        // ============================================
 
         document.dispatchEvent(
 
@@ -1605,7 +2325,6 @@ export class PDFViewer {
                 {
 
                     detail:
-
                         this.getDetailedSearchResults()
 
                 }
@@ -1614,9 +2333,14 @@ export class PDFViewer {
 
         );
 
-        if(
+
+        // ============================================
+        // IR A PRIMER RESULTADO
+        // ============================================
+
+        if (
             this.activeSearchLocation >= 0
-        ){
+        ) {
 
             this.scrollToSearchMatch(
 
@@ -1628,11 +2352,6 @@ export class PDFViewer {
 
         }
 
-        /*console.log(
-            `🔎 "${query}" encontrado en ${results.length} página(s)`
-        );
-
-        console.table(results);*/
 
         return results;
 
@@ -1701,64 +2420,523 @@ export class PDFViewer {
 
         this.procedureBlock = [];
 
+
         if (!this.searchReady) {
-            console.warn("⚠️ Índice de búsqueda no disponible.");
+
+            console.warn(
+                "⚠️ Índice de búsqueda no disponible."
+            );
+
             return [];
+
         }
 
-        const startRegex =
-            /^\s*4(\.\d+)?\.?\s*(PROCEDIMIENTO|PASOS\s+DE\s+LA\s+TAREA|ACTIVIDADES|CONSIDERACIONES)/i;
 
-        const endRegex =
-            /^\s*(5|6|7|8|9|10)(\.\d+)?\./;
+        // =====================================================
+        // NORMALIZACIÓN COMPACTA CON MAPA DE POSICIONES
+        //
+        // Ejemplos:
+        //
+        // 4. PROCEDIMIENTO
+        // 4. PROCEDIMI ENTO
+        // 4 . PRO CEDIMIENTO
+        // 4.
+        // PROCEDIMIENTO
+        //
+        // todos terminan como:
+        //
+        // 4PROCEDIMIENTO
+        //
+        // Al mismo tiempo conservamos la posición de cada
+        // carácter dentro del texto original.
+        // =====================================================
 
-        let started = false;
+        const compactWithMap = rawText => {
 
-        for (const page of this.searchIndex) {
+            const original =
+                String(rawText || "");
 
-            // Ignorar completamente la primera página
-            // (normalmente contiene el índice)
-            if (page.page === 1)
-                continue;
 
-            const lines = page.text
-                .split("\n")
-                .map(x => x.trim())
-                .filter(Boolean);
+            let compact =
+                "";
 
-            for (const line of lines) {
 
-                if (!started) {
+            const map =
+                [];
 
-                    if (!startRegex.test(line))
-                        continue;
 
-                    // Si parece una entrada del índice
-                    // (........11)
-                    if (/\.{3,}\s*\d+$/.test(line))
-                        continue;
+            for (
+                let i = 0;
+                i < original.length;
+                i++
+            ) {
 
-                    started = true;
+                const normalizedCharacter =
+                    original[i]
 
-                }
+                        .normalize("NFD")
 
-                if (started) {
+                        .replace(
+                            /[\u0300-\u036f]/g,
+                            ""
+                        );
 
-                    if (endRegex.test(line))
-                        return this.procedureBlock;
 
-                    this.procedureBlock.push({
+                for (
+                    const character
+                    of normalizedCharacter
+                ) {
 
-                        page: page.page,
-                        text: line
+                    if (
+                        /[A-Za-z0-9]/.test(
+                            character
+                        )
+                    ) {
 
-                    });
+                        compact +=
+                            character.toUpperCase();
+
+
+                        map.push(i);
+
+                    }
 
                 }
 
             }
 
+
+            return {
+
+                original,
+
+                compact,
+
+                map
+
+            };
+
+        };
+
+
+        // =====================================================
+        // CLAVES ESTRUCTURALES
+        // =====================================================
+
+        const START_KEY =
+            "4PROCEDIMIENTO";
+
+
+        const END_KEY =
+            "5RESTRICCIONES";
+
+
+        // 4.1 se sigue comprobando sobre el texto original
+        // porque así evitamos confundir números normales.
+
+        const firstSubsectionRegex =
+            /\b4\s*\.\s*1\s*\.?\s*/i;
+
+
+        // =====================================================
+        // 1. LOCALIZAR EL PROCEDIMIENTO REAL
+        // =====================================================
+
+        let startPageIndex =
+            -1;
+
+
+        let startCharacterIndex =
+            -1;
+
+
+        for (
+            let pageIndex = 0;
+            pageIndex < this.searchIndex.length;
+            pageIndex++
+        ) {
+
+            const page =
+                this.searchIndex[
+                    pageIndex
+                ];
+
+
+            const pageText =
+                String(
+                    page.text || ""
+                );
+
+
+            const compactData =
+                compactWithMap(
+                    pageText
+                );
+
+
+            const {
+                compact,
+                map
+            } = compactData;
+
+
+            // =============================================
+            // ¿EXISTE 4. PROCEDIMIENTO?
+            // =============================================
+
+            const compactStartIndex =
+                compact.indexOf(
+                    START_KEY
+                );
+
+
+            if (
+                compactStartIndex === -1
+            ) {
+
+                continue;
+
+            }
+
+
+            // =============================================
+            // DESCARTAR TABLA DE CONTENIDO
+            //
+            // Normalmente contiene:
+            //
+            // CONTENIDO
+            // 1 OBJETIVO
+            // ...
+            // 4 PROCEDIMIENTO
+            // 5 RESTRICCIONES
+            // =============================================
+
+            const isContentsPage =
+
+                compact.includes(
+                    "CONTENIDO"
+                )
+
+                &&
+
+                compact.includes(
+                    START_KEY
+                )
+
+                &&
+
+                compact.includes(
+                    END_KEY
+                );
+
+
+            if (isContentsPage) {
+
+                continue;
+
+            }
+
+
+            // =============================================
+            // OBTENER POSICIÓN ORIGINAL DEL "4"
+            // =============================================
+
+            const originalStartIndex =
+                map[
+                    compactStartIndex
+                ];
+
+
+            if (
+                originalStartIndex ===
+                undefined
+            ) {
+
+                continue;
+
+            }
+
+
+            // =============================================
+            // CONFIRMAR QUE DESPUÉS EXISTE 4.1
+            // EN LA MISMA PÁGINA
+            // =============================================
+
+            const afterProcedure =
+                pageText.slice(
+                    originalStartIndex
+                );
+
+
+            let hasFirstSubsection =
+                firstSubsectionRegex.test(
+                    afterProcedure
+                );
+
+
+            // =============================================
+            // O EN LA PÁGINA SIGUIENTE
+            // =============================================
+
+            if (
+                !hasFirstSubsection
+                &&
+                this.searchIndex[
+                    pageIndex + 1
+                ]
+            ) {
+
+                const nextPageText =
+                    String(
+                        this.searchIndex[
+                            pageIndex + 1
+                        ].text || ""
+                    );
+
+
+                hasFirstSubsection =
+                    firstSubsectionRegex.test(
+                        nextPageText
+                    );
+
+            }
+
+
+            if (
+                !hasFirstSubsection
+            ) {
+
+                continue;
+
+            }
+
+
+            // =============================================
+            // PROCEDIMIENTO REAL ENCONTRADO
+            // =============================================
+
+            startPageIndex =
+                pageIndex;
+
+
+            startCharacterIndex =
+                originalStartIndex;
+
+
+            break;
+
         }
+
+
+        // =====================================================
+        // NO EXISTE UN PROCEDIMIENTO RECONOCIBLE
+        // =====================================================
+
+        if (
+            startPageIndex === -1
+        ) {
+
+            console.warn(
+                "⚠️ No se encontró el inicio real del bloque 4. PROCEDIMIENTO."
+            );
+
+            return [];
+
+        }
+
+
+        // =====================================================
+        // 2. EXTRAER DESDE 4. PROCEDIMIENTO
+        // HASTA 5. RESTRICCIONES
+        // =====================================================
+
+        for (
+            let pageIndex =
+                startPageIndex;
+
+            pageIndex <
+                this.searchIndex.length;
+
+            pageIndex++
+        ) {
+
+            const page =
+                this.searchIndex[
+                    pageIndex
+                ];
+
+
+            let pageText =
+                String(
+                    page.text || ""
+                );
+
+
+            // =============================================
+            // PRIMERA PÁGINA:
+            // eliminar todo lo anterior al procedimiento
+            // =============================================
+
+            if (
+                pageIndex ===
+                startPageIndex
+            ) {
+
+                pageText =
+                    pageText.slice(
+                        startCharacterIndex
+                    );
+
+            }
+
+
+            // =============================================
+            // LOCALIZAR 5. RESTRICCIONES
+            // USANDO TEXTO COMPACTO
+            // =============================================
+
+            const compactData =
+                compactWithMap(
+                    pageText
+                );
+
+
+            const compactEndIndex =
+                compactData.compact.indexOf(
+                    END_KEY
+                );
+
+
+            let reachedEnd =
+                false;
+
+
+            if (
+                compactEndIndex !== -1
+            ) {
+
+                const originalEndIndex =
+                    compactData.map[
+                        compactEndIndex
+                    ];
+
+
+                if (
+                    originalEndIndex !==
+                    undefined
+                ) {
+
+                    pageText =
+                        pageText.slice(
+                            0,
+                            originalEndIndex
+                        );
+
+
+                    reachedEnd =
+                        true;
+
+                }
+
+            }
+
+
+            // =============================================
+            // RECONSTRUIR LÍNEAS
+            // =============================================
+
+            const lines =
+                pageText
+
+                    .split("\n")
+
+                    .map(line =>
+
+                        String(line || "")
+
+                            .replace(
+                                /\u00A0/g,
+                                " "
+                            )
+
+                            .replace(
+                                /\s+/g,
+                                " "
+                            )
+
+                            .trim()
+
+                    )
+
+                    .filter(Boolean);
+
+
+            // =============================================
+            // GUARDAR CONTENIDO
+            // =============================================
+
+            for (
+                let i = 0;
+                i < lines.length;
+                i++
+            ) {
+
+                let line =
+                    lines[i];
+
+
+                // =========================================
+                // RECONSTRUIR NUMERACIÓN PARTIDA
+                //
+                // 4.2.
+                // PASOS DE LA TAREA
+                //
+                // 4.2.1.
+                // TRASLADO...
+                // =========================================
+
+                if (
+                    /^4(?:\.\d+){0,4}\.?$/.test(
+                        line
+                    )
+                    &&
+                    lines[i + 1]
+                ) {
+
+                    line =
+                        `${line} ${lines[i + 1]}`;
+
+
+                    i++;
+
+                }
+
+
+                this.procedureBlock.push({
+
+                    page:
+                        page.page,
+
+                    text:
+                        line
+
+                });
+
+            }
+
+
+            // =============================================
+            // YA LLEGAMOS A 5. RESTRICCIONES
+            // =============================================
+
+            if (reachedEnd) {
+
+                break;
+
+            }
+
+        }
+
 
         return this.procedureBlock;
 
@@ -1769,191 +2947,262 @@ export class PDFViewer {
     // ================================================
     normalizeProcedureBlock() {
 
-        if (!Array.isArray(this.procedureBlock) || !this.procedureBlock.length) {
+        if (
+            !Array.isArray(
+                this.procedureBlock
+            )
+            ||
+            !this.procedureBlock.length
+        ) {
 
-            console.warn("⚠️ procedureBlock vacío.");
+            console.warn(
+                "⚠️ procedureBlock vacío."
+            );
 
             return [];
 
         }
 
+
         const normalized = [];
 
-        let buffer = "";
+        let pendingPrefix =
+            null;
 
-        let page = 1;
 
-        const flushBuffer = () => {
-
-            if (!buffer.trim()) return;
-
-            normalized.push({
-
+        const pushLine =
+            (
                 page,
+                text
+            ) => {
 
-                text: buffer
+                const clean = String(text || "")
+
+                    .replace(/\u00A0/g, " ")
+
                     .replace(/\s+/g, " ")
+
                     .replace(/\s+\./g, ".")
+
                     .replace(/\s+,/g, ",")
+
                     .replace(/\s+:/g, ":")
-                    .trim()
 
-            });
+                    .trim();
 
-            buffer = "";
 
-        };
+                if (!clean) {
 
-        for (const item of this.procedureBlock) {
-
-            page = item.page;
-
-            let line = item.text
-                .replace(/\u00A0/g, " ")
-                .replace(/\s+/g, " ")
-                .trim();
-
-            if (!line) continue;
-
-            // ===============================
-            // Ignorar encabezados de página
-            // ===============================
-
-            if (/^Página\s+\d+/i.test(line)) continue;
-
-            if (/^PET[-\s]/i.test(line)) continue;
-
-            if (/^Código:/i.test(line)) continue;
-
-            if (/^Versión:/i.test(line)) continue;
-
-            // ===============================
-            // Romanos
-            // ===============================
-
-            if (/^(I|II|III|IV|V|VI|VII|VIII|IX|X)\.?$/i.test(line)) {
-
-                flushBuffer();
-
-                buffer = line;
-
-                continue;
-
-            }
-
-            // ===============================
-            // Numeración decimal
-            // ===============================
-
-            if (/^\d+(\.\d+){1,4}\.?$/i.test(line)) {
-
-                flushBuffer();
-
-                buffer = line;
-
-                continue;
-
-            }
-
-            // ===============================
-            // Letras
-            // ===============================
-
-            if (/^[A-ZÑ]\.$/.test(line)) {
-
-                flushBuffer();
-
-                buffer = line;
-
-                continue;
-
-            }
-
-            // ===============================
-            // Viñetas
-            // ===============================
-
-            if (/^[•●▪■►➤✓✔]/.test(line)) {
-
-                flushBuffer();
-
-                normalized.push({
-
-                    page,
-
-                    text: line
-
-                });
-
-                continue;
-
-            }
-
-            // ===============================
-            // Encabezados completos
-            // ===============================
-
-            if (
-
-                /^(ACTIVIDADES|CONSIDERACIONES|MOVILIZACION|MOVILIZACIÓN|DESMOVILIZACION|DESMOVILIZACIÓN|EJECUCION|EJECUCIÓN|FINALIZACION|FINALIZACIÓN|MEDIDAS|PASOS|PROCEDIMIENTO)/i.test(line)
-
-            ) {
-
-                if (buffer) {
-
-                    buffer += " " + line;
-
-                    flushBuffer();
-
-                } else {
-
-                    normalized.push({
-
-                        page,
-
-                        text: line
-
-                    });
+                    return;
 
                 }
 
-                continue;
-
-            }
-
-            // ===============================
-            // Continuación
-            // ===============================
-
-            if (buffer) {
-
-                buffer += " " + line;
-
-            }
-
-            else {
 
                 normalized.push({
 
                     page,
 
-                    text: line
+                    text:
+                        clean
 
                 });
 
+            };
+
+
+        for (
+            const item
+            of this.procedureBlock
+        ) {
+
+            const page =
+                item.page;
+
+
+            let line =
+                String(
+                    item.text || ""
+                )
+
+                .replace(/\u00A0/g, " ")
+
+                .replace(/\s+/g, " ")
+
+                .trim();
+
+
+            if (!line) {
+
+                continue;
+
             }
+
+
+            // ============================================
+            // LIMPIAR NÚMERO DE PÁGINA PEGADO
+            // AL INICIO DE UN ENCABEZADO DEL BLOQUE 4
+            //
+            // Ejemplo real:
+            // 14 4.3.2 ALMACENAMIENTO...
+            //
+            // debe quedar:
+            // 4.3.2 ALMACENAMIENTO...
+            // ============================================
+
+            line = line.replace(
+                /^\d{1,3}\s+(?=4(?:\.\d+){1,4}\.?\s+)/,
+                ""
+            );
+
+
+            // ======================================
+            // IGNORAR ENCABEZADOS / PIES DE PÁGINA
+            // ======================================
+
+            if (
+                /^Página\s+\d+/i.test(line)
+                ||
+                /^PET[-\s]/i.test(line)
+                ||
+                /^Código:/i.test(line)
+                ||
+                /^Versión:/i.test(line)
+                ||
+                /^CONFIDENCIAL:/i.test(line)
+            ) {
+
+                continue;
+
+            }
+
+
+            // ======================================
+            // NUMERACIÓN SOLA
+            //
+            // 4.
+            // 4.2.
+            // 4.2.1.
+            // ======================================
+
+            if (
+                /^4(?:\.\d+){0,4}\.?$/.test(
+                    line
+                )
+            ) {
+
+                if (pendingPrefix) {
+
+                    pushLine(
+                        pendingPrefix.page,
+                        pendingPrefix.text
+                    );
+
+                }
+
+
+                pendingPrefix = {
+
+                    page,
+
+                    text:
+                        line
+
+                };
+
+
+                continue;
+
+            }
+
+
+            // ======================================
+            // LETRA SOLA
+            //
+            // A.
+            // B.
+            // ======================================
+
+            if (
+                /^[A-ZÑ]\.$/.test(line)
+            ) {
+
+                if (pendingPrefix) {
+
+                    pushLine(
+                        pendingPrefix.page,
+                        pendingPrefix.text
+                    );
+
+                }
+
+
+                pendingPrefix = {
+
+                    page,
+
+                    text:
+                        line
+
+                };
+
+
+                continue;
+
+            }
+
+
+            // ======================================
+            // UNIR PREFIJO CON SU TÍTULO
+            // ======================================
+
+            if (pendingPrefix) {
+
+                pushLine(
+
+                    pendingPrefix.page,
+
+                    `${pendingPrefix.text} ${line}`
+
+                );
+
+
+                pendingPrefix =
+                    null;
+
+
+                continue;
+
+            }
+
+
+            // ======================================
+            // CONSERVAR TODO LO DEMÁS
+            // ======================================
+
+            pushLine(
+                page,
+                line
+            );
 
         }
 
-        flushBuffer();
 
-        this.procedureBlock = normalized;
+        if (pendingPrefix) {
 
-        /*console.group("🧹 PROCEDURE NORMALIZED");
+            pushLine(
 
-        console.table(normalized);
+                pendingPrefix.page,
 
-        console.groupEnd();*/
+                pendingPrefix.text
+
+            );
+
+        }
+
+
+        this.procedureBlock =
+            normalized;
+
 
         return normalized;
 
@@ -3131,52 +4380,572 @@ export class PDFViewer {
 
     // ================================================
     // LOCALIZAR COINCIDENCIAS
-    // (MULTI FRAGMENTO)
+    // BÚSQUEDA FLEXIBLE + COORDENADAS EXACTAS
     // ================================================
 
-    findSearchLocations(query){
+    findSearchLocations(query) {
 
         this.searchLocations = [];
 
-        if(!query){
+
+        // ============================================
+        // CONSULTA VACÍA
+        // ============================================
+
+        if (!query) {
 
             return [];
 
         }
 
+
         const search =
             this.normalizeText(query);
 
+
+        const terms =
+            this.getSearchTerms(search);
+
+
+        if (!terms.length) {
+
+            return [];
+
+        }
+
+
+        /*
+        * Evita que distintas ventanas de búsqueda
+        * generen varias veces la misma coincidencia
+        * física.
+        */
         const duplicates =
             new Set();
 
-        for(const page of this.searchIndex){
+
+        // ============================================
+        // RECORRER PÁGINAS
+        // ============================================
+
+        for (const page of this.searchIndex) {
+
+            const fragments =
+                this.getPageCoordinates(
+                    page.page
+                );
+
+
+            const rawFragments =
+                this.getPageFragments(
+                    page.page
+                );
+
+
+            if (!fragments.length) {
+
+                continue;
+
+            }
+
 
             const windows =
-                this.buildSearchWindows(page.page);
+                this.buildSearchWindows(
+                    page.page
+                );
 
-            windows.forEach(window=>{
 
-                if(
-                    !window.normalized.includes(search)
-                ){
+            for (const window of windows) {
 
-                    return;
+                const normalized =
+                    window.normalized;
+
+
+                // ====================================
+                // FRASE EXACTA
+                // ====================================
+
+                const exactMatch =
+                    normalized.includes(
+                        search
+                    );
+
+
+                // ====================================
+                // TODAS LAS PALABRAS
+                // ====================================
+
+                const allTermsMatch =
+                    terms.every(
+                        term =>
+                            normalized.includes(
+                                term
+                            )
+                    );
+
+
+                if (
+                    !exactMatch &&
+                    !allTermsMatch
+                ) {
+
+                    continue;
 
                 }
 
-                const key =
-                    `${window.page}-${window.startIndex}`;
 
-                if(
-                    duplicates.has(key)
-                ){
+                // ====================================
+                // FRAGMENTOS DE ESTA VENTANA
+                // ====================================
 
-                    return;
+                const windowFragments =
+                    fragments.slice(
+
+                        window.startIndex,
+
+                        window.endIndex + 1
+
+                    );
+
+
+                const matchedItems = [];
+
+                const matchedItemKeys =
+                    new Set();
+
+
+                // ====================================
+                // REGISTRAR UNA PALABRA EXACTA
+                // DENTRO DE UN FRAGMENTO
+                // ====================================
+
+                const addMatchesForTerm =
+                    (
+                        term,
+                        onlyFirst = false
+                    ) => {
+
+                        for (
+                            let relativeIndex = 0;
+                            relativeIndex <
+                            windowFragments.length;
+                            relativeIndex++
+                        ) {
+
+                            const fragment =
+                                windowFragments[
+                                    relativeIndex
+                                ];
+
+
+                            const fragmentText =
+                                this.normalizeText(
+                                    fragment.text || ""
+                                );
+
+
+                            if (!fragmentText) {
+
+                                continue;
+
+                            }
+
+
+                            let position =
+                                fragmentText.indexOf(
+                                    term
+                                );
+
+
+                            while (
+                                position !== -1
+                            ) {
+
+                                const absoluteIndex =
+
+                                    window.startIndex +
+                                    relativeIndex;
+
+
+                                /*
+                                * El fragmento de PDF puede
+                                * contener varias palabras.
+                                *
+                                * Calculamos aproximadamente
+                                * qué parte horizontal del
+                                * fragmento corresponde al
+                                * término encontrado.
+                                */
+
+                                // ============================================
+                                // MEDIR EL ANCHO VISUAL REAL DEL TEXTO
+                                // ============================================
+
+                                const originalText =
+                                    rawFragments[
+                                        absoluteIndex
+                                    ]?.text
+                                    ||
+                                    fragment.text
+                                    ||
+                                    "";
+
+
+                                const normalizedOriginal =
+                                    this.normalizeText(
+                                        originalText
+                                    );
+
+
+                                /*
+                                * Intentamos ubicar el término dentro
+                                * del texto original normalizado.
+                                */
+                                const normalizedPosition =
+                                    normalizedOriginal.indexOf(
+                                        term
+                                    );
+
+
+                                let matchX =
+                                    fragment.x;
+
+
+                                let matchWidth =
+                                    Math.max(
+                                        fragment.width,
+                                        2
+                                    );
+
+
+                                if (
+                                    normalizedPosition !== -1 &&
+                                    originalText.length
+                                ) {
+
+                                    // ========================================
+                                    // CANVAS TEMPORAL PARA MEDIR TEXTO
+                                    // ========================================
+
+                                    if (!this._searchMeasureCanvas) {
+
+                                        this._searchMeasureCanvas =
+                                            document.createElement(
+                                                "canvas"
+                                            );
+
+                                        this._searchMeasureContext =
+                                            this._searchMeasureCanvas
+                                                .getContext("2d");
+
+                                    }
+
+
+                                    const ctx =
+                                        this._searchMeasureContext;
+
+
+                                    if (ctx) {
+
+                                        const fontSize =
+                                            Math.max(
+                                                fragment.fontSize || 12,
+                                                6
+                                            );
+
+
+                                        ctx.font =
+                                            `${fontSize}px Arial`;
+
+
+                                        /*
+                                        * Texto previo a la coincidencia.
+                                        */
+                                        const beforeText =
+                                            normalizedOriginal.substring(
+                                                0,
+                                                normalizedPosition
+                                            );
+
+
+                                        /*
+                                        * Texto exacto de la coincidencia.
+                                        */
+                                        const matchText =
+                                            normalizedOriginal.substring(
+                                                normalizedPosition,
+                                                normalizedPosition +
+                                                term.length
+                                            );
+
+
+                                        const totalMeasured =
+                                            ctx.measureText(
+                                                normalizedOriginal
+                                            ).width;
+
+
+                                        const beforeMeasured =
+                                            ctx.measureText(
+                                                beforeText
+                                            ).width;
+
+
+                                        const matchMeasured =
+                                            ctx.measureText(
+                                                matchText
+                                            ).width;
+
+
+                                        if (totalMeasured > 0) {
+
+                                            const startRatio =
+                                                beforeMeasured /
+                                                totalMeasured;
+
+
+                                            const widthRatio =
+                                                matchMeasured /
+                                                totalMeasured;
+
+
+                                            // ========================================
+                                            // PEQUEÑA COMPENSACIÓN VISUAL
+                                            // ========================================
+
+                                            const horizontalPadding =
+                                                Math.max(
+                                                    (fragment.fontSize || 12) * 0.015,
+                                                    0.35
+                                                );
+
+
+                                            matchX =
+
+                                                fragment.x +
+
+                                                (
+                                                    fragment.width *
+                                                    startRatio
+                                                )
+
+                                                -
+
+                                                horizontalPadding;
+
+
+                                            matchWidth =
+
+                                                Math.max(
+
+                                                    (
+                                                        fragment.width *
+                                                        widthRatio
+                                                    )
+
+                                                    +
+
+                                                    (
+                                                        horizontalPadding * 2
+                                                    ),
+
+                                                    2
+
+                                                );
+
+                                        }
+
+                                    }
+
+                                }
+
+
+                                const key = [
+
+                                    page.page,
+
+                                    absoluteIndex,
+
+                                    term,
+
+                                    position
+
+                                ].join("-");
+
+
+                                if (
+                                    !matchedItemKeys.has(
+                                        key
+                                    )
+                                ) {
+
+                                    matchedItemKeys.add(
+                                        key
+                                    );
+
+
+                                    matchedItems.push({
+
+                                        fragmentIndex:
+                                            absoluteIndex,
+
+                                        term,
+
+                                        text:
+
+                                            rawFragments[
+                                                absoluteIndex
+                                            ]?.text
+
+                                            ||
+
+                                            fragment.text,
+
+                                        x:
+                                            matchX,
+
+                                        y:
+                                            fragment.y,
+
+                                        width:
+                                            matchWidth,
+
+                                        height:
+                                            fragment.height
+
+                                    });
+
+                                }
+
+
+                                if (onlyFirst) {
+
+                                    return true;
+
+                                }
+
+
+                                position =
+                                    fragmentText.indexOf(
+
+                                        term,
+
+                                        position +
+                                        Math.max(
+                                            term.length,
+                                            1
+                                        )
+
+                                    );
+
+                            }
+
+                        }
+
+
+                        return false;
+
+                    };
+
+
+                // ====================================
+                // UNA SOLA PALABRA
+                // ====================================
+
+                if (terms.length === 1) {
+
+                    addMatchesForTerm(
+                        terms[0],
+                        false
+                    );
 
                 }
 
-                duplicates.add(key);
+                // ====================================
+                // VARIAS PALABRAS
+                // ====================================
+
+                else {
+
+                    for (const term of terms) {
+
+                        addMatchesForTerm(
+                            term,
+                            true
+                        );
+
+                    }
+
+                }
+
+
+                /*
+                * Si la ventana coincide pero no
+                * podemos relacionarla con ningún
+                * fragmento físico, no creamos un
+                * highlight falso.
+                */
+
+                if (!matchedItems.length) {
+
+                    continue;
+
+                }
+
+
+                // ====================================
+                // ORDEN FÍSICO
+                // ====================================
+
+                matchedItems.sort(
+                    (a, b) =>
+                        a.fragmentIndex -
+                        b.fragmentIndex
+                );
+
+
+                // ====================================
+                // EVITAR VENTANAS DUPLICADAS
+                // ====================================
+
+                const physicalKey =
+
+                    `${page.page}:` +
+
+                    matchedItems
+                        .map(
+                            item =>
+                                `${item.fragmentIndex}-${item.term}-${Math.round(item.x * 10)}`
+                        )
+                        .join("|");
+
+
+                if (
+                    duplicates.has(
+                        physicalKey
+                    )
+                ) {
+
+                    continue;
+
+                }
+
+
+                duplicates.add(
+                    physicalKey
+                );
+
+
+                // ====================================
+                // ANCLA PARA NAVEGACIÓN
+                // ====================================
+
+                const anchor =
+                    matchedItems[0];
+
+
+                // ====================================
+                // REGISTRAR RESULTADO
+                // ====================================
 
                 this.searchLocations.push({
 
@@ -3187,28 +4956,55 @@ export class PDFViewer {
                         window.page,
 
                     index:
-                        window.startIndex,
+                        anchor.fragmentIndex,
+
+                    endIndex:
+                        window.endIndex,
 
                     text:
                         window.text,
 
+                    /*
+                    * Se mantienen estas propiedades
+                    * porque scrollToSearchMatch(),
+                    * getSearchContext() y ranking
+                    * ya las utilizan.
+                    */
+
                     x:
-                        window.x,
+                        anchor.x,
 
                     y:
-                        window.y,
+                        anchor.y,
 
                     width:
-                        window.width,
+                        anchor.width,
 
                     height:
-                        window.height
+                        anchor.height,
+
+
+                    /*
+                    * NUEVO:
+                    *
+                    * posiciones físicas concretas
+                    * que deben resaltarse.
+                    */
+
+                    matchedItems,
+
+
+                    matchType:
+                        exactMatch
+                            ? "exact"
+                            : "terms"
 
                 });
 
-            });
+            }
 
         }
+
 
         return this.searchLocations;
 
@@ -3345,28 +5141,794 @@ export class PDFViewer {
     }
 
     // ================================================
-    // RESULTADOS DETALLADOS DEL BUSCADOR
+    // 📚 OBTENER SECCIONES PRINCIPALES DEL PET
     // ================================================
 
-    getDetailedSearchResults(){
+    getMainDocumentSections() {
 
-        return this.searchLocations.map(location=>({
+        const sections = [];
 
-            id:location.id,
+        const registered =
+            new Set();
 
-            page:location.page,
 
-            text:location.text,
+        const validTitles =
+            /^(OBJETIVO|RESPONSABLES|REQUERIMIENTOS|PROCEDIMIENTO|RESTRICCIONES|DOCUMENTOS|REGISTROS|ANEXOS|CONTROL)/i;
 
-            preview:
 
-                location.text.length > 120
+        for (const page of this.searchIndex) {
 
-                    ? location.text.substring(0,120) + "..."
+            const lines =
+                page.text
+                    .split("\n")
+                    .map(line => line.trim())
+                    .filter(Boolean);
 
-                    : location.text
 
-        }));
+            for (const line of lines) {
+
+                /*
+                * Ignorar entradas del índice:
+                *
+                * 4. PROCEDIMIENTO ............ 10
+                */
+                if (
+                    /\.{3,}\s*\d+\s*$/.test(line)
+                ) {
+
+                    continue;
+
+                }
+
+
+                const match =
+                    line.match(
+                        /^([1-9])\.\s+(.+)/
+                    );
+
+
+                if (!match) {
+
+                    continue;
+
+                }
+
+
+                const number =
+                    match[1];
+
+
+                const title =
+                    match[2]
+                        .replace(/\s+/g, " ")
+                        .trim();
+
+
+                if (
+                    !validTitles.test(title)
+                ) {
+
+                    continue;
+
+                }
+
+
+                /*
+                * Registrar solamente la primera
+                * aparición real de cada sección.
+                */
+                if (
+                    registered.has(number)
+                ) {
+
+                    continue;
+
+                }
+
+
+                registered.add(number);
+
+
+                sections.push({
+
+                    number,
+
+                    page:
+                        page.page,
+
+                    title:
+                        `${number}. ${title}`,
+
+                    shortTitle:
+                        title
+
+                });
+
+            }
+
+        }
+
+
+        return sections;
+
+    }
+
+    // ================================================
+    // 🔎 OBTENER CONTEXTO DE UNA COINCIDENCIA
+    // ================================================
+
+    getSearchContext(location) {
+
+        if (!location) {
+
+            return {
+
+                sectionTitle: "",
+                sectionShortTitle: "",
+                mainSectionTitle: "",
+                sectionPath: []
+
+            };
+
+        }
+
+
+        // ============================================
+        // 1. SECCIÓN PRINCIPAL
+        // ============================================
+
+        const mainSections =
+            this.getMainDocumentSections();
+
+
+        let mainSection =
+            null;
+
+
+        for (const section of mainSections) {
+
+            if (
+                section.page <=
+                location.page
+            ) {
+
+                mainSection =
+                    section;
+
+            }
+
+            else {
+
+                break;
+
+            }
+
+        }
+
+
+        // ============================================
+        // 2. CONTEXTO INTERNO DEL PROCEDIMIENTO
+        // ============================================
+
+        let outlineNode =
+            null;
+
+
+        /*
+        * El outline corresponde principalmente
+        * al bloque 4. PROCEDIMIENTO.
+        */
+        if (
+            mainSection?.number === "4" &&
+            Array.isArray(this.outline) &&
+            this.outline.length
+        ) {
+
+            const ordered =
+                [...this.outline]
+                    .sort((a, b) => {
+
+                        if (
+                            a.page !== b.page
+                        ) {
+
+                            return (
+                                a.page -
+                                b.page
+                            );
+
+                        }
+
+                        /*
+                        * En coordenadas PDF:
+                        * Y mayor = texto más arriba.
+                        */
+                        return (
+                            b.y -
+                            a.y
+                        );
+
+                    });
+
+
+            for (const node of ordered) {
+
+                const isBeforeMatch =
+
+                    node.page <
+                        location.page
+
+                    ||
+
+                    (
+                        node.page ===
+                            location.page
+
+                        &&
+
+                        node.y >=
+                            location.y - 3
+                    );
+
+
+                if (
+                    isBeforeMatch
+                ) {
+
+                    outlineNode =
+                        node;
+
+                    continue;
+
+                }
+
+
+                /*
+                * Ya pasamos la posición
+                * de la coincidencia.
+                */
+                if (
+                    node.page >
+                        location.page
+                ) {
+
+                    break;
+
+                }
+
+            }
+
+        }
+
+
+        // ============================================
+        // 3. CREAR RUTA DEL ENCABEZADO
+        // ============================================
+
+        const sectionPath = [];
+
+
+        if (outlineNode) {
+
+            let current =
+                outlineNode;
+
+
+            const visited =
+                new Set();
+
+
+            while (
+                current &&
+                !visited.has(current.id)
+            ) {
+
+                visited.add(
+                    current.id
+                );
+
+
+                sectionPath.unshift(
+
+                    current.shortTitle ||
+                    current.title
+
+                );
+
+
+                if (
+                    current.parent === null ||
+                    current.parent === undefined
+                ) {
+
+                    break;
+
+                }
+
+
+                current =
+                    this.outlineIndex.get(
+                        current.parent
+                    );
+
+            }
+
+        }
+
+
+        // ============================================
+        // 4. RESULTADO
+        // ============================================
+
+        if (outlineNode) {
+
+            return {
+
+                sectionTitle:
+                    outlineNode.title,
+
+                sectionShortTitle:
+                    outlineNode.shortTitle ||
+                    outlineNode.title,
+
+                mainSectionTitle:
+                    mainSection?.title || "",
+
+                sectionLevel:
+                    outlineNode.level,
+
+                sectionType:
+                    outlineNode.type,
+
+                sectionPath
+
+            };
+
+        }
+
+
+        if (mainSection) {
+
+            return {
+
+                sectionTitle:
+                    mainSection.title,
+
+                sectionShortTitle:
+                    mainSection.shortTitle,
+
+                mainSectionTitle:
+                    mainSection.title,
+
+                sectionLevel:
+                    1,
+
+                sectionType:
+                    "main",
+
+                sectionPath: [
+                    mainSection.shortTitle
+                ]
+
+            };
+
+        }
+
+
+        return {
+
+            sectionTitle: "",
+            sectionShortTitle: "",
+            mainSectionTitle: "",
+            sectionLevel: null,
+            sectionType: null,
+            sectionPath: []
+
+        };
+
+    }
+
+    // ================================================
+    // ⭐ CALCULAR RELEVANCIA DE UNA COINCIDENCIA
+    // ================================================
+
+    calculateSearchRelevance(
+        location,
+        query
+    ) {
+
+        if (
+            !location ||
+            !query
+        ) {
+
+            return 0;
+
+        }
+
+
+        const search =
+            this.normalizeText(query);
+
+
+        const terms =
+            this.getSearchTerms(search);
+
+
+        const context =
+            this.getSearchContext(
+                location
+            );
+
+
+        const sectionTitle =
+            this.normalizeText(
+
+                context.sectionTitle ||
+                context.sectionShortTitle ||
+                ""
+
+            );
+
+
+        const mainSectionTitle =
+            this.normalizeText(
+
+                context.mainSectionTitle ||
+                ""
+
+            );
+
+
+        const resultText =
+            this.normalizeText(
+                location.text || ""
+            );
+
+
+        let score = 0;
+
+
+        // ============================================
+        // 1. FRASE EXACTA EN TÍTULO ESPECÍFICO
+        // ============================================
+
+        if (
+            sectionTitle &&
+            sectionTitle.includes(search)
+        ) {
+
+            score += 300;
+
+        }
+
+
+        // ============================================
+        // 2. TODAS LAS PALABRAS EN TÍTULO ESPECÍFICO
+        // ============================================
+
+        if (
+            sectionTitle &&
+            terms.length &&
+            terms.every(
+                term =>
+                    sectionTitle.includes(term)
+            )
+        ) {
+
+            score += 220;
+
+        }
+
+
+        // ============================================
+        // 3. FRASE EXACTA EN SECCIÓN PRINCIPAL
+        // ============================================
+
+        if (
+            mainSectionTitle &&
+            mainSectionTitle.includes(search)
+        ) {
+
+            score += 180;
+
+        }
+
+
+        // ============================================
+        // 4. TODAS LAS PALABRAS EN SECCIÓN PRINCIPAL
+        // ============================================
+
+        if (
+            mainSectionTitle &&
+            terms.length &&
+            terms.every(
+                term =>
+                    mainSectionTitle.includes(term)
+            )
+        ) {
+
+            score += 140;
+
+        }
+
+
+        // ============================================
+        // 5. FRASE EXACTA EN EL TEXTO ENCONTRADO
+        // ============================================
+
+        if (
+            resultText.includes(search)
+        ) {
+
+            score += 100;
+
+        }
+
+
+        // ============================================
+        // 6. TODAS LAS PALABRAS EN EL TEXTO
+        // ============================================
+
+        if (
+            terms.length &&
+            terms.every(
+                term =>
+                    resultText.includes(term)
+            )
+        ) {
+
+            score += 70;
+
+        }
+
+
+        // ============================================
+        // 7. TIPO DE COINCIDENCIA
+        // ============================================
+
+        if (
+            location.matchType === "exact"
+        ) {
+
+            score += 30;
+
+        }
+
+        else if (
+            location.matchType === "terms"
+        ) {
+
+            score += 15;
+
+        }
+
+
+        // ============================================
+        // 8. BONUS POR CANTIDAD DE PALABRAS
+        // ============================================
+
+        const matchedTerms =
+            terms.filter(
+                term =>
+                    resultText.includes(term) ||
+                    sectionTitle.includes(term)
+            );
+
+
+        score +=
+            matchedTerms.length * 10;
+
+
+        return score;
+
+    }
+
+    // ================================================
+    // ⭐ ORDENAR RESULTADOS POR RELEVANCIA
+    // ================================================
+
+    sortSearchLocationsByRelevance(
+        query
+    ) {
+
+        if (
+            !Array.isArray(
+                this.searchLocations
+            ) ||
+            !this.searchLocations.length
+        ) {
+
+            return;
+
+        }
+
+
+        this.searchLocations.forEach(
+            location => {
+
+                location.relevance =
+                    this.calculateSearchRelevance(
+                        location,
+                        query
+                    );
+
+            }
+        );
+
+
+        this.searchLocations.sort(
+            (a, b) => {
+
+                // ====================================
+                // 1. MAYOR RELEVANCIA
+                // ====================================
+
+                if (
+                    b.relevance !==
+                    a.relevance
+                ) {
+
+                    return (
+                        b.relevance -
+                        a.relevance
+                    );
+
+                }
+
+
+                // ====================================
+                // 2. COINCIDENCIA EXACTA
+                // ====================================
+
+                if (
+                    a.matchType !==
+                    b.matchType
+                ) {
+
+                    if (
+                        a.matchType ===
+                        "exact"
+                    ) {
+
+                        return -1;
+
+                    }
+
+                    if (
+                        b.matchType ===
+                        "exact"
+                    ) {
+
+                        return 1;
+
+                    }
+
+                }
+
+
+                // ====================================
+                // 3. ORDEN DOCUMENTAL
+                // ====================================
+
+                if (
+                    a.page !== b.page
+                ) {
+
+                    return (
+                        a.page -
+                        b.page
+                    );
+
+                }
+
+
+                return (
+                    a.index -
+                    b.index
+                );
+
+            }
+        );
+
+
+        /*
+        * IMPORTANTE:
+        *
+        * después de ordenar debemos volver
+        * a numerar los IDs porque el sidebar
+        * usa estos IDs para navegar.
+        */
+
+        this.searchLocations.forEach(
+            (location, index) => {
+
+                location.id =
+                    index;
+
+            }
+        );
+
+    }
+
+    // ================================================
+    // RESULTADOS DETALLADOS DEL BUSCADOR
+    // CON CONTEXTO DEL PET
+    // ================================================
+
+    getDetailedSearchResults() {
+
+        return this.searchLocations.map(
+            location => {
+
+                const context =
+                    this.getSearchContext(
+                        location
+                    );
+
+
+                return {
+
+                    id:
+                        location.id,
+
+                    page:
+                        location.page,
+
+                    text:
+                        location.text,
+
+                    preview:
+
+                        location.text.length > 140
+
+                            ? location.text.substring(
+                                0,
+                                140
+                            ) + "..."
+
+                            : location.text,
+
+
+                    // ================================
+                    // TIPO DE COINCIDENCIA
+                    // ================================
+
+                    matchType:
+                        location.matchType ||
+                        "exact",
+
+                    relevance:
+                        location.relevance || 0,
+
+
+                    // ================================
+                    // CONTEXTO DEL PET
+                    // ================================
+
+                    sectionTitle:
+                        context.sectionTitle,
+
+                    sectionShortTitle:
+                        context.sectionShortTitle,
+
+                    mainSectionTitle:
+                        context.mainSectionTitle,
+
+                    sectionLevel:
+                        context.sectionLevel,
+
+                    sectionType:
+                        context.sectionType,
+
+                    sectionPath:
+                        context.sectionPath
+
+                };
+
+            }
+
+        );
 
     }
 
@@ -3599,105 +6161,277 @@ export class PDFViewer {
     }
 
     // ================================================
-    // DIBUJAR RESALTADOS DE UNA PÁGINA
+    // DIBUJAR RESALTADOS EXACTOS DE UNA PÁGINA
     // ================================================
 
-    renderPageHighlights(pageNumber){
+    renderPageHighlights(pageNumber) {
 
-        this.clearHighlightLayer(pageNumber);
+        this.clearHighlightLayer(
+            pageNumber
+        );
+
 
         const layer =
+            this.highlightLayers.get(
+                pageNumber
+            );
 
-            this.highlightLayers.get(pageNumber);
 
-        if(!layer){
+        if (!layer) {
 
             return;
 
         }
+
 
         const pageData =
+            this.pages[
+                pageNumber - 1
+            ];
 
-            this.pages[pageNumber-1];
 
-        if(!pageData){
+        if (!pageData) {
 
             return;
 
         }
+
+
+        // ============================================
+        // GARANTIZAR QUE LA CAPA QUEDE
+        // ENCIMA DEL CANVAS
+        // ============================================
+
+        layer.style.position =
+            "absolute";
+
+        layer.style.inset =
+            "0";
+
+        layer.style.width =
+            "100%";
+
+        layer.style.height =
+            "100%";
+
+        layer.style.zIndex =
+            "40";
+
+        layer.style.pointerEvents =
+            "none";
+
+        layer.style.overflow =
+            "hidden";
+
 
         const viewport =
 
             pageData.page.getViewport({
 
-                scale:this.scale
+                scale:
+                    this.scale
 
             });
 
-        this.searchLocations
 
-            .filter(item=>item.page===pageNumber)
+        // ============================================
+        // RESULTADO ACTUAL
+        // ============================================
 
-            .forEach(location=>{
+        const activeLocation =
 
-                const marker =
+            this.activeSearchLocation >= 0
 
-                    document.createElement("div");
-
-                marker.className =
-                    "pdf-search-highlight";
-
-                if(
-                    location.id ===
+                ? this.searchLocations[
                     this.activeSearchLocation
-                ){
+                ]
 
-                    marker.classList.add(
-                        "active"
-                    );
+                : null;
 
-                }
 
-                marker.dataset.page =
-                    pageNumber;
+        // ============================================
+        // COINCIDENCIAS DE ESTA PÁGINA
+        // ============================================
 
-                marker.dataset.index =
-                    location.index;
+        const pageLocations =
 
-                const [left, top] =
-                    viewport.convertToViewportPoint(
-                        location.x,
-                        location.y
-                    );
+            this.searchLocations.filter(
 
-                const scaledWidth =
-                    location.width * viewport.scale;
+                item =>
+                    item.page === pageNumber
 
-                const scaledHeight =
-                    Math.max(
+            );
 
-                        location.height *
-                        viewport.scale,
 
-                        18
+        pageLocations.forEach(
+            location => {
 
-                    );
 
-                marker.style.left =
-                    `${left}px`;
+                /*
+                * Con el nuevo motor usamos las
+                * coordenadas individuales.
+                *
+                * El fallback permite que búsquedas
+                * antiguas sigan funcionando.
+                */
 
-                marker.style.top =
-                    `${top - scaledHeight}px`;
+                const items =
 
-                marker.style.width =
-                    `${scaledWidth}px`;
+                    Array.isArray(
+                        location.matchedItems
+                    )
 
-                marker.style.height =
-                    `${scaledHeight}px`;
+                    &&
 
-                layer.appendChild(marker);
+                    location.matchedItems.length
 
-            });
+                        ? location.matchedItems
+
+                        : [{
+
+                            x:
+                                location.x,
+
+                            y:
+                                location.y,
+
+                            width:
+                                location.width,
+
+                            height:
+                                location.height,
+
+                            fragmentIndex:
+                                location.index
+
+                        }];
+
+
+                items.forEach(
+                    (item, itemIndex) => {
+
+
+                        if (
+                            item.x === undefined ||
+                            item.y === undefined
+                        ) {
+
+                            return;
+
+                        }
+
+
+                        const marker =
+
+                            document.createElement(
+                                "div"
+                            );
+
+
+                        marker.className =
+                            "pdf-search-highlight";
+
+
+                        // ====================================
+                        // RESULTADO ACTIVO
+                        // ====================================
+
+                        if (
+                            activeLocation &&
+                            activeLocation.id ===
+                                location.id
+                        ) {
+
+                            marker.classList.add(
+                                "active"
+                            );
+
+                        }
+
+
+                        marker.dataset.page =
+                            pageNumber;
+
+
+                        marker.dataset.index =
+                            location.index;
+
+
+                        marker.dataset.match =
+                            itemIndex;
+
+
+                        // ====================================
+                        // PDF → COORDENADAS DEL VIEWPORT
+                        // ====================================
+
+                        const [left, top] =
+
+                            viewport
+                                .convertToViewportPoint(
+
+                                    item.x,
+
+                                    item.y
+
+                                );
+
+
+                        const scaledWidth =
+
+                            Math.max(
+
+                                item.width *
+                                viewport.scale,
+
+                                3
+
+                            );
+
+
+                        const scaledHeight =
+
+                            Math.max(
+
+                                item.height *
+                                viewport.scale,
+
+                                8
+
+                            );
+
+
+                        // ====================================
+                        // DIBUJAR RECTÁNGULO
+                        // ====================================
+
+                        marker.style.left =
+                            `${left}px`;
+
+
+                        marker.style.top =
+                            `${top - scaledHeight}px`;
+
+
+                        marker.style.width =
+                            `${scaledWidth}px`;
+
+
+                        marker.style.height =
+                            `${scaledHeight}px`;
+
+
+                        layer.appendChild(
+                            marker
+                        );
+
+                    }
+
+                );
+
+            }
+
+        );
 
     }
 
@@ -4677,6 +7411,8 @@ export class PDFViewer {
         this.procedureBlock = null;
         this.procedureType = null;
         this.pdfDoc = null;
+        this.documentType =
+            "pets";
         this.taskSteps = [];
         this.taskMap.clear();
         this.taskTree = [];
@@ -4735,6 +7471,8 @@ export class PDFViewer {
         this.procedureBlock = null;
         this.procedureType = null;
         this.pdfDoc = null;
+        this.documentType =
+            "pets";
         this.taskSteps = [];
         this.taskMap.clear();
         this.taskTree = [];

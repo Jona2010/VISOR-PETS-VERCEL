@@ -10,6 +10,9 @@ from "./zoom.js";
 import { Sidebar }
 from "./sidebar.js";
 
+import { DocumentosManager }
+from "./documentos.js";
+
 // ================================================================
 // 🛑 PATCH: SILENCIAR ERRORES DE WORKER (AGREGAR AQUÍ)
 // ================================================================
@@ -124,7 +127,7 @@ class AreaLoader {
         this.total.textContent = `${this.pets.length} procedimientos`;
         this.fill.style.width = '0%';
         this.percentage.textContent = '0%';
-        this.counter.textContent = `PET 000 de ${String(this.pets.length).padStart(3, '0')}`;
+        this.counter.textContent = `PETS 000 de ${String(this.pets.length).padStart(3, '0')}`;
         this.petCode.textContent = 'Cargando...';
         this.petTitle.textContent = 'Preparando procedimientos...';
         this.loadedCount.textContent = `0 / ${this.pets.length}`;
@@ -274,12 +277,16 @@ class PDFDownloadLoader {
             pet.area || '--';
 
         this.petCode.textContent =
-            pet.code || 'PET --- · VER. --';
+            pet.code || 'PETS --- · VER. --';
 
         this.petTitle.textContent =
             pet.title || 'Cargando procedimiento...';
 
         this.fill.style.width = '0%';
+
+        // IMPORTANTE:
+        // eliminar cualquier color inline dejado por error()
+        this.fill.style.background = '';
 
         this.percentage.textContent = '0%';
 
@@ -407,13 +414,14 @@ class PDFDownloadLoader {
     }
     
     complete() {
-        this.fill.style.width = '100%';
-        this.percentage.textContent = '100%';
-        this.speed.textContent = '✅ Completado';
-        
-        setTimeout(() => {
-            this.hide();
-        }, 500);
+
+        this.fill.style.width = "100%";
+
+        this.percentage.textContent = "100%";
+
+        this.speed.textContent =
+            "Preparando documento...";
+
     }
     
     hide() {
@@ -656,17 +664,26 @@ async function initializeAppWithLoader() {
     showInitialSplash();
     
     try {
-        // Cargar solo la configuración (sin PETS)
+        // Cargar la configuración actual de PETS.
         config = await loadConfig();
-        
+
+        // Compartir el catálogo ya descargado con
+        // el administrador de bibliotecas.
+        documentosManager.validarCatalogo("pets", config);
+
+        documentosManager.catalogos.set("pets", config);
+
+        // Mantener PETS como biblioteca inicial.
+        await documentosManager.cambiarBiblioteca("pets");
+
+        // Crear el cliente de Supabase.
         createSupabaseClient(config.supabaseUrl, config.supabaseKey);
-        
-        // Ocultar splash después de 800ms
-        await new Promise(resolve => setTimeout(resolve, 800));
+                
+        // Inicializar los componentes de la aplicación.
+        await initializeApp();
+
+        // Ocultar el splash cuando la aplicación esté preparada.
         hideInitialSplash();
-        
-        // Inicializar la app directamente (sin cargar todos los PETS)
-        initializeApp();
         
         console.log('✅ App iniciada (carga bajo demanda)');
         
@@ -686,6 +703,12 @@ let viewer    = null;
 let zoom      = null;
 let sidebar   = null;
 let config    = null;
+
+// Administrador de bibliotecas.
+const documentosManager = new DocumentosManager();
+
+// Bucket correspondiente al PDF abierto.
+let currentBucket = "pets";
 
 let currentPath = null;
 let loading     = false;
@@ -713,9 +736,18 @@ async function initializeApp() {
 
         pdfjsLib.GlobalWorkerOptions.workerSrc = "./pdf.worker.min.js";
 
-        config = await loadConfig();
+        // Reutilizar la configuración cargada durante el inicio.
+        if (!config) {
+            config = await loadConfig();
+        }
 
-        createSupabaseClient(config.supabaseUrl, config.supabaseKey);
+        // Crear el cliente únicamente si todavía no existe.
+        if (!supabase) {
+            createSupabaseClient(
+                config.supabaseUrl,
+                config.supabaseKey
+            );
+        }
 
         const viewerContainer = document.getElementById("viewerContainer");
         const pdfViewerEl     = document.getElementById("pdfViewer");
@@ -736,9 +768,17 @@ async function initializeApp() {
         zoom = new ZoomManager({ viewer });
 
         sidebar = new Sidebar({
+
             config,
+
+            documentosManager,
+
             onOpenPDF: openPDF,
-            onTaskSelected: handleTaskSelection
+
+            onTaskSelected: handleTaskSelection,
+
+            onBibliotecaChange: handleBibliotecaChange
+
         });
 
         initializeKeyboard();
@@ -764,6 +804,9 @@ async function initializeApp() {
 
 let explorerOpen = false;
 
+// Documento para el cual ya se generaron las tarjetas.
+let explorerRenderedDocument = null;
+
 const explorer = {
 
     panel:null,
@@ -773,6 +816,14 @@ const explorer = {
     button:null,
 
     close:null,
+
+    searchButton:null,
+
+    searchDrawer:null,
+
+    searchOverlay:null,
+
+    searchClose:null,
 
     tabs:[],
 
@@ -841,6 +892,29 @@ function initializeExplorer(){
     explorer.button =
         document.getElementById(
             "explorerBtn"
+        );
+
+    explorer.searchButton =
+        document.getElementById(
+            "searchPdfBtn"
+        );
+
+
+    explorer.searchDrawer =
+        document.getElementById(
+            "searchPanel"
+        );
+
+
+    explorer.searchOverlay =
+        document.getElementById(
+            "searchOverlay"
+        );
+
+
+    explorer.searchClose =
+        document.getElementById(
+            "closeSearchPanel"
         );
 
     explorer.close =
@@ -950,6 +1024,26 @@ function initializeExplorer(){
 
     );
 
+    explorer.searchButton
+        ?.addEventListener(
+            "click",
+            toggleSearchPanel
+        );
+
+
+    explorer.searchClose
+        ?.addEventListener(
+            "click",
+            closeSearchPanel
+        );
+
+
+    explorer.searchOverlay
+        ?.addEventListener(
+            "click",
+            closeSearchPanel
+        );
+
     explorer.close?.addEventListener(
 
         "click",
@@ -1045,11 +1139,21 @@ function initializeExplorerEvents(){
 
         ()=>{
 
-            navigateSearchResults(-1);
+            if (
+                !viewer ||
+                !viewer.getSearchCount?.()
+            ) {
+
+                return;
+
+            }
+
+            viewer.previousSearchMatch?.();
 
         }
 
     );
+
 
     explorer.searchNext?.addEventListener(
 
@@ -1057,7 +1161,16 @@ function initializeExplorerEvents(){
 
         ()=>{
 
-            navigateSearchResults(1);
+            if (
+                !viewer ||
+                !viewer.getSearchCount?.()
+            ) {
+
+                return;
+
+            }
+
+            viewer.nextSearchMatch?.();
 
         }
 
@@ -1075,15 +1188,16 @@ function initializeExplorerEvents(){
 
                     event.preventDefault();
 
-                    navigateSearchResults(+1);
+                    viewer?.nextSearchMatch?.();
 
                     break;
+
 
                 case "ArrowUp":
 
                     event.preventDefault();
 
-                    navigateSearchResults(-1);
+                    viewer?.previousSearchMatch?.();
 
                     break;
 
@@ -1184,36 +1298,106 @@ function initializeExplorerEvents(){
 // CAMBIAR TAB
 // ================================
 
-function changeExplorerTab(view){
+function changeExplorerTab(view) {
+
+    if (
+        view !== "steps" &&
+        view !== "search"
+    ) {
+        return;
+    }
+
 
     explorer.activeTab = view;
 
-    explorer.tabs.forEach(tab=>{
+
+    // ============================================
+    // BOTÓN ACTIVO
+    // ============================================
+
+    explorer.tabs.forEach(tab => {
+
+        const active =
+            tab.dataset.view === view;
 
         tab.classList.toggle(
-
             "active",
+            active
+        );
 
-            tab.dataset.view===view
-
+        tab.setAttribute(
+            "aria-selected",
+            active ? "true" : "false"
         );
 
     });
 
-    Object.entries(explorer.views)
 
-        .forEach(([key,el])=>{
+    // ============================================
+    // CAMBIAR VISTA
+    // ============================================
 
-            if(!el) return;
+    if (explorer.stepsView) {
 
-            el.hidden =
-                key!==view;
+        explorer.stepsView.hidden =
+            view !== "steps";
+
+    }
+
+
+    if (explorer.searchView) {
+
+        explorer.searchView.hidden =
+            view !== "search";
+
+    }
+
+
+    // ============================================
+    // CONTADORES
+    // ============================================
+
+    const stepsCount =
+        document.getElementById(
+            "stepsCount"
+        );
+
+    const searchCount =
+        document.getElementById(
+            "searchCount"
+        );
+
+
+    if (stepsCount) {
+
+        stepsCount.hidden =
+            view !== "steps";
+
+    }
+
+
+    if (searchCount) {
+
+        searchCount.hidden =
+            view !== "search";
+
+    }
+
+
+    // ============================================
+    // FOCO EN BUSCADOR
+    // ============================================
+
+    if (
+        view === "search" &&
+        window.innerWidth > 900
+    ) {
+
+        requestAnimationFrame(() => {
+
+            explorer.searchInput?.focus();
 
         });
-
-    if(view==="search"){
-
-        explorer.searchInput?.focus();
 
     }
 
@@ -1247,7 +1431,7 @@ function handleExplorerSearch(){
 // LIMPIAR BUSCADOR
 // ================================
 
-function clearExplorerSearch(){
+function clearExplorerSearch(enfocar = true){
 
     explorer.searchInput.value = "";
 
@@ -1303,7 +1487,11 @@ function clearExplorerSearch(){
 
     }
 
-    explorer.searchInput?.focus();
+    if (enfocar) {
+
+        explorer.searchInput?.focus();
+
+    }
 
     explorer.searchResults
 
@@ -1474,14 +1662,22 @@ function renderSearchResults(query){
             "pdf-search-info-success";
 
         explorer.searchInfo.textContent =
-            `${matches.length} coincidencias encontradas`;
+            `${matches.length} ${
+                matches.length === 1
+                    ? "coincidencia"
+                    : "coincidencias"
+            }`;
 
     }
+
 
     if(explorer.searchCounter){
 
         explorer.searchCounter.textContent =
-            `${matches.length} resultados`;
+            "";
+
+        explorer.searchCounter.hidden =
+            true;
 
     }
 
@@ -1531,28 +1727,287 @@ function renderSearchResults(query){
 }
 
 // ================================
-// CREAR TARJETA
+// CLASIFICAR TIPO DE RESULTADO
 // ================================
 
-function createSearchCard(match,query,index){
+function getSearchResultType(
+    match,
+    query
+){
+
+    const normalize =
+        value =>
+            String(value || "")
+                .normalize("NFD")
+                .replace(
+                    /[\u0300-\u036f]/g,
+                    ""
+                )
+                .toLowerCase()
+                .trim();
+
+
+    const search =
+        normalize(query);
+
+
+    const terms =
+        search
+            .split(/\s+/)
+            .filter(Boolean);
+
+
+    const section =
+        normalize(
+            match.sectionShortTitle ||
+            match.sectionTitle ||
+            ""
+        );
+
+
+    const mainSection =
+        normalize(
+            match.mainSectionTitle ||
+            ""
+        );
+
+
+    const text =
+        normalize(
+            match.text ||
+            match.preview ||
+            ""
+        );
+
+
+    // ============================================
+    // EN TÍTULO
+    // ============================================
+
+    if (
+        section &&
+        (
+            section.includes(search) ||
+            terms.every(
+                term =>
+                    section.includes(term)
+            )
+        )
+    ) {
+
+        return {
+
+            type:
+                "title",
+
+            label:
+                "En título"
+
+        };
+
+    }
+
+
+    // ============================================
+    // EN SECCIÓN
+    // ============================================
+
+    if (
+        mainSection &&
+        (
+            mainSection.includes(search) ||
+            terms.every(
+                term =>
+                    mainSection.includes(term)
+            )
+        )
+    ) {
+
+        return {
+
+            type:
+                "section",
+
+            label:
+                "En sección"
+
+        };
+
+    }
+
+
+    // ============================================
+    // EN CONTENIDO
+    // ============================================
+
+    if (
+        text.includes(search) ||
+        terms.some(
+            term =>
+                text.includes(term)
+        )
+    ) {
+
+        return {
+
+            type:
+                "content",
+
+            label:
+                "En contenido"
+
+        };
+
+    }
+
+
+    return {
+
+        type:
+            "content",
+
+        label:
+            "En contenido"
+
+    };
+
+}
+
+// ================================
+// CREAR TARJETA DE RESULTADO
+// ================================
+
+function createSearchCard(
+    match,
+    query,
+    index
+){
 
     const card =
-        document.createElement("button");
+        document.createElement(
+            "button"
+        );
 
-    card.type = "button";
+
+    card.type =
+        "button";
+
 
     card.className =
         "pdf-search-card";
 
-    card.dataset.index = index;
+
+    card.dataset.index =
+        index;
+
+
+    // ============================================
+    // CONTEXTO
+    // ============================================
+
+    const sectionTitle =
+
+        match.sectionShortTitle
+
+        ||
+
+        match.sectionTitle
+
+        ||
+
+        match.mainSectionTitle
+
+        ||
+
+        "Contenido del PET";
+
+
+    // ============================================
+    // TIPO DE COINCIDENCIA
+    // ============================================
+
+    const resultType =
+        getSearchResultType(
+            match,
+            query
+        );
+
+
+    card.dataset.resultType =
+        resultType.type;
+
+
+    // ============================================
+    // RUTA DE SECCIÓN
+    // ============================================
+
+    const path =
+        Array.isArray(
+            match.sectionPath
+        )
+            ? match.sectionPath
+                .filter(Boolean)
+                .slice(-2)
+            : [];
+
+
+    const pathHtml =
+        path.length > 1
+
+            ? `
+                <div class="pdf-search-path">
+                    ${path
+                        .map(
+                            item =>
+                                `<span>${escapeHtml(item)}</span>`
+                        )
+                        .join(
+                            `<span class="pdf-search-path-arrow">›</span>`
+                        )
+                    }
+                </div>
+            `
+
+            : "";
+
 
     card.innerHTML = `
 
-        <div class="pdf-search-page">
+        <div class="pdf-search-card-top">
 
-            Página ${match.page}
+            <div class="pdf-search-context">
+
+                ${escapeHtml(
+                    sectionTitle
+                )}
+
+            </div>
+
+
+            <span
+                class="pdf-search-badge pdf-search-badge-${resultType.type}"
+            >
+
+                ${resultType.label}
+
+            </span>
 
         </div>
+
+
+        ${pathHtml}
+
+
+        <div class="pdf-search-meta">
+
+            <span class="pdf-search-page">
+
+                Página ${match.page}
+
+            </span>
+
+        </div>
+
 
         <div class="pdf-search-snippet">
 
@@ -1568,17 +2023,21 @@ function createSearchCard(match,query,index){
 
     `;
 
+
     card.addEventListener(
 
         "click",
 
         ()=>{
 
-            openSearchResult(index);
+            openSearchResult(
+                index
+            );
 
         }
 
     );
+
 
     return card;
 
@@ -1795,41 +2254,286 @@ function setCurrentSearchResult(index){
 }
 
 // ================================
-// RESALTAR TEXTO
+// RESALTAR TÉRMINOS DE BÚSQUEDA
 // ================================
 
-function highlightSearchText(text,query){
+function highlightSearchText(
+    text,
+    query
+){
 
-    if(!text){
+    if(
+        !text ||
+        !query
+    ){
 
-        return "";
+        return text || "";
 
     }
 
-    const escaped =
-        query.replace(
 
-            /[.*+?^${}()|[\]\\]/g,
+    const stopWords =
+        new Set([
 
-            "\\$&"
+            "de",
+            "del",
+            "la",
+            "las",
+            "el",
+            "los",
+            "y",
+            "o",
+            "en",
+            "para",
+            "por",
+            "con",
+            "un",
+            "una",
+            "al"
 
+        ]);
+
+
+    const terms =
+
+        query
+
+            .trim()
+
+            .split(/\s+/)
+
+            .filter(Boolean)
+
+            .filter(term => {
+
+                if(
+                    query.trim()
+                        .split(/\s+/)
+                        .length === 1
+                ){
+
+                    return true;
+
+                }
+
+                return !stopWords.has(
+                    term.toLowerCase()
+                );
+
+            })
+
+            .sort(
+                (a,b) =>
+                    b.length -
+                    a.length
+            );
+
+
+    let result =
+        text;
+
+
+    terms.forEach(term=>{
+
+        const escaped =
+            term.replace(
+
+                /[.*+?^${}()|[\]\\]/g,
+
+                "\\$&"
+
+            );
+
+
+        result =
+            result.replace(
+
+                new RegExp(
+                    escaped,
+                    "ig"
+                ),
+
+                value =>
+                    `<span class="pdf-search-highlight">${value}</span>`
+
+            );
+
+    });
+
+
+    return result;
+
+}
+
+let searchPanelOpen = false;
+
+
+// ================================
+// 🔍 TOGGLE BUSCADOR
+// ================================
+
+function toggleSearchPanel() {
+
+    searchPanelOpen
+        ? closeSearchPanel()
+        : openSearchPanel();
+
+}
+
+
+// ================================
+// 🔍 ABRIR BUSCADOR
+// ================================
+
+function openSearchPanel() {
+
+    if (
+        !viewer?.pdfDoc ||
+        currentBucket !== "pets"
+    ) {
+
+        return;
+
+    }
+
+
+    // No permitir los dos paneles abiertos.
+    if (explorerOpen) {
+
+        closeExplorer();
+
+    }
+
+
+    searchPanelOpen = true;
+
+    explorer.searchButton?.classList.add(
+        "active"
+    );
+
+    explorer.searchButton?.setAttribute(
+        "aria-pressed",
+        "true"
+    );
+
+    explorer.searchDrawer.hidden =
+        false;
+
+
+    explorer.searchOverlay.hidden =
+        false;
+
+
+    explorer.searchDrawer.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+
+    explorer.searchOverlay.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+
+    requestAnimationFrame(() => {
+
+        explorer.searchDrawer
+            .classList.add(
+                "visible"
+            );
+
+
+        explorer.searchOverlay
+            .classList.add(
+                "visible"
+            );
+
+    });
+
+
+    if (
+        window.innerWidth > 900
+    ) {
+
+        setTimeout(() => {
+
+            explorer.searchInput?.focus();
+
+        }, 100);
+
+    }
+
+}
+
+
+function closeSearchPanel() {
+
+    if (!explorer.searchDrawer) {
+        return;
+    }
+
+    searchPanelOpen = false;
+
+    explorer.searchButton?.classList.remove(
+        "active"
+    );
+
+    explorer.searchButton?.setAttribute(
+        "aria-pressed",
+        "false"
+    );
+
+
+    // ============================================
+    // SACAR EL FOCO DEL PANEL ANTES DE OCULTARLO
+    // ============================================
+
+    if (
+        document.activeElement &&
+        explorer.searchDrawer.contains(
+            document.activeElement
+        )
+    ) {
+
+        explorer.searchButton?.focus();
+
+    }
+
+
+    explorer.searchDrawer
+        .classList.remove(
+            "visible"
         );
 
-    return text.replace(
 
-        new RegExp(
+    explorer.searchOverlay
+        ?.classList.remove(
+            "visible"
+        );
 
-            escaped,
 
-            "ig"
+    setTimeout(() => {
 
-        ),
+        explorer.searchDrawer.hidden =
+            true;
 
-        value =>
+        explorer.searchOverlay.hidden =
+            true;
 
-            `<span class="pdf-search-highlight">${value}</span>`
 
-    );
+        explorer.searchDrawer.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+
+        explorer.searchOverlay.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+    }, 300);
 
 }
 
@@ -1847,7 +2551,22 @@ function openExplorer(){
 
     if(!explorer.panel) return;
 
+    if (searchPanelOpen) {
+
+        closeSearchPanel();
+
+    }
+
     explorerOpen = true;
+
+    explorer.button?.classList.add(
+        "active"
+    );
+
+    explorer.button?.setAttribute(
+        "aria-pressed",
+        "true"
+    );
 
     if(viewer?.pdfDoc){
 
@@ -1876,19 +2595,59 @@ function openExplorer(){
 
 function closeExplorer(){
 
-    if(!explorer.panel) return;
+    if(!explorer.panel) {
+        return;
+    }
+
 
     explorerOpen = false;
 
-    explorer.panel.classList.remove("visible");
+    explorer.button?.classList.remove(
+        "active"
+    );
 
-    explorer.overlay?.classList.remove("visible");
+    explorer.button?.setAttribute(
+        "aria-pressed",
+        "false"
+    );
+
+
+    // ============================================
+    // SACAR EL FOCO DEL PANEL ANTES DE OCULTARLO
+    // ============================================
+
+    if (
+        document.activeElement &&
+        explorer.panel.contains(
+            document.activeElement
+        )
+    ) {
+
+        explorer.button?.focus();
+
+    }
+
+
+    explorer.panel
+        .classList.remove(
+            "visible"
+        );
+
+
+    explorer.overlay
+        ?.classList.remove(
+            "visible"
+        );
+
 
     setTimeout(()=>{
 
-        explorer.panel.hidden = true;
+        explorer.panel.hidden =
+            true;
 
-        explorer.overlay.hidden = true;
+        explorer.overlay.hidden =
+            true;
+
 
         explorer.panel.setAttribute(
             "aria-hidden",
@@ -1903,13 +2662,28 @@ function closeExplorer(){
 // 📋 RENDER EXPLORER
 // ================================
 
-function renderExplorer(){
+function renderExplorer() {
 
-    if(!viewer) return;
+    if (!viewer?.pdfDoc) {
+        return;
+    }
 
+    // Actualizar únicamente la información del encabezado.
     updateExplorerInfo();
 
+    // Si las tarjetas ya corresponden al documento actual,
+    // no es necesario volver a construirlas.
+    if (
+        explorerRenderedDocument === viewer.pdfDoc
+    ) {
+        return;
+    }
+
+    // Generar las tarjetas del nuevo documento.
     renderTaskSteps();
+
+    // Registrar que este documento ya fue procesado.
+    explorerRenderedDocument = viewer.pdfDoc;
 
 }
 
@@ -1970,7 +2744,7 @@ function renderTaskSteps(){
 
                 <p>
 
-                    Este PET no contiene una sección
+                    Este PETS no contiene una sección
                     de pasos de la tarea reconocible.
 
                 </p>
@@ -2214,13 +2988,20 @@ function updateExplorerInfo(){
 // 🧹 CLEAR EXPLORER
 // ================================
 
-function clearExplorer(){
+function clearExplorer() {
 
+    // Invalidar las tarjetas del PDF anterior.
+    explorerRenderedDocument = null;
+
+    // Limpiar los pasos del PET anterior.
     explorer.stepsView?.replaceChildren();
 
-    explorer.searchView?.replaceChildren();
+    // No eliminar los controles internos de searchView.
+    // El buscador PDF debe conservar su estructura HTML.
 
-    const counter = document.getElementById("stepsCount");
+    // Restablecer el contador.
+    const counter =
+        document.getElementById("stepsCount");
 
     if (counter) {
 
@@ -2228,13 +3009,14 @@ function clearExplorer(){
 
     }
 
-    if(explorer.title){
+    // Restablecer la información.
+    if (explorer.title) {
 
         explorer.title.textContent = "Sin documento";
 
     }
 
-    if(explorer.subtitle){
+    if (explorer.subtitle) {
 
         explorer.subtitle.textContent = "";
 
@@ -2272,11 +3054,231 @@ function initializeMobileSidebar() {
     overlay?.addEventListener("click",    closeSidebar);
 
     sidebarEl.addEventListener("click", e => {
+
         if (!isMobile) return;
-        if (e.target.classList.contains("area-btn")) {
+
+        const botonPDF = e.target.closest(
+            ".area-btn, .document-card-open"
+        );
+
+        if (botonPDF) {
+
             setTimeout(closeSidebar, 180);
+
         }
+
     });
+}
+
+/* =====================================================
+   CAMBIO DE BIBLIOTECA
+   PETS / FDS / MANUALES
+===================================================== */
+
+function handleBibliotecaChange(tipo) {
+
+    /* =====================================================
+       01. CERRAR EL EXPLORADOR
+    ===================================================== */
+
+    closeExplorer();
+
+    closeSearchPanel();
+
+    clearExplorer();
+
+
+    /* =====================================================
+       02. LIMPIAR LA BÚSQUEDA DEL PDF ANTERIOR
+    ===================================================== */
+
+    clearTimeout(explorer.searchTimer);
+
+    // Eliminar los resultados anteriores.
+    explorer.searchMatches = [];
+
+    explorer.currentMatch = -1;
+
+    if (explorer.searchInput) {
+
+        explorer.searchInput.value = "";
+
+    }
+
+    explorer.searchResults?.replaceChildren();
+
+    explorer.searchList?.replaceChildren();
+
+    if (explorer.searchEmpty) {
+
+        explorer.searchEmpty.hidden = false;
+
+    }
+
+    if (explorer.searchInfo) {
+
+        explorer.searchInfo.textContent = "";
+
+        explorer.searchInfo.className = "";
+
+    }
+
+    if (explorer.searchCounter) {
+
+        explorer.searchCounter.textContent =
+            "0 resultados";
+
+    }
+
+
+    /* =====================================================
+       03. LIMPIAR EL DOCUMENTO ACTUAL
+    ===================================================== */
+
+    // Utilizar los mismos métodos de limpieza
+    // que ya emplea openPDF().
+
+    viewer?.destroy?.();
+
+    viewer?.clear?.();
+
+
+    /* =====================================================
+       04. OCULTAR INDICADORES ANTERIORES
+    ===================================================== */
+
+    downloadLoader.hide();
+
+    togglePDFSplash(false);
+
+    hideFatalError();
+
+
+    /* =====================================================
+       05. RESTABLECER EL ESTADO DEL VISOR
+    ===================================================== */
+
+    currentPath = null;
+
+    currentBucket = tipo;
+
+    loading = false;
+
+    // Actualizar la disponibilidad del explorador.
+    const explorerBtn = document.getElementById("explorerBtn");
+
+    const searchPdfBtn =
+        document.getElementById(
+            "searchPdfBtn"
+        );
+
+
+    if (searchPdfBtn) {
+
+        searchPdfBtn.style.display =
+            tipo === "pets"
+                ? ""
+                : "none";
+
+        searchPdfBtn.disabled =
+            true;
+
+    }
+
+    if (explorerBtn) {
+
+        explorerBtn.style.display =
+            tipo === "pets" ? "" : "none";
+
+    }
+
+
+    /* =====================================================
+       06. RESTABLECER LA NAVEGACIÓN
+    ===================================================== */
+
+    const pageInput =
+        document.getElementById("pageInput");
+
+    const pageTotal =
+        document.getElementById("pageTotal");
+
+    const prevPage =
+        document.getElementById("prevPage");
+
+    const nextPage =
+        document.getElementById("nextPage");
+
+    if (pageInput) {
+
+        pageInput.value = "";
+
+    }
+
+    if (pageTotal) {
+
+        pageTotal.textContent = "–";
+
+    }
+
+    if (prevPage) {
+
+        prevPage.disabled = true;
+
+    }
+
+    if (nextPage) {
+
+        nextPage.disabled = true;
+
+    }
+
+
+    /* =====================================================
+       07. ACTUALIZAR EL TÍTULO
+    ===================================================== */
+
+    const nombres = {
+
+        pets: "Selecciona un PETS",
+
+        fds: "Selecciona una FDS",
+
+        manuales: "Selecciona un Manual"
+
+    };
+
+    const nombre =
+        nombres[tipo] || "Selecciona un documento";
+
+    updateTopBar(nombre, "");
+
+
+    /* =====================================================
+       08. ACTUALIZAR LA PANTALLA DE BIENVENIDA
+    ===================================================== */
+
+    const titulo =
+        document.getElementById("emptyStateTitle");
+
+    const descripcion =
+        document.getElementById("emptyStateSub");
+
+    if (titulo) {
+
+        titulo.textContent = nombre;
+
+    }
+
+    if (descripcion) {
+
+        descripcion.textContent =
+            "Selecciona un documento del panel izquierdo para visualizarlo aquí.";
+
+    }
+
+    toggleEmptyState(true);
+
 }
 
 // ================================
@@ -2284,15 +3286,91 @@ function initializeMobileSidebar() {
 // ================================
 
 async function openPDF(path, petName, areaName, petData) {
+
+    // Los PETS actuales no incluyen el bucket en petData.
+    // Por compatibilidad, utilizamos "pets" por defecto.
+
+    const bucket = petData?.bucket || "pets";
+
+    // ==========================================
+    // INFORMACIÓN SEGÚN EL TIPO DE DOCUMENTO
+    // ==========================================
+
+    const esPETS = bucket === "pets";
+
+    const nombreDocumento =
+        petData?.nombre ||
+        petName ||
+        "Documento sin título";
+
+    const codigoDocumento =
+        petData?.id ||
+        (esPETS ? "PETS ---" : bucket.toUpperCase());
+
+    const tituloCarga = esPETS
+        ? petData?.title || "Preparando procedimiento..."
+        : nombreDocumento;
+
+    // Identificar el archivo por su bucket y su ruta.
+
+    const cacheKey = documentosManager.getCacheKey({
+
+        bucket,
+
+        path
+
+    });
+
     try {
-        if (loading && currentPath === path) return;
+
+        if (
+
+            loading &&
+
+            currentPath === path &&
+
+            currentBucket === bucket
+
+        ) {
+
+            return;
+
+        }
 
         loading = true;
+
         currentPath = path;
+
+        currentBucket = bucket;
+
+        // El explorador de pasos es exclusivo de PETS.
+        const explorerBtn = document.getElementById("explorerBtn");
+
+        const searchPdfBtn =
+            document.getElementById(
+                "searchPdfBtn"
+            );
+
+        if (explorerBtn) {
+
+            explorerBtn.style.display =
+                esPETS ? "" : "none";
+
+        }
+
+        if (searchPdfBtn) {
+
+            searchPdfBtn.style.display =
+                esPETS ? "" : "none";
+
+            searchPdfBtn.disabled =
+                true;
+
+        }
 
         hideFatalError?.();
         clearExplorer();
-        clearExplorerSearch();
+        clearExplorerSearch(false);
 
         viewer?.destroy?.();
         viewer?.clear?.();
@@ -2306,46 +3384,49 @@ async function openPDF(path, petName, areaName, petData) {
         updateTopBar(petName, areaName);
 
         // ✅ Verificar si el PDF está en caché
-        let pdfData = pdfCache.get(path);
+        let pdfData = pdfCache.get(cacheKey);
         let fromCache = false;
 
         if (pdfData) {
+
             console.log(`📦 PDF en caché: ${petName}`);
+
             fromCache = true;
-            
-            // Mostrar loader brevemente para feedback visual
+
+            // El archivo ya está descargado.
+            // Solo necesitamos prepararlo para su visualización.
             downloadLoader.show({
-                name: petName || 'Cargando PDF...',
-                area: areaName || '--',
-                code: petData?.id || petName || 'PET ---',
-                title: petData?.title || 'Cargando procedimiento...'
+
+                name: nombreDocumento,
+
+                area: areaName || "--",
+
+                code: codigoDocumento,
+
+                title: tituloCarga
+
             });
-            
-            // Simular progreso rápido
-            let progress = 0;
-            const fastLoad = setInterval(() => {
-                progress += 25;
-                if (progress >= 100) {
-                    clearInterval(fastLoad);
-                    downloadLoader.update(100, 100);
-                    setTimeout(() => downloadLoader.hide(), 300);
-                } else {
-                    downloadLoader.update(progress * 0.5, 100);
-                }
-            }, 80);
-            
-            // Esperar a que termine la animación
-            await new Promise(resolve => setTimeout(resolve, 600));
-            
+
+            downloadLoader.speed.textContent =
+                "Archivo recuperado de caché";
+
         } else {
             // ✅ Descargar PDF con progreso
-            const pdfUrl = await buildPDFUrl(path);
+            const pdfUrl = await buildPDFUrl(
+                path,
+                bucket
+            );
             
             downloadLoader.show({
-                name: petName || 'Cargando PDF...',
-                area: areaName || '--',
-                code: petData?.id || petName || 'PET ---',
-                title: petData?.title || 'Cargando procedimiento...'
+
+                name: nombreDocumento,
+
+                area: areaName || "--",
+
+                code: codigoDocumento,
+
+                title: tituloCarga
+
             });
             
             pdfData = await downloadPDFWithProgress(pdfUrl, petData, (loaded, total) => {
@@ -2359,19 +3440,58 @@ async function openPDF(path, petName, areaName, petData) {
                 pdfCache.delete(firstKey);
                 console.log(`🗑️ Caché lleno, eliminando: ${firstKey}`);
             }
-            pdfCache.set(path, pdfData);
+
+            pdfCache.set(cacheKey, pdfData);
             //console.log(`💾 PDF cacheado: ${petName} (${pdfCache.size}/${MAX_CACHE_SIZE})`);
         }
 
         // Crear blob y cargar
-        const blob = new Blob([pdfData], { type: 'application/pdf' });
+        // Crear el Blob y abrir el documento.
+        const blob = new Blob(
+            [pdfData],
+            { type: "application/pdf" }
+        );
+
         const blobUrl = URL.createObjectURL(blob);
-        
-        downloadLoader.hide();
-        await viewer.load(blobUrl);
-        renderExplorer();
-        
-        setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+
+        try {
+
+            // Preparar el PDF y el índice del explorador.
+            await viewer.load(
+                blobUrl,
+                bucket
+            );
+
+            if (
+                esPETS &&
+                searchPdfBtn
+            ) {
+
+                searchPdfBtn.disabled =
+                    false;
+
+            }
+
+            // Construir las tarjetas de Explorar PETS.
+            // El explorador de pasos solo se construye para PETS.
+            if (esPETS) {
+
+                renderExplorer();
+
+            }
+
+            // Ocultar el indicador cuando termine la preparación.
+            downloadLoader.hide();
+
+        } finally {
+
+            // Mantener temporalmente la URL para las
+            // operaciones internas de PDF.js.
+            setTimeout(() => {
+                URL.revokeObjectURL(blobUrl);
+            }, 10000);
+
+        }
 
     } catch (error) {
         // ... manejo de errores (mantener igual)
@@ -2393,9 +3513,16 @@ async function openPDF(path, petName, areaName, petData) {
         if (error?.message?.includes("expired") || error?.status === 400) {
             try {
                 // ✅ Si falla, eliminar de caché y reintentar
-                pdfCache.delete(path);
-                const freshUrl = await buildPDFUrl(path);
-                await viewer.load(freshUrl);
+                pdfCache.delete(cacheKey);
+
+                const freshUrl = await buildPDFUrl(
+                    path,
+                    bucket
+                );
+                await viewer.load(
+                    freshUrl,
+                    bucket
+                );
                 downloadLoader.hide();
                 return;
             } catch (e2) {
@@ -2416,7 +3543,16 @@ async function openPDF(path, petName, areaName, petData) {
             container.innerHTML = "";
         }
 
-        showFatalError("No se pudo abrir el PDF", path);
+        showFatalError(
+            "No se pudo abrir el PDF",
+            path,
+            {
+                bucket,
+                petName,
+                areaName,
+                petData
+            }
+        );
 
     } finally {
         loading = false;
@@ -2573,13 +3709,32 @@ function togglePDFSplash(show) {
 // 🔗 SIGNED URL
 // ================================
 
-async function buildPDFUrl(path) {
+async function buildPDFUrl(
+    path,
+    bucket = "pets"
+) {
+
+    if (!path) {
+
+        throw new Error(
+            "No se ha indicado la ruta del PDF"
+        );
+
+    }
+
     const { data, error } = await supabase
         .storage
-        .from(config.bucket || "pets")
+        .from(bucket)
         .createSignedUrl(path, 3600);
-    if (error) throw error;
+
+    if (error) {
+
+        throw error;
+
+    }
+
     return data.signedUrl;
+
 }
 
 // ================================
@@ -2679,7 +3834,17 @@ function initializeVisibility() {
                 console.log("🔄 Renovando URL firmada...");
                 if(currentPath){
 
-                    buildPDFUrl(currentPath);
+                    buildPDFUrl(
+                        currentPath,
+                        currentBucket
+                    ).catch(error => {
+
+                        console.warn(
+                            "No se pudo comprobar la URL del documento:",
+                            error
+                        );
+
+                    });
 
                 }
             }
@@ -2696,32 +3861,15 @@ function initializeOnlineStatus() {
     window.addEventListener("online",  () => hideLoading());
 }
 
-/* // ================================
-// ⏳ LOADING OVERLAY
-// ================================
-
-function showLoading(text) {
-    let overlay = document.getElementById("loadingOverlay");
-    if (!overlay) {
-        overlay = document.createElement("div");
-        overlay.id = "loadingOverlay";
-        overlay.innerHTML = `<div class="loader"></div><div class="loading-text">${text}</div>`;
-        document.body.appendChild(overlay);
-    }
-    const el = overlay.querySelector(".loading-text");
-    if (el) el.textContent = text;
-    overlay.classList.add("show");
-}
-
-function hideLoading() {
-    document.getElementById("loadingOverlay")?.classList.remove("show");
-} */
-
 // ================================
 // 🚨 ERROR UI
 // ================================
 
-function showFatalError(message, retryPath) {
+function showFatalError(
+    message,
+    retryPath,
+    retryInfo = {}
+) {
 
     let overlay = document.getElementById("errorOverlay");
     if (!overlay) {
@@ -2736,16 +3884,37 @@ function showFatalError(message, retryPath) {
         <div class="fatal-error">
             <div class="fatal-error-icon">⚠️</div>
             <div class="fatal-error-title">${message}</div>
-            <div class="fatal-error-message">Verifica tu conexión o intenta con otro PET.</div>
+            <div class="fatal-error-message">Verifica tu conexión, comprueba que el documento esté disponible o intenta nuevamente.</div>
             ${retryPath ? `<button class="fatal-error-retry" onclick="window.__retryPDF()">Reintentar</button>` : ""}
         </div>`;
 
     if (retryPath) {
+
         window.__retryPDF = () => {
+
             overlay.remove();
+
             currentPath = null;
-            openPDF(retryPath);
+
+            openPDF(
+
+                retryPath,
+
+                retryInfo.petName,
+
+                retryInfo.areaName,
+
+                {
+                    ...(retryInfo.petData || {}),
+
+                    bucket:
+                        retryInfo.bucket || "pets"
+                }
+
+            );
+
         };
+
     }
 }
 

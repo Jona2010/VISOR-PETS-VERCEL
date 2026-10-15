@@ -1,3 +1,5 @@
+import { SolicitudesManager } from "./solicitudes.js";
+
 // ==========================================
 // SIDEBAR V2
 // CONFIGURACIÓN DE ÁREAS
@@ -82,7 +84,248 @@ const AREA_CONFIG = [
         icon: "electrico.png"
     }*/
 
+    /*{
+        id: "MANTENIMIENTO ELECTRICO MINA",
+        nombre: "Mantenimiento Eléctrico Mina",
+        color: "#EAB308",
+        icon: "electrico.png"
+    }*/
+
 ];
+
+
+/* =====================================================
+   CONFIGURACIÓN DE ICONOS FDS
+===================================================== */
+
+const FDS_CATEGORY_ICONS = {
+
+    "adhesivos y selladores":
+        "adhesivos-selladores.png",
+
+    "cementos y materiales minerales":
+        "cementos-minerales.png",
+
+    "combustibles y gases":
+        "combustibles-gases.png",
+
+    "lubricantes y grasas":
+        "lubricantes-grasas.png",
+
+    "otros productos":
+        "otros-productos.png",
+
+    "pendiente de clasificacion":
+        "pendiente-clasificacion.png",
+
+    "pinturas y recubrimientos":
+        "pinturas-recubrimientos.png",
+
+    "productos para procesos industriales":
+        "procesos-industriales.png",
+
+    "reactivos y soluciones de calibracion":
+        "reactivos-calibracion.png",
+
+    "soldadura y materiales de union":
+        "soldadura-union.png",
+
+    "solventes y limpiadores":
+        "solventes-limpiadores.png"
+
+};
+
+/* =====================================================
+   COLORES DE LAS CATEGORÍAS FDS
+===================================================== */
+
+const FDS_CATEGORY_COLORS = {
+
+    "adhesivos y selladores": {
+        color: "#0D9488",
+        fondo: "#E0F2EF"
+    },
+
+    "cementos y materiales minerales": {
+        color: "#92704B",
+        fondo: "#F4EDE3"
+    },
+
+    "combustibles y gases": {
+        color: "#DC554C",
+        fondo: "#FCEAE7"
+    },
+
+    "lubricantes y grasas": {
+        color: "#C58B23",
+        fondo: "#FFF4DE"
+    },
+
+    "otros productos": {
+        color: "#64748B",
+        fondo: "#EDF1F5"
+    },
+
+    "pendiente de clasificacion": {
+        color: "#D49A21",
+        fondo: "#FFF4D9"
+    },
+
+    "pinturas y recubrimientos": {
+        color: "#8B5CF6",
+        fondo: "#F1EAFE"
+    },
+
+    "productos para procesos industriales": {
+        color: "#4876A8",
+        fondo: "#E8F0F9"
+    },
+
+    "reactivos y soluciones de calibracion": {
+        color: "#0891B2",
+        fondo: "#E2F5F9"
+    },
+
+    "soldadura y materiales de union": {
+        color: "#C66B35",
+        fondo: "#FFF0E4"
+    },
+
+    "solventes y limpiadores": {
+        color: "#549B65",
+        fondo: "#EAF6E9"
+    }
+
+};
+
+/* =====================================================
+   CONFIGURACIÓN DE ICONOS MANUALES
+===================================================== */
+
+const MANUALES_CATEGORY_ICONS = {
+
+    "accesorios y componentes automotrices":
+        "accesorios-automotrices.png",
+
+    "amoladoras":
+        "amoladoras.png",
+
+    "aspiradoras y equipos de limpieza":
+        "aspiradoras-limpieza.png",
+
+    "atornilladores y herramientas de perforacion":
+        "atornilladores-perforacion.png",
+
+    "baterias y cargadores":
+        "baterias-cargadores.png",
+
+    "generadores y grupos electrogenos":
+        "generadores-electrogenos.png",
+
+    "herramientas hidraulicas y neumaticas":
+        "hidraulicas-neumaticas.png",
+
+    "instrumentos de medicion y nivelacion":
+        "medicion-nivelacion.png",
+
+    "luminarias y equipos de iluminacion":
+        "luminarias-iluminacion.png",
+
+    "pistolas de calor":
+        "pistolas-calor.png",
+
+    "plataformas y maquinaria de elevacion":
+        "plataformas-elevacion.png",
+
+    "soldadura y equipos de union":
+        "soldadura-equipos-union.png",
+
+    "sopladores":
+        "sopladores.png",
+
+    "taladros y rotomartillos":
+        "taladros-rotomartillos.png"
+
+};
+
+
+/* =====================================================
+   COLORES DE LAS CATEGORÍAS MANUALES
+===================================================== */
+
+const MANUALES_CATEGORY_COLORS = {
+
+    "accesorios y componentes automotrices": {
+        color: "#2563EB",
+        fondo: "#E8F0FE"
+    },
+
+    "amoladoras": {
+        color: "#D97706",
+        fondo: "#FFF1DD"
+    },
+
+    "aspiradoras y equipos de limpieza": {
+        color: "#0F766E",
+        fondo: "#E4F5F2"
+    },
+
+    "atornilladores y herramientas de perforacion": {
+        color: "#7C3AED",
+        fondo: "#F1EAFE"
+    },
+
+    "baterias y cargadores": {
+        color: "#CA8A04",
+        fondo: "#FFF6D8"
+    },
+
+    "generadores y grupos electrogenos": {
+        color: "#DC2626",
+        fondo: "#FDE8E8"
+    },
+
+    "herramientas hidraulicas y neumaticas": {
+        color: "#0369A1",
+        fondo: "#E5F3FA"
+    },
+
+    "instrumentos de medicion y nivelacion": {
+        color: "#0891B2",
+        fondo: "#E2F5F9"
+    },
+
+    "luminarias y equipos de iluminacion": {
+        color: "#EAB308",
+        fondo: "#FFF9D9"
+    },
+
+    "pistolas de calor": {
+        color: "#EA580C",
+        fondo: "#FFF0E7"
+    },
+
+    "plataformas y maquinaria de elevacion": {
+        color: "#16A34A",
+        fondo: "#E8F7EC"
+    },
+
+    "soldadura y equipos de union": {
+        color: "#BE123C",
+        fondo: "#FCE7ED"
+    },
+
+    "sopladores": {
+        color: "#0284C7",
+        fondo: "#E5F4FB"
+    },
+
+    "taladros y rotomartillos": {
+        color: "#6D28D9",
+        fondo: "#EEE8FC"
+    }
+
+};
 
 export class Sidebar {
 
@@ -94,7 +337,11 @@ export class Sidebar {
 
         onTaskSelected = null,
 
-        onSearchRequested = null
+        onSearchRequested = null,
+
+        documentosManager = null,
+
+        onBibliotecaChange = null
 
     }) {
 
@@ -102,11 +349,27 @@ export class Sidebar {
 
         this.onOpenPDF = onOpenPDF;
 
+        // Administrador de las tres bibliotecas.
+        this.documentosManager = documentosManager;
+
+        // PETS permanece como biblioteca inicial.
+        this.bibliotecaActual = "pets";
+
+        // Categoría seleccionada en FDS o Manuales.
+        this.categoriaActual = null;
+
+        // Documentos de la biblioteca activa.
+        this.documentosActuales = [];
+
         // Callback hacia App
         this.onTaskSelected = onTaskSelected;
 
         // Callback hacia App para iniciar la búsqueda
         this.onSearchRequested = onSearchRequested;
+
+        // Callback para actualizar el visor
+        // cuando se cambia de biblioteca.
+        this.onBibliotecaChange = onBibliotecaChange;
 
         this.petsList    = document.getElementById("petsList");
         this.searchInput = document.getElementById("searchInput");
@@ -153,6 +416,21 @@ export class Sidebar {
         this.requestCounter =
             document.getElementById("requestCounter");
 
+        this.requestTitle =
+            document.getElementById("requestTitle");
+
+        this.requestAreaLabel =
+            document.getElementById("requestAreaLabel");
+
+        this.requestGamesCounter =
+            document.getElementById("requestGamesCounter");
+
+        this.requestGeneralQuantity =
+            document.getElementById("requestGeneralQuantity");
+
+        this.requestApplyQuantity =
+            document.getElementById("requestApplyQuantity");
+
         this.copyRequestBtn =
             document.getElementById("copyRequestBtn");
 
@@ -167,6 +445,28 @@ export class Sidebar {
 
         this.requestSelectAll =
             document.getElementById("requestSelectAll");
+
+        // ==========================================
+        // VISTAS DE SOLICITUD
+        // ==========================================
+
+        this.requestAreaContainer =
+            document.getElementById("requestAreaContainer");
+
+        this.requestTools =
+            document.getElementById("requestTools");
+
+        this.requestViewAll =
+            document.getElementById("requestViewAll");
+
+        this.requestViewSelected =
+            document.getElementById("requestViewSelected");
+
+        this.requestSelectedBadge =
+            document.getElementById("requestSelectedBadge");
+
+        // Vista inicial del panel.
+        this.requestView = "todos";
 
         this.cards            = [];
         this.activeCard       = null;
@@ -305,15 +605,23 @@ export class Sidebar {
         this.pdfViewer = null;
 
         // ==========================================
-        // SIDEBAR V3
-        // SOLICITUD DE PROCEDIMIENTOS
+        // SOLICITUDES DE LAS TRES BIBLIOTECAS
         // ==========================================
 
-        this.requestArea = "TODOS";
-
-        this.requestSelection = new Map();
+        this.requestArea = "C1";
 
         this.requestVisible = false;
+
+        // Administrador único de solicitudes.
+        this.solicitudes = new SolicitudesManager();
+
+        // Actualizar los contadores cuando cambie
+        // una selección o su cantidad.
+        this.solicitudes.setOnChange(() => {
+
+            this.updateRequestCounter();
+
+        });
 
         // ==========================================
         // TOAST
@@ -341,14 +649,99 @@ export class Sidebar {
     }
 
     initialize() {
-        //this.renderPets();
+
+        // Renderizado inicial de PETS.
         this.render();
 
+        // Buscador actual.
         this.initializeSearch();
 
+        // Paneles del explorador.
         this.initializeTaskPanel();
 
         this.initializeSearchTreePanel();
+
+
+        /* =====================================================
+        SELECTOR DE BIBLIOTECAS
+        ===================================================== */
+
+        this.bibliotecaBtns = [
+
+            ...document.querySelectorAll(
+                ".biblioteca-btn"
+            )
+
+        ];
+
+        this.bibliotecaBtns.forEach(btn => {
+
+            btn.addEventListener("click", async () => {
+
+                const tipo =
+                    btn.dataset.biblioteca;
+
+                if (
+                    !tipo ||
+                    tipo === this.bibliotecaActual
+                ) {
+                    return;
+                }
+
+                // Evitar cambios simultáneos.
+                this.bibliotecaBtns.forEach(boton => {
+
+                    boton.disabled = true;
+
+                });
+
+                try {
+
+                    await this.setBiblioteca(tipo);
+
+                    // Actualizar el botón seleccionado.
+                    this.bibliotecaBtns.forEach(boton => {
+
+                        const activo =
+                            boton.dataset.biblioteca === tipo;
+
+                        boton.classList.toggle(
+                            "active",
+                            activo
+                        );
+
+                        boton.setAttribute(
+                            "aria-pressed",
+                            String(activo)
+                        );
+
+                    });
+
+                } catch (error) {
+
+                    console.error(
+                        "Error al cambiar de biblioteca:",
+                        error
+                    );
+
+                    this.showToast(
+                        "No se pudo cargar la biblioteca.",
+                        "error"
+                    );
+
+                } finally {
+
+                    this.bibliotecaBtns.forEach(boton => {
+
+                        boton.disabled = false;
+
+                    });
+
+                }
+
+            });
+
+        });
 
         this.requestBtn?.addEventListener(
 
@@ -405,6 +798,24 @@ export class Sidebar {
 
         );
 
+        // ==========================================
+        // CAMBIO DE VISTA DE SOLICITUD
+        // ==========================================
+
+        this.requestViewAll?.addEventListener(
+            "click",
+            () => {
+                this.setRequestView("todos");
+            }
+        );
+
+        this.requestViewSelected?.addEventListener(
+            "click",
+            () => {
+                this.setRequestView("seleccionados");
+            }
+        );
+
         this.requestSelectAll?.addEventListener(
 
             "change",
@@ -440,6 +851,55 @@ export class Sidebar {
 
             }
 
+        );
+
+        // ==========================================
+        // APLICAR CANTIDAD GENERAL
+        // ==========================================
+
+        this.requestApplyQuantity?.addEventListener(
+            "click",
+            () => {
+
+                const cantidad = Number(
+                    this.requestGeneralQuantity?.value
+                );
+
+                try {
+
+                    const actualizados =
+                        this.solicitudes.aplicarCantidadGeneral(
+                            cantidad,
+                            this.bibliotecaActual
+                        );
+
+                    if (actualizados === 0) {
+
+                        this.showToast(
+                            "Selecciona al menos un documento.",
+                            "warning"
+                        );
+
+                        return;
+
+                    }
+
+                    this.renderRequestPets();
+
+                    this.showToast(
+                        "Cantidad aplicada correctamente."
+                    );
+
+                } catch (error) {
+
+                    this.showToast(
+                        "Ingresa una cantidad válida.",
+                        "warning"
+                    );
+
+                }
+
+            }
         );
 
         // ==========================================
@@ -481,9 +941,17 @@ export class Sidebar {
 
             "click",
 
-            ()=>{
+            () => {
 
-                this.showAreas();
+                if (this.bibliotecaActual === "pets") {
+
+                    this.showAreas();
+
+                } else {
+
+                    this.volverCategoriasDocumentales();
+
+                }
 
             }
 
@@ -539,26 +1007,42 @@ export class Sidebar {
 
     render() {
 
-        // Fade Out
         this.petsList.style.opacity = "0";
 
         requestAnimationFrame(() => {
 
-            // Limpiar contenido
             this.petsList.innerHTML = "";
 
-            // Renderizar según la vista actual
-            if (this.viewMode === "areas") {
+            // Mantener la navegación original de PETS.
+            if (this.bibliotecaActual === "pets") {
 
-                this.renderAreas();
+                if (this.viewMode === "areas") {
 
-            } else {
+                    this.renderAreas();
 
-                this.renderPets();
+                } else {
+
+                    this.renderPets();
+
+                }
 
             }
 
-            // Fade In
+            // Navegación de FDS y Manuales.
+            else {
+
+                if (this.viewMode === "areas") {
+
+                    this.renderCategoriasDocumentales();
+
+                } else {
+
+                    this.renderDocumentos();
+
+                }
+
+            }
+
             requestAnimationFrame(() => {
 
                 this.petsList.style.opacity = "1";
@@ -3018,6 +3502,12 @@ export class Sidebar {
 
     renderAreas() {
 
+        // Mostrar las tarjetas de áreas desde arriba.
+        this.petsList.scrollTop = 0;
+        this.petsList.scrollLeft = 0;
+
+        // Mantener aquí el resto del código original.
+
         // Limpiar listado
         this.petsList.innerHTML = "";
 
@@ -3132,25 +3622,62 @@ export class Sidebar {
     }
 
     // ================================
-    // 🔎 BÚSQUEDA
+    // BUSCADOR — PETS, FDS Y MANUALES
     // ================================
 
     initializeSearch() {
 
         this.searchInput?.addEventListener("input", () => {
+
             clearTimeout(this.searchTimeout);
+
             if (this.searchClear) {
-                this.searchClear.hidden = !this.searchInput.value;
+
+                this.searchClear.hidden =
+                    !this.searchInput.value;
+
             }
-            this.searchTimeout = setTimeout(() => this.filterPets(), 120);
+
+            this.searchTimeout = setTimeout(() => {
+
+                if (this.bibliotecaActual === "pets") {
+
+                    // Conservar el buscador original.
+                    this.filterPets();
+
+                } else {
+
+                    // Buscador de FDS y Manuales.
+                    this.filterDocumentos();
+
+                }
+
+            }, 120);
+
         });
 
         this.searchClear?.addEventListener("click", () => {
-            this.searchInput.value  = "";
+
+            clearTimeout(this.searchTimeout);
+
+            this.searchInput.value = "";
+
             this.searchClear.hidden = true;
+
             this.searchInput.focus();
-            this.filterPets();
+
+            if (this.bibliotecaActual === "pets") {
+
+                this.filterPets();
+
+            } else {
+
+                this.filterDocumentos();
+
+            }
+
         });
+
     }
 
     filterPets() {
@@ -3190,6 +3717,135 @@ export class Sidebar {
 
         this.renderEmptyState(visible === 0);
         this.updateCounter(visible);
+    }
+
+    // ==========================================
+    // BUSCAR FDS Y MANUALES
+    // ==========================================
+
+    async filterDocumentos() {
+
+        if (
+            this.bibliotecaActual === "pets" ||
+            !this.documentosManager
+        ) {
+            return;
+        }
+
+        const tipo = this.bibliotecaActual;
+
+        const texto =
+            this.searchInput?.value.trim() || "";
+
+        // ======================================
+        // SIN TEXTO DE BÚSQUEDA
+        // ======================================
+
+        if (!texto) {
+
+            if (this.categoriaActual) {
+
+                // Regresar a los documentos de
+                // la categoría que estaba abierta.
+
+                this.viewMode = "pets";
+
+                if (this.currentAreaName) {
+
+                    this.currentAreaName.textContent =
+                        this.categoriaActual;
+
+                }
+
+                if (this.changeAreaBtn) {
+
+                    this.changeAreaBtn.hidden = false;
+
+                }
+
+            } else {
+
+                // Si estábamos en la pantalla
+                // general, volver a las categorías.
+
+                this.viewMode = "areas";
+
+                if (this.currentAreaName) {
+
+                    this.currentAreaName.textContent =
+                        "Todas las categorías";
+
+                }
+
+                if (this.changeAreaBtn) {
+
+                    this.changeAreaBtn.hidden = true;
+
+                }
+
+            }
+
+            this.render();
+
+            return;
+
+        }
+
+        // ======================================
+        // BÚSQUEDA EN TODAS LAS CATEGORÍAS
+        // ======================================
+
+        try {
+
+            const resultados =
+                await this.documentosManager.buscarDocumentos(
+                    texto,
+                    null,
+                    tipo
+                );
+
+            // Evitar mostrar resultados antiguos
+            // si el usuario cambió de biblioteca
+            // o modificó la búsqueda.
+
+            if (
+                tipo !== this.bibliotecaActual ||
+                texto !== (this.searchInput?.value.trim() || "")
+            ) {
+                return;
+            }
+
+            this.viewMode = "pets";
+
+            if (this.currentAreaName) {
+
+                this.currentAreaName.textContent =
+                    "Resultados de búsqueda";
+
+            }
+
+            if (this.changeAreaBtn) {
+
+                this.changeAreaBtn.hidden = false;
+
+            }
+
+            this.renderDocumentos(resultados);
+
+        } catch (error) {
+
+            console.error(
+                "Error al buscar documentos:",
+                error
+            );
+
+            this.showToast(
+                "No se pudo realizar la búsqueda.",
+                "error"
+            );
+
+        }
+
     }
 
     // ================================
@@ -3273,6 +3929,12 @@ export class Sidebar {
     // ==========================================
 
     renderPets() {
+
+        // Mostrar los procedimientos desde el principio.
+        this.petsList.scrollTop = 0;
+        this.petsList.scrollLeft = 0;
+
+        // Mantener aquí el resto del código original.
 
         // ==========================================
         // LIMPIAR CONTENEDOR
@@ -3728,41 +4390,94 @@ export class Sidebar {
     }
 
     // ==========================================
-    // SIDEBAR V3
-    // PANEL SOLICITUD
+    // SOLICITUDES — PETS, FDS Y MANUALES
     // ==========================================
 
-    openRequestPanel(){
+    openRequestPanel() {
 
-        if(!this.requestPanel)
-            return;
+        if (!this.requestPanel) return;
+
+        const tipo = this.bibliotecaActual;
+
+        this.solicitudes.setBiblioteca(tipo);
 
         this.requestVisible = true;
 
-        if(this.requestSearch){
+        // Abrir siempre en la vista «Todos».
+        this.requestView = "todos";
 
-            this.requestSearch.value = "";
+        this.updateRequestView();
+
+        // =====================================
+        // ACTUALIZAR ENCABEZADO
+        // =====================================
+
+        const titulos = {
+            pets: "Seleccionar procedimientos",
+            fds: "Seleccionar FDS",
+            manuales: "Seleccionar manuales"
+        };
+
+        if (this.requestTitle) {
+
+            this.requestTitle.textContent =
+                titulos[tipo];
 
         }
 
-        // Abrir directamente en el área que el usuario
-        // está visualizando en el visor
-        this.requestArea =
+        if (this.requestAreaLabel) {
 
-            this.currentArea === "TODOS"
+            this.requestAreaLabel.textContent =
+                tipo === "pets" ? "Área" : "Categoría";
 
-                ? "C1"
+        }
 
-                : this.currentArea;
+        if (this.requestSearch) {
+
+            this.requestSearch.value = "";
+
+            this.requestSearch.placeholder =
+                tipo === "pets"
+                    ? "Buscar procedimiento..."
+                    : tipo === "fds"
+                        ? "Buscar FDS..."
+                        : "Buscar manual...";
+
+        }
+
+        if (this.requestGeneralQuantity) {
+
+            this.requestGeneralQuantity.value = 1;
+
+        }
+
+        // =====================================
+        // GRUPO INICIAL
+        // =====================================
+
+        if (tipo === "pets") {
+
+            this.requestArea =
+                this.currentArea === "TODOS"
+                    ? "C1"
+                    : this.currentArea;
+
+        } else {
+
+            this.requestArea =
+                this.categoriaActual || "";
+
+        }
+
+        // =====================================
+        // MOSTRAR PANEL
+        // =====================================
 
         this.requestPanel.hidden = false;
 
         this.requestPanel.setAttribute(
-
             "aria-hidden",
-
             "false"
-
         );
 
         this.renderRequestAreas();
@@ -3771,28 +4486,39 @@ export class Sidebar {
 
         this.updateRequestCounter();
 
-        requestAnimationFrame(() => {
+        // Evitar abrir el teclado automáticamente
+        // cuando se utiliza un celular.
+        if (window.innerWidth > 900) {
 
-            this.requestSearch?.focus();
+            requestAnimationFrame(() => {
 
-        });
+                this.requestSearch?.focus();
+
+            });
+
+        }
 
     }
+
 
     // ==========================================
     // CERRAR PANEL
     // ==========================================
 
-    closeRequestPanel(){
+    closeRequestPanel() {
 
-        if(!this.requestPanel)
-            return;
+        if (!this.requestPanel) return;
 
         this.requestVisible = false;
 
-        // Evita que un elemento del panel conserve el foco
-        if(this.requestPanel.contains(document.activeElement)){
+        if (
+            this.requestPanel.contains(
+                document.activeElement
+            )
+        ) {
+
             document.activeElement.blur();
+
         }
 
         this.requestPanel.hidden = true;
@@ -3802,50 +4528,94 @@ export class Sidebar {
             "true"
         );
 
-        this.requestArea = this.currentArea;
-
     }
 
+
     // ==========================================
-    // RENDER ÁREAS DE SOLICITUD
+    // MOSTRAR ÁREAS O CATEGORÍAS
     // ==========================================
 
-    renderRequestAreas(){
+    renderRequestAreas() {
 
-        if(!this.requestAreaSelect)
-            return;
+        if (!this.requestAreaSelect) return;
 
-        this.requestAreaSelect.innerHTML = "";
+        const tipo = this.bibliotecaActual;
 
-        AREA_CONFIG
-            .filter(area => area.id !== "TODOS")
-            .forEach(area => {
+        let grupos = [];
 
-                const option =
-                    document.createElement("option");
+        if (tipo === "pets") {
 
-                option.value = area.id;
+            grupos = AREA_CONFIG
 
-                option.textContent = area.nombre;
+                .filter(area => area.id !== "TODOS")
 
-                this.requestAreaSelect.appendChild(option);
+                .map(area => ({
 
-            });
+                    id: area.id,
 
-        if(
-            !this.requestArea ||
-            this.requestArea === "TODOS"
-        ){
+                    nombre: area.nombre
 
-            const defaultArea =
+                }));
 
-                AREA_CONFIG.find(
+        } else {
 
-                    area => area.id === "C1"
+            grupos = [
 
-                );
+                ...new Set(
 
-            this.requestArea = defaultArea.id;
+                    this.documentosActuales
+                        .map(documento => documento.categoria)
+                        .filter(Boolean)
+
+                )
+
+            ]
+
+            .sort((a, b) =>
+
+                a.localeCompare(
+                    b,
+                    "es",
+                    { numeric: true }
+                )
+
+            )
+
+            .map(categoria => ({
+
+                id: categoria,
+
+                nombre: categoria
+
+            }));
+
+        }
+
+        this.requestAreaSelect.replaceChildren();
+
+        grupos.forEach(grupo => {
+
+            const option =
+                document.createElement("option");
+
+            option.value = grupo.id;
+
+            option.textContent = grupo.nombre;
+
+            this.requestAreaSelect.appendChild(
+                option
+            );
+
+        });
+
+        const existe = grupos.some(
+            grupo => grupo.id === this.requestArea
+        );
+
+        if (!existe) {
+
+            this.requestArea =
+                grupos[0]?.id || "";
 
         }
 
@@ -3855,96 +4625,308 @@ export class Sidebar {
     }
 
     // ==========================================
-    // RENDER PETS DE SOLICITUD
+    // VISTA: TODOS / SELECCIONADOS
     // ==========================================
 
-    renderRequestPets(){
+    setRequestView(vista) {
 
-        if(!this.requestPetsList)
+        if (
+            vista !== "todos" &&
+            vista !== "seleccionados"
+        ) {
             return;
+        }
 
-        this.requestPetsList.innerHTML = "";
+        if (this.requestView === vista) {
+            return;
+        }
 
-        const query =
+        this.requestView = vista;
 
-            this.requestSearch
-                ?.value
-                .trim()
-                .toLowerCase() || "";
+        this.updateRequestView();
 
-        const pets =
+        // Comenzar el listado desde arriba.
+        if (this.requestPetsList) {
 
-            this.config.pets
+            this.requestPetsList.scrollTop = 0;
+
+        }
+
+        this.renderRequestPets();
+
+    }
+
+
+    // ==========================================
+    // ACTUALIZAR LA INTERFAZ DE LAS VISTAS
+    // ==========================================
+
+    updateRequestView() {
+
+        const seleccionados =
+            this.requestView === "seleccionados";
+
+        // Actualizar el botón activo.
+        for (const [boton, activo] of [
+
+            [this.requestViewAll, !seleccionados],
+
+            [this.requestViewSelected, seleccionados]
+
+        ]) {
+
+            if (!boton) continue;
+
+            boton.classList.toggle(
+                "active",
+                activo
+            );
+
+            boton.setAttribute(
+                "aria-pressed",
+                String(activo)
+            );
+
+        }
+
+        // El selector de área o categoría
+        // solo se muestra en «Todos».
+        if (this.requestAreaContainer) {
+
+            this.requestAreaContainer.hidden =
+                seleccionados;
+
+        }
+
+        // El buscador y «Seleccionar todos»
+        // solo se muestran en «Todos».
+        if (this.requestTools) {
+
+            this.requestTools.hidden =
+                seleccionados;
+
+        }
+
+    }
+
+    // ==========================================
+    // OBTENER DOCUMENTOS DEL GRUPO ACTUAL
+    // ==========================================
+
+    getRequestDocuments() {
+
+        const tipo = this.bibliotecaActual;
+
+        // =====================================
+        // PETS
+        // =====================================
+
+        if (tipo === "pets") {
+
+            return this.config.pets
 
                 .filter(pet =>
 
-                    Object.keys(
-
-                        pet.archivos
-
-                    ).includes(
-
+                    Object.prototype.hasOwnProperty.call(
+                        pet.archivos || {},
                         this.requestArea
-
                     )
 
                 )
 
-                .filter(pet=>{
+                .map(pet => {
 
-                    if(!query)
-                        return true;
+                    const path =
+                        pet.archivos[this.requestArea];
 
-                    const number =
-                        pet.nombre.match(/\d+/)?.[0] ?? "";
+                    const numero =
+                        pet.nombre.match(/^\d+/)?.[0];
 
-                    const petCode =
-                        `PET ${number.padStart(3,"0")}`;
+                    const codigo = numero
 
-                    return(
+                        ? `PET ${numero.padStart(3, "0")}`
 
-                        pet.nombre
-                            .toLowerCase()
-                            .includes(query)
+                        : pet.nombre;
 
-                        ||
+                    return {
 
-                        petCode
-                            .toLowerCase()
-                            .includes(query)
+                        ...pet,
 
-                        ||
+                        tipo: "pets",
 
-                        number
-                            .includes(query)
+                        codigo,
 
-                    );
+                        categoria: this.requestArea,
+
+                        area: this.requestArea,
+
+                        requestArea: this.requestArea,
+
+                        path,
+
+                        version:
+                            this.extractVersionFromPath(
+                                path
+                            ) || "",
+
+                        titulo:
+                            pet.titulo ||
+                            pet.nombre
+                                .replace(/^\d+[-\s]*/, "")
+                                .trim()
+
+                    };
 
                 })
 
-                .sort((a,b)=>{
+                .sort((a, b) => {
 
-                    const na =
-                        parseInt(
-                            a.nombre.match(/\d+/)?.[0] || 0
-                        );
+                    const numeroA = Number(
+                        a.codigo.match(/\d+/)?.[0] || 0
+                    );
 
-                    const nb =
-                        parseInt(
-                            b.nombre.match(/\d+/)?.[0] || 0
-                        );
+                    const numeroB = Number(
+                        b.codigo.match(/\d+/)?.[0] || 0
+                    );
 
-                    return na-nb;
+                    return numeroA - numeroB;
 
                 });
 
-        if(!pets.length){
+        }
 
-            this.requestPetsList.innerHTML = `
-                <div class="request-empty">
-                    No existen procedimientos para esta área.
-                </div>
-            `;
+        // =====================================
+        // FDS Y MANUALES
+        // =====================================
+
+        return this.documentosActuales
+
+            .filter(documento =>
+
+                documento.categoria ===
+                this.requestArea
+
+            )
+
+            .map(documento => ({
+
+                ...documento,
+
+                tipo
+
+            }))
+
+            .sort((a, b) =>
+
+                a.nombre.localeCompare(
+                    b.nombre,
+                    "es",
+                    { numeric: true }
+                )
+
+            );
+
+    }
+
+
+    // ==========================================
+    // MOSTRAR DOCUMENTOS PARA SOLICITAR
+    // ==========================================
+
+    renderRequestPets() {
+
+        if (!this.requestPetsList) return;
+
+        const posicion =
+            this.requestPetsList.scrollTop;
+
+        this.requestPetsList.replaceChildren();
+
+        // Determinar qué vista está activa.
+        const seleccionados =
+            this.requestView === "seleccionados";
+
+        // En la vista «Seleccionados» no aplicamos
+        // el filtro del buscador.
+        const query = seleccionados
+
+            ? ""
+
+            : this.normalize(
+                this.requestSearch?.value || ""
+            );
+
+        // Obtener los documentos según la vista.
+        const documentos =
+
+            (seleccionados
+
+                ? this.solicitudes.obtenerSeleccionados(
+                    this.bibliotecaActual
+                )
+
+                : this.getRequestDocuments()
+
+            )
+
+            .filter(documento => {
+
+                if (!query) return true;
+
+                const contenido = [
+
+                    documento.codigo,
+
+                    documento.id,
+
+                    documento.nombre,
+
+                    documento.titulo,
+
+                    documento.fabricante,
+
+                    documento.marca,
+
+                    documento.modelo
+
+                ]
+
+                .filter(Boolean)
+
+                .join(" ");
+
+                return this.normalize(
+                    contenido
+                ).includes(query);
+
+            });
+
+        // =====================================
+        // LISTA VACÍA
+        // =====================================
+
+        if (!documentos.length) {
+
+            const empty =
+                document.createElement("div");
+
+            empty.className = "request-empty";
+
+            empty.textContent = seleccionados
+
+                ? "Todavía no hay documentos seleccionados."
+
+                : "No se encontraron documentos.";
+
+            this.requestPetsList.appendChild(
+                empty
+            );
+
+            if (this.requestSelectAll) {
+
+                this.requestSelectAll.checked = false;
+
+            }
 
             this.updateRequestCounter();
 
@@ -3955,108 +4937,299 @@ export class Sidebar {
         const fragment =
             document.createDocumentFragment();
 
-        pets.forEach(pet=>{
+        // =====================================
+        // CREAR CADA REGISTRO
+        // =====================================
 
-            const path =
-                pet.archivos[
-                    this.requestArea
-                ];
+        documentos.forEach(documento => {
 
-            const version =
-                this.extractVersionFromPath(
-                    path
+            const seleccionado =
+                this.solicitudes.obtenerSeleccionado(
+                    documento
                 );
-
-            const numMatch =
-                pet.nombre.match(/^(\d+)/);
-
-            const petNum =
-
-                numMatch
-
-                    ? `PET ${numMatch[1].padStart(3,"0")}`
-
-                    : pet.nombre;
 
             const item =
-                document.createElement("label");
+                document.createElement("div");
 
-            item.className =
-                "request-pet";
-
-            item.innerHTML =
-
-            item.innerHTML = `
-                <input
-                    type="checkbox"
-                    data-pet="${pet.nombre}"
-                >
-
-                <div class="request-pet-info">
-
-                    <div class="request-pet-top">
-
-                        <span class="request-pet-code">
-                            ${petNum}
-                        </span>
-
-                        ${
-                            version
-                                ? `<span class="request-pet-version">
-                                    VER. ${version}
-                                </span>`
-                                : ""
-                        }
-
-                    </div>
-
-                    <div class="request-pet-name">
-                        ${pet.titulo || pet.nombre}
-                    </div>
-
-                </div>
-            `;
-
-            const checkbox =
-                item.querySelector("input");
-
-            const key =
-                `${this.requestArea}|${pet.nombre}`;
-
-            checkbox.checked =
-                this.requestSelection.has(
-                    key
-                );
+            item.className = "request-pet";
 
             item.classList.toggle(
                 "selected",
-                checkbox.checked
+                Boolean(seleccionado)
             );
 
-            checkbox.addEventListener(
+            // =================================
+            // CHECKBOX
+            // =================================
 
-                "change",
+            const checkbox =
+                document.createElement("input");
 
-                ()=>{
+            checkbox.type = "checkbox";
 
-                    item.classList.toggle(
+            checkbox.className =
+                "request-item-check";
 
-                        "selected",
+            checkbox.checked =
+                Boolean(seleccionado);
 
-                        checkbox.checked
+            checkbox.setAttribute(
+                "aria-label",
+                `Seleccionar ${documento.nombre}`
+            );
 
-                    );
+            // =================================
+            // INFORMACIÓN
+            // =================================
 
-                    this.toggleRequestPet(
+            const info =
+                document.createElement("div");
 
-                        pet,
+            info.className =
+                "request-pet-info";
 
-                        checkbox.checked
+            const top =
+                document.createElement("div");
 
-                    );
+            top.className =
+                "request-pet-top";
+
+            const codigo =
+                document.createElement("span");
+
+            codigo.className =
+                "request-pet-code";
+
+            codigo.textContent =
+                documento.codigo ||
+                documento.id?.replace(/^(FDS|MAN)-/i, "$1 ") ||
+                documento.nombre;
+
+            top.appendChild(codigo);
+
+            if (documento.version) {
+
+                const version =
+                    document.createElement("span");
+
+                version.className =
+                    "request-pet-version";
+
+                version.textContent =
+                    `VER. ${documento.version}`;
+
+                top.appendChild(version);
+
+            }
+
+            const nombre =
+                document.createElement("div");
+
+            nombre.className =
+                "request-pet-name";
+
+            nombre.textContent =
+                documento.titulo ||
+                documento.nombre;
+
+            info.appendChild(top);
+
+            info.appendChild(nombre);
+
+            // Mostrar el grupo del documento
+            // en la vista «Seleccionados».
+            if (seleccionados) {
+
+                const grupo =
+                    document.createElement("span");
+
+                grupo.className =
+                    "request-selected-group";
+
+                grupo.textContent =
+                    documento.categoria ||
+                    documento.area ||
+                    "";
+
+                if (grupo.textContent) {
+
+                    info.appendChild(grupo);
 
                 }
 
+            }
+
+            // =================================
+            // CANTIDAD INDIVIDUAL
+            // =================================
+
+            const cantidad =
+                document.createElement("div");
+
+            cantidad.className =
+                "request-item-quantity";
+
+            cantidad.hidden =
+                !seleccionado;
+
+            const etiqueta =
+                document.createElement("span");
+
+            etiqueta.textContent = "Juegos";
+
+            const reducir =
+                document.createElement("button");
+
+            reducir.type = "button";
+
+            reducir.className =
+                "request-qty-btn";
+
+            reducir.textContent = "−";
+
+            reducir.setAttribute(
+                "aria-label",
+                `Reducir cantidad de ${documento.nombre}`
+            );
+
+            const valor =
+                document.createElement("span");
+
+            valor.className =
+                "request-qty-value";
+
+            valor.textContent =
+                seleccionado?.cantidad ?? 1;
+
+            const incrementar =
+                document.createElement("button");
+
+            incrementar.type = "button";
+
+            incrementar.className =
+                "request-qty-btn";
+
+            incrementar.textContent = "+";
+
+            incrementar.setAttribute(
+                "aria-label",
+                `Incrementar cantidad de ${documento.nombre}`
+            );
+
+            reducir.disabled =
+                !seleccionado ||
+                seleccionado.cantidad <= 1;
+
+            // =================================
+            // EVENTOS DE CANTIDAD
+            // =================================
+
+            reducir.addEventListener(
+                "click",
+                () => {
+
+                    this.solicitudes.reducir(
+                        documento
+                    );
+
+                    const actual =
+                        this.solicitudes.obtenerSeleccionado(
+                            documento
+                        );
+
+                    valor.textContent =
+                        actual?.cantidad ?? 1;
+
+                    reducir.disabled =
+                        !actual ||
+                        actual.cantidad <= 1;
+
+                }
+            );
+
+            incrementar.addEventListener(
+                "click",
+                () => {
+
+                    this.solicitudes.incrementar(
+                        documento
+                    );
+
+                    const actual =
+                        this.solicitudes.obtenerSeleccionado(
+                            documento
+                        );
+
+                    valor.textContent =
+                        actual?.cantidad ?? 1;
+
+                    reducir.disabled =
+                        !actual ||
+                        actual.cantidad <= 1;
+
+                }
+            );
+
+            cantidad.append(
+                etiqueta,
+                reducir,
+                valor,
+                incrementar
+            );
+
+            info.appendChild(cantidad);
+
+            // =================================
+            // EVENTO DE SELECCIÓN
+            // =================================
+
+            checkbox.addEventListener(
+                "change",
+                () => {
+
+                    this.toggleRequestPet(
+                        documento,
+                        checkbox.checked
+                    );
+
+                    item.classList.toggle(
+                        "selected",
+                        checkbox.checked
+                    );
+
+                    const actual =
+                        this.solicitudes.obtenerSeleccionado(
+                            documento
+                        );
+
+                    cantidad.hidden =
+                        !actual;
+
+                    valor.textContent =
+                        actual?.cantidad ?? 1;
+
+                    reducir.disabled =
+                        !actual ||
+                        actual.cantidad <= 1;
+
+                    if (this.requestView === "seleccionados") {
+
+                        // Al deseleccionar un documento,
+                        // quitarlo inmediatamente de la lista.
+                        this.renderRequestPets();
+
+                    } else {
+
+                        this.updateRequestSelectAll();
+
+                    }
+
+                }
+            );
+
+            item.append(
+                checkbox,
+                info
             );
 
             fragment.appendChild(item);
@@ -4064,357 +5237,221 @@ export class Sidebar {
         });
 
         this.requestPetsList.appendChild(
-
             fragment
-
         );
 
-        if(this.requestSelectAll){
+        this.requestPetsList.scrollTop =
+            posicion;
 
-            const total =
-                this.requestPetsList.querySelectorAll(
-
-                    'input[type="checkbox"]'
-
-                ).length;
-
-            const selected =
-                this.requestPetsList.querySelectorAll(
-
-                    'input[type="checkbox"]:checked'
-
-                ).length;
-
-            this.requestSelectAll.checked =
-                total > 0 && total === selected;
-
-        }
-
-    }
-
-    // ==========================================
-    // SELECCIONAR / DESELECCIONAR PET
-    // ==========================================
-
-    toggleRequestPet(pet, selected){
-
-        const key =
-            `${this.requestArea}|${pet.nombre}`;
-
-        if(selected){
-
-            this.requestSelection.set(
-
-                key,
-
-                {
-
-                    ...pet,
-
-                    requestArea: this.requestArea
-
-                }
-
-            );
-
-        }else{
-
-            this.requestSelection.delete(
-
-                key
-
-            );
-
-        }
+        this.updateRequestSelectAll();
 
         this.updateRequestCounter();
 
     }
 
+
     // ==========================================
-    // SELECCIONAR / DESELECCIONAR TODOS
+    // SELECCIONAR O DESELECCIONAR
     // ==========================================
 
-    toggleAllRequestPets(){
+    toggleRequestPet(documento, selected) {
+
+        if (selected) {
+
+            this.solicitudes.seleccionar(
+                documento
+            );
+
+        } else {
+
+            this.solicitudes.deseleccionar(
+                documento
+            );
+
+        }
+
+    }
+
+
+    // ==========================================
+    // ACTUALIZAR SELECCIONAR TODOS
+    // ==========================================
+
+    updateRequestSelectAll() {
+
+        if (!this.requestSelectAll) return;
+
+        const checkboxes = [
+
+            ...this.requestPetsList.querySelectorAll(
+                ".request-item-check"
+            )
+
+        ];
+
+        this.requestSelectAll.checked =
+
+            checkboxes.length > 0 &&
+
+            checkboxes.every(
+                checkbox => checkbox.checked
+            );
+
+    }
+
+
+    // ==========================================
+    // SELECCIONAR O DESELECCIONAR TODOS
+    // ==========================================
+
+    toggleAllRequestPets() {
+
+        if (this.requestView === "seleccionados") return;
 
         const checked =
             this.requestSelectAll.checked;
 
         const checkboxes =
-
             this.requestPetsList.querySelectorAll(
-
-                'input[type="checkbox"]'
-
+                ".request-item-check"
             );
 
-        checkboxes.forEach(checkbox=>{
+        checkboxes.forEach(checkbox => {
 
-            checkbox.checked = checked;
+            if (checkbox.checked !== checked) {
 
-            checkbox.dispatchEvent(
+                checkbox.checked = checked;
 
-                new Event(
+                checkbox.dispatchEvent(
+                    new Event("change")
+                );
 
-                    "change"
-
-                )
-
-            );
+            }
 
         });
 
     }
 
+
     // ==========================================
-    // ACTUALIZAR CONTADOR
+    // ACTUALIZAR CONTADORES
     // ==========================================
 
-    updateRequestCounter(){
+    updateRequestCounter() {
 
-        if(!this.requestCounter)
-            return;
+        const totales =
+            this.solicitudes.obtenerTotales(
+                this.bibliotecaActual
+            );
 
-        const total =
-            this.requestSelection.size;
+        if (this.requestCounter) {
 
-        this.requestCounter.textContent =
-            total === 0
-                ? "0 seleccionados"
-                : `${total} seleccionado${total > 1 ? "s" : ""}`;
+            const total =
+                totales.documentos;
+
+            this.requestCounter.textContent =
+
+                `${total} documento${total === 1 ? "" : "s"} seleccionado${total === 1 ? "" : "s"}`;
+
+        }
+
+        // Actualizar el número de la pestaña
+        // «Seleccionados».
+        if (this.requestSelectedBadge) {
+
+            this.requestSelectedBadge.textContent =
+                totales.documentos;
+
+        }
+
+        if (this.requestGamesCounter) {
+
+            this.requestGamesCounter.textContent =
+
+                `Total de juegos: ${totales.juegos}`;
+
+        }
 
     }
 
+
     // ==========================================
-    // LIMPIAR SOLICITUD
+    // LIMPIAR BIBLIOTECA ACTUAL
     // ==========================================
 
-    clearRequest(){
+    clearRequest() {
 
-        this.requestSelection.clear();
+        this.solicitudes.limpiar(
+            this.bibliotecaActual
+        );
 
-        if(this.requestSearch){
+        if (this.requestSearch) {
 
             this.requestSearch.value = "";
 
         }
 
-        this.updateRequestCounter();
+        if (this.requestGeneralQuantity) {
 
-        this.renderRequestPets();
-
-        if(this.requestAreaSelect){
-
-            this.requestAreaSelect.value =
-                this.requestArea;
+            this.requestGeneralQuantity.value = 1;
 
         }
 
-        if(this.requestSelectAll){
+        if (this.requestSelectAll) {
 
             this.requestSelectAll.checked = false;
 
         }
 
+        this.renderRequestPets();
+
+        this.updateRequestCounter();
+
     }
+
 
     // ==========================================
     // GENERAR TEXTO PARA WHATSAPP
     // ==========================================
 
-    generateRequestText(){
+    generateRequestText() {
 
-        if(this.requestSelection.size === 0){
-
-            return "";
-
-        }
-
-        const grouped = {};
-
-        Array.from(this.requestSelection.values())
-
-            .sort((a,b)=>{
-
-                const na =
-                    parseInt(
-                        a.nombre.match(/\d+/)?.[0] || 0
-                    );
-
-                const nb =
-                    parseInt(
-                        b.nombre.match(/\d+/)?.[0] || 0
-                    );
-
-                return na - nb;
-
-            })
-
-            .forEach(pet=>{
-
-                const area =
-                    pet.requestArea;
-
-                if(!grouped[area]){
-
-                    grouped[area] = [];
-
-                }
-
-                grouped[area].push(pet);
-
-            });
-
-        const lines = [];
-
-        // ==========================================
-        // ENCABEZADO
-        // ==========================================
-
-        lines.push(
-            "📋 SOLICITUD DE PETS"
+        return this.solicitudes.generarTexto(
+            this.bibliotecaActual
         );
-
-        lines.push("");
-
-        // ==========================================
-        // ÁREAS Y PROCEDIMIENTOS
-        // ==========================================
-
-        AREA_CONFIG
-
-            .filter(area => grouped[area.id])
-
-            .forEach(area => {
-
-                lines.push(
-                    `🏢 Área: ${area.nombre}`
-                );
-
-                lines.push("");
-
-                grouped[area.id].forEach(pet => {
-
-                    const path =
-                        pet.archivos[area.id];
-
-                    const version =
-                        this.extractVersionFromPath(path);
-
-                    const number =
-                        pet.nombre.match(/\d+/)?.[0];
-
-                    const petCode =
-                        number
-                            ? `PET ${number.padStart(3,"0")}`
-                            : pet.nombre;
-
-                    const petTitle =
-                        pet.titulo ||
-                        pet.nombre
-                            .replace(/^\d+[-\s]*/, "")
-                            .trim();
-
-                    lines.push(
-                        `📄 ${petCode}${version ? ` · VER. ${version}` : ""}`
-                    );
-
-                    lines.push(
-                        `   ${petTitle}`
-                    );
-
-                    lines.push("");
-
-                });
-
-            });
-
-        // ==========================================
-        // TOTAL
-        // ==========================================
-
-        const total =
-            this.requestSelection.size;
-
-        lines.push(
-            `📌 Total: ${total} procedimiento${total > 1 ? "s" : ""}`
-        );
-
-        return lines.join("\n");
 
     }
 
-    async copyToClipboard(text){
 
-        if(
-            navigator.clipboard &&
-            window.isSecureContext
-        ){
+    // ==========================================
+    // COPIAR TEXTO
+    // ==========================================
 
-            try{
+    async copyToClipboard(text) {
 
-                await navigator.clipboard.writeText(text);
-
-                return true;
-
-            }catch(e){
-
-                console.warn("Clipboard API falló", e);
-
-            }
-
-        }
-
-        const textarea = document.createElement("textarea");
-
-        textarea.value = text;
-
-        textarea.style.position = "fixed";
-        textarea.style.left = "-9999px";
-        textarea.style.top = "0";
-
-        document.body.appendChild(textarea);
-
-        textarea.focus();
-
-        textarea.select();
-
-        textarea.setSelectionRange(
-            0,
-            textarea.value.length
+        return this.solicitudes.copiarTexto(
+            text
         );
 
-        let ok = false;
-
-        try{
-
-            ok = document.execCommand("copy");
-
-        }catch(e){
-
-            console.error(e);
-
-        }
-
-        textarea.remove();
-
-        return ok;
-
     }
+
 
     // ==========================================
     // COPIAR SOLICITUD
     // ==========================================
 
-    async copyRequest(){
+    async copyRequest() {
+
+        const tipo =
+            this.bibliotecaActual;
 
         const text =
             this.generateRequestText();
 
-        if(!text){
+        if (!text) {
 
             this.showToast(
-                "Seleccione al menos un procedimiento.",
+                "Selecciona al menos un documento.",
                 "warning"
             );
 
@@ -4425,9 +5462,11 @@ export class Sidebar {
         const copied =
             await this.copyToClipboard(text);
 
-        if(copied){
+        if (copied) {
 
-            this.clearRequest();
+            // Limpiar exclusivamente la biblioteca
+            // cuya solicitud se ha copiado.
+            this.solicitudes.limpiar(tipo);
 
             this.closeRequestPanel();
 
@@ -4435,10 +5474,10 @@ export class Sidebar {
                 "Solicitud copiada correctamente."
             );
 
-        }else{
+        } else {
 
             this.showToast(
-                "No fue posible copiar.",
+                "No fue posible copiar la solicitud.",
                 "error"
             );
 
@@ -4577,4 +5616,900 @@ export class Sidebar {
             }
         );
     }
+
+    /* =====================================================
+        CAMBIAR BIBLIOTECA
+    ===================================================== */
+
+    async setBiblioteca(tipo) {
+
+        if (!this.documentosManager) {
+
+            throw new Error(
+                "DocumentosManager no está configurado"
+            );
+
+        }
+
+        // Validar y cargar antes de modificar la interfaz.
+        // Si falla la carga, mantenemos la biblioteca anterior.
+
+        const documentos = tipo === "pets"
+            ? []
+            : await this.documentosManager.getDocumentos(tipo);
+
+        await this.documentosManager.cambiarBiblioteca(tipo);
+
+
+        /* =====================================================
+            01. ESTADO DE LA BIBLIOTECA
+        ===================================================== */
+
+        // Cerrar el panel anterior antes de
+        // cambiar su contenido.
+        if (this.requestVisible) {
+
+            this.closeRequestPanel();
+
+        }
+
+        this.bibliotecaActual = tipo;
+
+        // Conservar las selecciones de las otras
+        // bibliotecas y actualizar la biblioteca activa.
+        this.solicitudes.setBiblioteca(tipo);
+
+        this.documentosActuales = documentos;
+
+        this.categoriaActual = null;
+
+        this.viewMode = "areas";
+
+        this.currentArea = "TODOS";
+
+        this.cards = [];
+
+        this.filteredPets = [];
+
+        this.activeCard = null;
+
+        this.activeButton = null;
+
+        this.activeAreaLabel = null;
+
+        clearTimeout(this.searchTimeout);
+
+
+        /* =====================================================
+            02. BUSCADOR
+        ===================================================== */
+
+        if (this.searchInput) {
+
+            this.searchInput.value = "";
+
+            // En PETS se habilita al entrar
+            // en la vista de procedimientos.
+            //
+            // En FDS y Manuales estará disponible
+            // desde la pantalla de categorías.
+
+            this.searchInput.disabled =
+                tipo === "pets";
+
+            const placeholders = {
+
+                pets:
+                    "Seleccione un área",
+
+                fds:
+                    "Buscar FDS, código o fabricante...",
+
+                manuales:
+                    "Buscar manual, marca o modelo..."
+
+            };
+
+            this.searchInput.placeholder =
+                placeholders[tipo];
+
+        }
+
+
+        /* =====================================================
+        03. BOTÓN CAMBIAR ÁREA / CATEGORÍA
+        ===================================================== */
+
+        if (this.changeAreaBtn) {
+
+            this.changeAreaBtn.hidden = true;
+
+            const texto =
+                this.changeAreaBtn.querySelector("span");
+
+            if (texto) {
+
+                texto.textContent =
+                    tipo === "pets"
+                        ? "Cambiar área"
+                        : "Cambiar categoría";
+
+            }
+
+            this.changeAreaBtn.setAttribute(
+                "aria-label",
+                tipo === "pets"
+                    ? "Cambiar área"
+                    : "Cambiar categoría"
+            );
+
+            this.changeAreaBtn.title =
+                tipo === "pets"
+                    ? "Cambiar área"
+                    : "Cambiar categoría";
+
+        }
+
+
+        /* =====================================================
+        04. ÁREA / CATEGORÍA ACTUAL
+        ===================================================== */
+
+        if (this.currentAreaName) {
+
+            this.currentAreaName.textContent =
+                tipo === "pets"
+                    ? "Todos"
+                    : "Todos";
+
+        }
+
+        const etiqueta = document.querySelector(
+            "#currentAreaInfo .area-label"
+        );
+
+        if (etiqueta) {
+
+            etiqueta.textContent =
+                tipo === "pets"
+                    ? "Área seleccionada"
+                    : "Categoría seleccionada";
+
+        }
+
+
+        /* =====================================================
+            05. LOGOTIPO Y TÍTULO
+        ===================================================== */
+
+        const titulos = {
+
+            pets: {
+                titulo: "PETS",
+                subtitulo: "Procedimiento Escrito de Trabajo Seguro"
+            },
+
+            fds: {
+                titulo: "FDS",
+                subtitulo: "Fichas de Datos de Seguridad"
+            },
+
+            manuales: {
+                titulo: "MANUALES",
+                subtitulo: "Manuales Técnicos"
+            }
+
+        };
+
+        const biblioteca = titulos[tipo];
+
+        const logoTitle =
+            document.getElementById("logoTitle");
+
+        const logoSub =
+            document.getElementById("logoSub");
+
+        if (logoTitle) {
+
+            logoTitle.textContent =
+                biblioteca.titulo;
+
+        }
+
+        if (logoSub) {
+
+            logoSub.textContent =
+                biblioteca.subtitulo;
+
+        }
+
+
+        /* =====================================================
+        06. BOTÓN DE SOLICITUDES
+        ===================================================== */
+
+        if (this.requestBtn) {
+
+            // Las solicitudes de FDS y Manuales
+            // se habilitarán al integrar solicitudes.js.
+
+            // Habilitar las solicitudes de las
+            // tres bibliotecas.
+
+            this.requestBtn.disabled = false;
+
+            const nombres = {
+
+                pets: "Solicitar PETS",
+
+                fds: "Solicitar FDS",
+
+                manuales: "Solicitar Manuales"
+
+            };
+
+            const texto =
+                this.requestBtn.querySelector("span");
+
+            if (texto) {
+
+                texto.textContent = nombres[tipo];
+
+            }
+
+            const descripciones = {
+
+                pets: "Solicitar procedimientos",
+
+                fds: "Solicitar fichas de seguridad",
+
+                manuales: "Solicitar manuales técnicos"
+
+            };
+
+            this.requestBtn.title =
+                descripciones[tipo];
+
+            this.requestBtn.setAttribute(
+                "aria-label",
+                descripciones[tipo]
+            );
+
+        }
+
+
+        /* =====================================================
+            07. ACTUALIZAR EL VISOR
+        ===================================================== */
+
+        if (
+            typeof this.onBibliotecaChange === "function"
+        ) {
+
+            this.onBibliotecaChange(tipo);
+
+        }
+
+
+        /* =====================================================
+        08. MOSTRAR EL NUEVO CATÁLOGO
+        ===================================================== */
+
+        this.render();
+
+    }
+
+
+    /* =====================================================
+    MOSTRAR CATEGORÍAS DOCUMENTALES
+    ===================================================== */
+
+    renderCategoriasDocumentales() {
+
+        const categorias = [
+
+            ...new Set(
+
+                this.documentosActuales
+
+                    .map(documento => documento.categoria)
+
+                    .filter(Boolean)
+
+            )
+
+        ].sort((a, b) =>
+
+            a.localeCompare(
+                b,
+                "es",
+                { numeric: true }
+            )
+
+        );
+
+        this.petsList.innerHTML = "";
+
+        this.cards = [];
+
+        const fragment =
+            document.createDocumentFragment();
+
+        if (!categorias.length) {
+
+            const empty =
+                document.createElement("div");
+
+            empty.className = "empty-search-state";
+
+            const mensaje =
+                document.createElement("p");
+
+            mensaje.textContent =
+                "Todavía no hay documentos registrados.";
+
+            empty.appendChild(mensaje);
+
+            fragment.appendChild(empty);
+
+        }
+
+        categorias.forEach(categoria => {
+
+            const total =
+                this.documentosActuales.filter(
+                    documento =>
+                        documento.categoria === categoria
+                ).length;
+
+            const card =
+                document.createElement("button");
+
+            card.type = "button";
+
+            card.className = "area-card";
+
+            /* =====================================================
+            IDENTIFICAR BIBLIOTECA DE LA TARJETA
+            ===================================================== */
+
+            if (this.bibliotecaActual === "fds") {
+
+                card.classList.add(
+                    "fds-category-card"
+                );
+
+            }
+
+            if (this.bibliotecaActual === "manuales") {
+
+                card.classList.add(
+                    "manual-category-card"
+                );
+
+            }
+
+
+            /* =====================================================
+            NORMALIZAR NOMBRE DE LA CATEGORÍA
+            ===================================================== */
+
+            const categoriaNormalizada = String(categoria)
+
+                .normalize("NFD")
+
+                .replace(/[\u0300-\u036f]/g, "")
+
+                .toLowerCase()
+
+                .trim();
+
+
+            /* =====================================================
+            COLOR DE LA CATEGORÍA
+            ===================================================== */
+
+            let colores = null;
+
+            if (this.bibliotecaActual === "fds") {
+
+                colores =
+                    FDS_CATEGORY_COLORS[categoriaNormalizada] || {
+                        color: "#0D9488",
+                        fondo: "#E0F2EF"
+                    };
+
+            }
+
+            else if (this.bibliotecaActual === "manuales") {
+
+                colores =
+                    MANUALES_CATEGORY_COLORS[categoriaNormalizada] || {
+                        color: "#2563EB",
+                        fondo: "#E8F0FE"
+                    };
+
+            }
+
+
+            if (colores) {
+
+                card.style.setProperty(
+                    "--area-color",
+                    colores.color
+                );
+
+                card.style.setProperty(
+                    "--category-icon-bg",
+                    colores.fondo
+                );
+
+            }
+
+            const header =
+                document.createElement("div");
+
+            header.className = "area-card-header";
+
+            /* =====================================================
+                ICONOS DE CATEGORÍAS DOCUMENTALES
+            ===================================================== */
+
+            const icono =
+                document.createElement("div");
+
+            icono.className = "area-card-icon";
+
+
+            /* =====================================================
+                ELEGIR PNG SEGÚN BIBLIOTECA
+            ===================================================== */
+
+            let archivo = null;
+
+            if (this.bibliotecaActual === "fds") {
+
+                archivo =
+                    FDS_CATEGORY_ICONS[categoriaNormalizada]
+                    || "otros-productos.png";
+
+            }
+
+            else if (this.bibliotecaActual === "manuales") {
+
+                archivo =
+                    MANUALES_CATEGORY_ICONS[categoriaNormalizada]
+                    || "accesorios-automotrices.png";
+
+            }
+
+
+            /* =====================================================
+            CREAR IMAGEN
+            ===================================================== */
+
+            if (archivo) {
+
+                const imagen =
+                    document.createElement("img");
+
+                imagen.src =
+                    `icons/${archivo}`;
+
+                imagen.alt =
+                    categoria;
+
+                imagen.draggable =
+                    false;
+
+                imagen.loading =
+                    "lazy";
+
+                icono.appendChild(
+                    imagen
+                );
+
+            }
+
+            header.appendChild(icono);
+
+            const info =
+                document.createElement("div");
+
+            info.className = "area-card-info";
+
+            const title =
+                document.createElement("div");
+
+            title.className = "area-card-title";
+
+            title.textContent = categoria;
+
+            const count =
+                document.createElement("div");
+
+            count.className = "area-card-count";
+
+            count.textContent =
+                `${total} ${total === 1 ? "documento" : "documentos"}`;
+
+            info.appendChild(title);
+
+            info.appendChild(count);
+
+            card.appendChild(header);
+
+            card.appendChild(info);
+
+            card.addEventListener("click", () => {
+
+                this.selectCategoriaDocumental(
+                    categoria
+                );
+
+            });
+
+            fragment.appendChild(card);
+
+        });
+
+        this.petsList.appendChild(fragment);
+
+        if (this.petsCounter) {
+
+            this.petsCounter.textContent =
+                `${categorias.length} categorías`;
+
+        }
+
+    }
+
+
+    /* =====================================================
+    SELECCIONAR CATEGORÍA DOCUMENTAL
+    ===================================================== */
+
+    selectCategoriaDocumental(categoria) {
+
+        this.categoriaActual = categoria;
+
+        this.viewMode = "pets";
+
+        if (this.currentAreaName) {
+
+            this.currentAreaName.textContent =
+                categoria;
+
+        }
+
+        if (this.changeAreaBtn) {
+
+            this.changeAreaBtn.hidden = false;
+
+        }
+
+        if (this.searchInput) {
+
+            this.searchInput.disabled = false;
+
+            this.searchInput.value = "";
+
+            this.searchInput.placeholder =
+                this.bibliotecaActual === "fds"
+                    ? "Buscar FDS, código o fabricante..."
+                    : "Buscar manual, marca o modelo...";
+
+        }
+
+        if (this.searchClear) {
+
+            this.searchClear.hidden = true;
+
+        }
+
+        this.render();
+
+    }
+
+
+    /* =====================================================
+        MOSTRAR DOCUMENTOS — FDS Y MANUALES
+    ===================================================== */
+
+    renderDocumentos(resultados = null) {
+
+        // Limpiar las tarjetas anteriores.
+        this.petsList.innerHTML = "";
+
+        // Restablecer la posición del listado.
+        this.petsList.scrollTop = 0;
+
+        this.petsList.scrollLeft = 0;
+
+        // Reiniciar las referencias de las tarjetas.
+        this.cards = [];
+
+        // Si recibimos resultados de una búsqueda,
+        // mostrarlos sin filtrar por categoría.
+        //
+        // En caso contrario, mostrar únicamente
+        // los documentos de la categoría abierta.
+
+        const documentos = Array.isArray(resultados)
+
+            ? resultados
+
+            : this.documentosActuales.filter(
+                documento =>
+                    documento.categoria === this.categoriaActual
+            );
+
+        const fragment = document.createDocumentFragment();
+
+        // ==========================================
+        // SIN RESULTADOS
+        // ==========================================
+
+        if (!documentos.length) {
+
+            const empty =
+                document.createElement("div");
+
+            empty.className =
+                "empty-search-state";
+
+            const mensaje =
+                document.createElement("p");
+
+            mensaje.textContent =
+                resultados !== null
+                    ? "No se encontraron documentos."
+                    : "Esta categoría no tiene documentos.";
+
+            empty.appendChild(mensaje);
+
+            fragment.appendChild(empty);
+
+        }
+
+        documentos.forEach(documento => {
+
+            // ==========================================
+            // TARJETA
+            // ==========================================
+
+            const card = document.createElement("div");
+
+            card.className = "pet-card document-card";
+
+            card.setAttribute("role", "listitem");
+
+            // ==========================================
+            // CÓDIGO Y VERSIÓN
+            // ==========================================
+
+            const numero = document.createElement("div");
+
+            numero.className = "pet-number-row";
+
+            const codigo = document.createElement("span");
+
+            codigo.className = "pet-number document-card-code";
+
+            const identificador = (documento.id || "")
+                .replace(/^FDS-/i, "FDS ")
+                .replace(/^MAN-/i, "MAN ");
+
+            const version = documento.version
+                ? ` · VER. ${documento.version}`
+                : "";
+
+            codigo.textContent = identificador + version;
+
+            numero.appendChild(codigo);
+
+            card.appendChild(numero);
+
+            // ==========================================
+            // TÍTULO
+            // ==========================================
+
+            const header = document.createElement("div");
+
+            header.className = "pet-card-header";
+
+            const title = document.createElement("div");
+
+            title.className = "pet-title document-card-title";
+
+            title.textContent =
+                documento.nombre || "Sin título";
+
+            header.appendChild(title);
+
+            card.appendChild(header);
+
+            // ==========================================
+            // INFORMACIÓN Y BOTÓN
+            // ==========================================
+
+            const footer = document.createElement("div");
+
+            footer.className = "document-card-footer";
+
+            const info = document.createElement("div");
+
+            info.className = "document-card-info";
+
+            if (this.bibliotecaActual === "fds") {
+
+                info.textContent = [
+
+                    documento.fabricante,
+
+                    documento.presentacion
+
+                ].filter(Boolean).join(" · ");
+
+            } else {
+
+                info.textContent = [
+
+                    documento.marca,
+
+                    documento.modelo
+
+                ].filter(Boolean).join(" · ");
+
+            }
+
+            const boton = document.createElement("button");
+
+            boton.type = "button";
+
+            boton.className = "document-card-open";
+
+            boton.textContent =
+                this.bibliotecaActual === "fds"
+                    ? "Ver FDS ↗"
+                    : "Ver manual ↗";
+
+            boton.setAttribute(
+                "aria-label",
+                `Abrir ${documento.nombre}`
+            );
+
+            boton.addEventListener("click", async () => {
+
+                if (!documento.path) {
+
+                    this.showToast(
+                        "Este documento no tiene una ruta válida.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+                try {
+
+                    this.petsList
+                        .querySelectorAll(".document-card.active")
+                        .forEach(elemento => {
+
+                            elemento.classList.remove("active");
+
+                        });
+
+                    card.classList.add("active");
+
+                    await this.onOpenPDF?.(
+
+                        documento.path,
+
+                        documento.nombre,
+
+                        documento.categoria,
+
+                        documento
+
+                    );
+
+                } catch (error) {
+
+                    card.classList.remove("active");
+
+                    console.error(
+                        "Error al abrir el documento:",
+                        error
+                    );
+
+                    this.showToast(
+                        "No se pudo abrir el documento.",
+                        "error"
+                    );
+
+                }
+
+            });
+
+            footer.appendChild(info);
+
+            footer.appendChild(boton);
+
+            card.appendChild(footer);
+
+            fragment.appendChild(card);
+
+        });
+
+        this.petsList.appendChild(fragment);
+
+        // ==========================================
+        // CONTADOR
+        // ==========================================
+
+        if (this.petsCounter) {
+
+            const total = documentos.length;
+
+            this.petsCounter.textContent =
+                `${total} ${total === 1
+                    ? "documento"
+                    : "documentos"}`;
+
+        }
+
+    }
+
+
+    /* =====================================================
+        REGRESAR A CATEGORÍAS
+    ===================================================== */
+
+    volverCategoriasDocumentales() {
+
+        clearTimeout(this.searchTimeout);
+
+        this.categoriaActual = null;
+
+        this.viewMode = "areas";
+
+        if (this.currentAreaName) {
+
+            this.currentAreaName.textContent =
+                "Todas las categorías";
+
+        }
+
+        if (this.changeAreaBtn) {
+
+            this.changeAreaBtn.hidden = true;
+
+        }
+
+        if (this.searchInput) {
+
+            this.searchInput.value = "";
+
+            this.searchInput.disabled = false;
+
+            this.searchInput.placeholder =
+                this.bibliotecaActual === "fds"
+                    ? "Buscar FDS, código o fabricante..."
+                    : "Buscar manual, marca o modelo...";
+
+        }
+
+        if (this.searchClear) {
+
+            this.searchClear.hidden = true;
+
+        }
+
+        this.render();
+
+    }
 }
+

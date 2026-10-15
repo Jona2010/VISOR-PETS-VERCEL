@@ -100,8 +100,8 @@
                     
                     <!-- PET actual -->
                     <div class="area-loader-current">
-                        <span class="area-loader-counter" id="loaderCounter">PET 000 de 143</span>
-                        <div class="area-loader-pet-code" id="loaderPetCode">PET 001 · VER. 02</div>
+                        <span class="area-loader-counter" id="loaderCounter">PETS 000 de 143</span>
+                        <div class="area-loader-pet-code" id="loaderPetCode">PETS 001 · VER. 02</div>
                         <div class="area-loader-pet-title" id="loaderPetTitle">Cargando procedimientos...</div>
                     </div>
                     
@@ -161,7 +161,47 @@
                     </div>
                 </div>
 
+                <!-- =======================================
+                     SELECTOR DE BIBLIOTECAS
+                ======================================= -->
+
+                <div
+                    id="bibliotecasSelector"
+                    role="group"
+                    aria-label="Seleccionar biblioteca documental"
+                >
+
+                    <button
+                        type="button"
+                        class="biblioteca-btn active"
+                        data-biblioteca="pets"
+                        aria-pressed="true"
+                    >
+                        PETS
+                    </button>
+
+                    <button
+                        type="button"
+                        class="biblioteca-btn"
+                        data-biblioteca="fds"
+                        aria-pressed="false"
+                    >
+                        FDS
+                    </button>
+
+                    <button
+                        type="button"
+                        class="biblioteca-btn"
+                        data-biblioteca="manuales"
+                        aria-pressed="false"
+                    >
+                        MANUALES
+                    </button>
+
+                </div>
+
                 <!-- Buscador -->
+
                 <div id="searchWrap">
                     <svg id="searchIcon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                         <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" stroke-width="1.4"/>
@@ -339,7 +379,7 @@
                         SOLICITUD
                     </span>
 
-                    <h2>
+                    <h2 id="requestTitle">
                         Seleccionar procedimientos
                     </h2>
 
@@ -371,15 +411,51 @@
             </div>
 
             <!-- =======================================
+                VISTAS DE SOLICITUD
+            ======================================= -->
+
+            <div
+                id="requestViewTabs"
+                role="group"
+                aria-label="Vista de documentos de la solicitud"
+            >
+
+                <button
+                    id="requestViewAll"
+                    class="request-view-tab active"
+                    type="button"
+                    aria-pressed="true"
+                >
+                    Todos
+                </button>
+
+                <button
+                    id="requestViewSelected"
+                    class="request-view-tab"
+                    type="button"
+                    aria-pressed="false"
+                >
+                    Seleccionados
+
+                    <span id="requestSelectedBadge">
+                        0
+                    </span>
+
+                </button>
+
+            </div>
+
+            <!-- =======================================
                 ÁREA
             ======================================= -->
 
             <div id="requestAreaContainer">
 
-                <label for="requestAreaSelect">
-
+                <label
+                    for="requestAreaSelect"
+                    id="requestAreaLabel"
+                >
                     Área
-
                 </label>
 
                 <select id="requestAreaSelect"></select>
@@ -449,15 +525,53 @@
 
             </div>
 
+            <!-- =======================================
+                CANTIDAD GENERAL DE JUEGOS
+            ======================================= -->
+
+            <div id="requestQuantityGeneral">
+
+                <label for="requestGeneralQuantity">
+                    Cantidad general
+                </label>
+
+                <div class="request-general-controls">
+
+                    <input
+                        id="requestGeneralQuantity"
+                        type="number"
+                        min="1"
+                        step="1"
+                        value="1"
+                        inputmode="numeric"
+                        aria-label="Cantidad general de juegos"
+                    >
+
+                    <button
+                        id="requestApplyQuantity"
+                        type="button"
+                    >
+                        Aplicar
+                    </button>
+
+                </div>
+
+            </div>
+
             <!-- Contador -->
 
             <div
                 id="requestCounter"
                 aria-live="polite"
             >
+                0 documentos seleccionados
+            </div>
 
-                0 procedimientos seleccionados
-
+            <div
+                id="requestGamesCounter"
+                aria-live="polite"
+            >
+                Total de juegos: 0
             </div>
 
             <!-- Lista -->
@@ -617,11 +731,46 @@
 
                 <!-- NUEVO BOTÓN -->
 
+                <!-- Buscar dentro del PET -->
+                <button
+                    id="searchPdfBtn"
+                    type="button"
+                    title="Buscar dentro del PET"
+                    aria-label="Buscar dentro del PET"
+                    disabled
+                >
+
+                    <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        aria-hidden="true">
+
+                        <circle
+                            cx="11"
+                            cy="11"
+                            r="6"
+                            stroke="currentColor"
+                            stroke-width="2"/>
+
+                        <path
+                            d="M16 16L21 21"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"/>
+
+                    </svg>
+
+                    <span>Buscar</span>
+
+                </button>
+
                 <button
                     id="explorerBtn"
                     type="button"
-                    title="Explorar PET"
-                    aria-label="Explorar PET">
+                    title="Explorar PETS"
+                    aria-label="Explorar PETS">
 
                     <svg
                         width="18"
@@ -1034,7 +1183,7 @@
                             </strong>
 
                             <span>
-                                Explora por áreas o busca tu PET.
+                                Explora por áreas o busca tu PETS.
                             </span>
 
                         </div>
@@ -1145,7 +1294,7 @@
                             
                             <!-- Detalles del PET -->
                             <div class="pdf-download-pet">
-                                <div class="pdf-download-pet-code" id="downloadPetCode">PET 001 · VER. 02</div>
+                                <div class="pdf-download-pet-code" id="downloadPetCode">PETS 001 · VER. 02</div>
                                 <div class="pdf-download-pet-title" id="downloadPetTitle">Título del procedimiento</div>
                             </div>
                             
@@ -1154,7 +1303,7 @@
                 </div>
 
                 <!-- ========================================================= -->
-                <!-- EXPLORAR PET -->
+                <!-- EXPLORAR PETS -->
                 <!-- ========================================================= -->
                 
                 <div
@@ -1181,7 +1330,7 @@
 
                             <h3>
 
-                                PET
+                                PETS
 
                             </h3>
 
@@ -1217,42 +1366,10 @@
 
                     </div>
 
-                    <!-- Tabs -->
-
-                    <div id="explorerTabs">
-
-                        <button
-                            class="explorer-tab active"
-
-                            data-view="steps">
-
-                            📋 Pasos de la Tarea
-
-                        </button>
-
-                        <button
-                            class="explorer-tab"
-
-                            data-view="search">
-
-                            🔍 Buscar
-
-                        </button>
-
-                    </div>
-
                     <div id="explorerCounter">
 
                         <span id="stepsCount">
-
                             0 pasos
-
-                        </span>
-
-                        <span id="searchCount" hidden>
-
-                            0 coincidencias
-
                         </span>
 
                     </div>
@@ -1270,7 +1387,7 @@
 
                             <p>
 
-                                Selecciona un PET para explorar su contenido.
+                                Selecciona un PETS para explorar su contenido.
 
                             </p>
 
@@ -1280,19 +1397,80 @@
                             id="explorerLoader"
                             hidden>
 
-                            Analizando PET...
+                            Analizando PETS...
 
                         </div>
 
                     </div>
 
-                    <!-- ==========================
-                        VISTA BUSCADOR
-                    ========================== -->
+                </div>
 
-                    <div
-                        id="searchView"
-                        hidden>
+                </aside>
+
+                <!-- ========================================================= -->
+                <!-- BUSCADOR DEL PET -->
+                <!-- ========================================================= -->
+
+                <div
+                    id="searchOverlay"
+                    hidden
+                    aria-hidden="true">
+                </div>
+
+
+                <aside
+                    id="searchPanel"
+                    role="complementary"
+                    hidden
+                    aria-hidden="true"
+                >
+
+                    <!-- HEADER -->
+
+                    <div id="searchPanelHeader">
+
+                        <div>
+
+                            <span class="search-panel-label">
+                                BUSCAR EN PETS
+                            </span>
+
+                            <h3>
+                                Buscar dentro del documento
+                            </h3>
+
+                        </div>
+
+
+                        <button
+                            id="closeSearchPanel"
+                            type="button"
+                            aria-label="Cerrar buscador"
+                            title="Cerrar"
+                        >
+
+                            <svg
+                                width="18"
+                                height="18"
+                                viewBox="0 0 24 24"
+                                fill="none">
+
+                                <path
+                                    d="M6 6L18 18M18 6L6 18"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"/>
+
+                            </svg>
+
+                        </button>
+
+                    </div>
+
+
+                    <!-- CONTENIDO -->
+
+                    <div id="searchView">
 
                         <div
                             id="pdfSearchPanel"
@@ -1308,7 +1486,7 @@
                                     autocorrect="off"
                                     autocapitalize="off"
                                     spellcheck="false"
-                                    aria-label="Buscar dentro del PET"
+                                    aria-label="Buscar dentro del PETS"
                                 >
 
                                 <button
@@ -1344,6 +1522,7 @@
 
                             </div>
 
+
                             <div
                                 id="pdfSearchInfo"
                                 aria-live="polite">
@@ -1351,6 +1530,7 @@
                                 Escribe una palabra para comenzar.
 
                             </div>
+
 
                             <div
                                 id="pdfSearchCounter"
@@ -1360,12 +1540,11 @@
 
                             </div>
 
+
                             <div
                                 id="pdfSearchResults"
                                 class="pdf-search-results"
                                 role="list">
-
-                                <!-- Estado vacío -->
 
                                 <div
                                     id="pdfSearchEmpty"
@@ -1375,12 +1554,10 @@
 
                                 </div>
 
-                                <!-- Lista dinámica -->
 
                                 <div
                                     id="pdfSearchList"
                                     class="pdf-search-list">
-
                                 </div>
 
                             </div>
@@ -1388,8 +1565,6 @@
                         </div>
 
                     </div>
-
-                </div>
 
                 </aside>
 
