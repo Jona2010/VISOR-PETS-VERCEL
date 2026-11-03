@@ -4017,95 +4017,153 @@ export class Sidebar {
     }
 
     // ================================
-    // 📦 CREATE CARD
+    // 📚 TARJETAS PETS
     // ================================
 
     createPetCard(pet) {
 
-        const card = document.createElement("div");
+        const card =
+            document.createElement("div");
 
-        card.className = "pet-card";
-        card.setAttribute("role", "listitem");
+        card.className =
+            "pet-card";
 
-        const numMatch = pet.nombre.match(/^(\d+)/);
+        card.setAttribute(
+            "role",
+            "listitem"
+        );
+
+
+        // ==========================================
+        // VISTA ACTUAL
+        // ==========================================
+
+        const isAllAreas =
+            this.currentArea === "TODOS";
+
+
+        // ==========================================
+        // DATOS DEL PET
+        // ==========================================
+
+        const numMatch =
+            pet.nombre.match(/^(\d+)/);
+
 
         const petNum =
             numMatch
                 ? `PET ${numMatch[1].padStart(3, "0")}`
                 : "";
 
+
         const petName =
             pet.nombre
                 .replace(/^\d+[-\s]*/, "")
                 .trim();
-        
+
+
         // ==========================================
-        // ID DEL PET
+        // RUTA PARA OBTENER LA VERSIÓN
+        //
+        // TODOS:
+        // usa el primer archivo disponible.
+        //
+        // C1 / C2 / HIDRO / etc:
+        // usa el archivo del área seleccionada.
         // ==========================================
 
-        const firstPath =
-            Object.values(pet.archivos)[0];
+        const referencePath =
+
+            isAllAreas
+
+                ? Object.values(
+                    pet.archivos || {}
+                )[0]
+
+                : pet.archivos?.[
+                    this.currentArea
+                ];
+
 
         const version =
             this.extractVersionFromPath(
-                firstPath
+                referencePath || ""
             );
 
-        // ==========================
-        // NÚMERO PET
-        // ==========================
 
-        if(petNum){
+        // ==========================================
+        // NÚMERO PET
+        // ==========================================
+
+        if (petNum) {
 
             const petHeader =
                 document.createElement("div");
 
+
             petHeader.className =
                 "pet-number-row";
+
 
             const numEl =
                 document.createElement("div");
 
+
             numEl.className =
                 "pet-number";
+
 
             numEl.textContent =
                 version
                     ? `${petNum} · VER. ${version}`
                     : petNum;
 
-            petHeader.appendChild(numEl);
 
-            card.appendChild(petHeader);
+            petHeader.appendChild(
+                numEl
+            );
+
+
+            card.appendChild(
+                petHeader
+            );
+
         }
 
-        // ==========================
+
+        // ==========================================
         // HEADER
-        // ==========================
+        // ==========================================
 
         const header =
             document.createElement("div");
 
+
         header.className =
             "pet-card-header";
+
 
         const title =
             document.createElement("div");
 
+
         title.className =
             "pet-title";
+
 
         title.textContent =
             petName;
 
+
         const chevron =
             document.createElement("div");
+
 
         chevron.className =
             "pet-chevron";
 
-        chevron.innerHTML =
-        `
+
+        chevron.innerHTML = `
             <svg
                 width="16"
                 height="16"
@@ -4122,72 +4180,126 @@ export class Sidebar {
             </svg>
         `;
 
-        header.appendChild(title);
-        header.appendChild(chevron);
 
-        card.appendChild(header);
+        header.appendChild(
+            title
+        );
 
-        // ==========================
-        // ÁREA ACTIVA
-        // ==========================
+
+        header.appendChild(
+            chevron
+        );
+
+
+        card.appendChild(
+            header
+        );
+
+
+        // ==========================================
+        // INDICADOR DE ÁREA ACTIVA
+        // ==========================================
 
         const areaIndicator =
             document.createElement("div");
 
+
         areaIndicator.className =
             "pet-active-area";
 
-        card.appendChild(areaIndicator);
 
-        // ==========================
-        // ÁREAS
-        // ==========================
+        card.appendChild(
+            areaIndicator
+        );
+
+
+        // ==========================================
+        // CONTENEDOR DEL ACORDEÓN
+        // ==========================================
 
         const areasRow =
             document.createElement("div");
 
+
         areasRow.className =
             "areas-row areas-collapsed";
 
-        // ------------------------------------------
-        // CONTADOR DE ÁREAS
-        // ------------------------------------------
 
-        const areaCount =
-            Object.keys(pet.archivos).length;
+        // ==========================================
+        // ÁREAS QUE DEBEN MOSTRARSE
+        //
+        // TODOS:
+        // mostrar todas.
+        //
+        // ÁREA ESPECÍFICA:
+        // mostrar únicamente la actual.
+        // ==========================================
+
+        const visibleAreas =
+
+            isAllAreas
+
+                ? Object.entries(
+                    pet.archivos || {}
+                )
+
+                : Object.entries(
+                    pet.archivos || {}
+                ).filter(
+                    ([area]) =>
+                        area === this.currentArea
+                );
+
+
+        // ==========================================
+        // ETIQUETA
+        // ==========================================
 
         const areasLabel =
             document.createElement("div");
 
+
         areasLabel.className =
             "areas-label";
 
-        areasLabel.innerHTML = `
-            <span>ÁREAS</span>
-            <strong>${areaCount}</strong>
-        `;
+
+        if (isAllAreas) {
+
+            areasLabel.innerHTML = `
+                <span>ÁREAS</span>
+                <strong>${visibleAreas.length}</strong>
+            `;
+
+        } else {
+
+            areasLabel.innerHTML = `
+                <span>ÁREA</span>
+            `;
+
+        }
+
 
         areasRow.appendChild(
             areasLabel
         );
 
-        // ------------------------------------------
+
+        // ==========================================
         // BOTONES DE ÁREA
-        // ------------------------------------------
+        // ==========================================
 
         const areasButtons =
             document.createElement("div");
 
+
         areasButtons.className =
             "areas-buttons";
 
-        Object.entries(
-            pet.archivos
-        ).forEach(
-            ([area,path]) => {
 
-                areasButtons.appendChild(
+        visibleAreas.forEach(
+            ([area, path]) => {
 
+                const button =
                     this.createAreaButton({
 
                         area,
@@ -4202,36 +4314,49 @@ export class Sidebar {
 
                         areaName:
                             area
-                    })
+
+                    });
+
+
+                areasButtons.appendChild(
+                    button
                 );
+
             }
         );
+
 
         areasRow.appendChild(
             areasButtons
         );
 
+
         card.appendChild(
             areasRow
         );
 
-        // ==========================
+
+        // ==========================================
         // ACORDEÓN
-        // ==========================
+        //
+        // SIEMPRE funciona igual:
+        // clic en tarjeta = abrir/cerrar
+        // clic en botón área = abrir PDF
+        // ==========================================
 
         header.addEventListener(
             "click",
             () => {
 
                 const expanded =
-
                     card.classList.contains(
                         "expanded"
                     );
 
-                // ==========================
-                // CERRAR TODOS
-                // ==========================
+
+                // ======================================
+                // CERRAR TODAS LAS TARJETAS
+                // ======================================
 
                 this.cards.forEach(
                     item => {
@@ -4240,79 +4365,49 @@ export class Sidebar {
                             "expanded"
                         );
 
-                        item.card.classList.remove(
-                            "active"
-                        );
 
                         item.areasRow.classList.add(
                             "areas-collapsed"
                         );
 
+
                         item.chevron.classList.remove(
                             "open"
                         );
 
-                        const badge =
-                            item.card.querySelector(
-                                ".pet-active-area"
-                            );
-
-                        if(badge){
-
-                            badge.textContent = "";
-
-                            badge.classList.remove(
-                                "visible"
-                            );
-                        }
-
-                        item.card.querySelectorAll(
-                            ".area-btn.active"
-                        ).forEach(
-                            btn => btn.classList.remove(
-                                "active"
-                            )
-                        );
                     }
                 );
 
-                // ==========================
-                // LIMPIAR REFERENCIAS
-                // ==========================
 
-                this.activeCard =
-                    null;
+                // ======================================
+                // ABRIR ESTA TARJETA
+                // ======================================
 
-                this.activeButton =
-                    null;
-
-                this.activeAreaLabel =
-                    null;
-
-                // ==========================
-                // ABRIR ACTUAL
-                // ==========================
-
-                if(!expanded){
+                if (!expanded) {
 
                     card.classList.add(
                         "expanded"
                     );
 
+
                     areasRow.classList.remove(
                         "areas-collapsed"
                     );
 
+
                     chevron.classList.add(
                         "open"
                     );
+
                 }
+
             }
         );
 
-        // ==========================
+
+        // ==========================================
         // REGISTRO
-        // ==========================
+        // ==========================================
 
         this.cards.push({
 
@@ -4323,9 +4418,12 @@ export class Sidebar {
             areasRow,
 
             chevron
+
         });
 
+
         return card;
+
     }
 
     // ================================
